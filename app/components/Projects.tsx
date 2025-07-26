@@ -1,20 +1,24 @@
+"use client";
+
 import React from 'react';
 import projects from "@/lib/projects.json";
 import Link from "next/link";
 import Image from "next/image";
 import {ArrowUpRight} from "lucide-react";
+import { motion } from 'motion/react';
+import {containerVariants, itemVariants} from "@/app/motion-variants";
 
 function Projects() {
     return (
-        <div className="section projects-section">
-            <div className="section-title">
+        <motion.div className="section projects-section" variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div className="section-title" variants={itemVariants}>
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/purple.webp"} alt={"Purple splash"} width={512}
                        height={512}/>
                 <h2>Projects I've worked on</h2>
-            </div>
-            <div className="flex flex-col gap-10">
+            </motion.div>
+            <motion.div className="flex flex-col gap-10">
                 {projects.map((project) => (
-                    <div className={"project-wrapper"} key={project.id}>
+                    <motion.div className={"project-wrapper"} key={project.id} variants={itemVariants}>
                         <div className="project-header-wrapper">
                             <Link href={project.link} target={"_blank"}>
                                 <h4 className={"project-title"}>
@@ -33,10 +37,10 @@ function Projects() {
                                 <p className={"chip-stroked"} key={`${role}-${roleIndex}`}>{role}</p>
                             ))}
                         </div>
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
 

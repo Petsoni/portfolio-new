@@ -1,21 +1,25 @@
+"use client";
+
 import React from 'react';
 import techStack from "@/lib/tech-stack.json";
 import Image from "next/image";
+import { motion } from 'motion/react';
+import {containerVariants, itemVariants} from '../motion-variants';
 
 function Technologies() {
     return (
-        <div className="section technologies-section">
-            <div className="section-title">
+        <motion.div className="section technologies-section" variants={containerVariants} initial="hidden" animate="visible">
+            <motion.div className="section-title" variants={itemVariants}>
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/blue.webp"} alt={"Blue splash"} width={512}
                        height={512}/>
                 <h2>Technologies I use</h2>
-            </div>
-            <div className="flex flex-row flex-wrap gap-3">
+            </motion.div>
+            <motion.div className="flex flex-row flex-wrap gap-3" variants={itemVariants}>
                 {techStack.map((tech) => (
-                    <p className={"chip"} key={tech}>{tech}</p>
+                    <motion.p className={"chip"} key={tech}>{tech}</motion.p>
                 ))}
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }
 

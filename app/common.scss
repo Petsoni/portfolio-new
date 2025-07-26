@@ -1,5 +1,5 @@
 $background: #ffffff;
-$text-color: #1c1c1c;
+$text-color: #3b3b3b;
 $light-text-color: #6d6d6d;
 $shade: #d1d1d1;
 $border-color: #5d5d5d;
@@ -11,6 +11,10 @@ $purple: #C46FDE;
 
 h1, h2, h3, h4 {
   letter-spacing: -2.5px;
+}
+
+h1, h2, h3, h4, h5, h6, p, a {
+  color: $text-color;
 }
 
 h1 {
