@@ -17,16 +17,16 @@ function HeroSection() {
                 into
                 real, working things. Web apps? Love ‘em. Websites? Can’t get enough. Give me a problem to solve or
                 a
-                concept to build, and I’ll happily lose track of time making it happen 🔥</p>
+                concept to build, and I’ll happily lose track of time making it happen.</p>
             <p>
                 By day, I’m crafting full-stack solutions, balancing frontend flair with backend logic (Angular,
                 React, Spring Boot, etc.) By night, I’m either deep-diving into some new tech rabbit hole or producing
-                electronic music—because creativity shouldn’t stop at the keyboard 🎵🎧
+                electronic music—because creativity shouldn’t stop at the keyboard.
             </p>
             <p>
                 I’m all about that "aha" moment. Whether it’s nailing a tricky feature, designing an interface that
                 just
-                clicks, or stumbling on the perfect synth riff ✨
+                clicks, or stumbling on the perfect synth riff.
             </p>
             <p>
                 If you’re looking for someone who cares as much about the Why as the How, let’s chat.

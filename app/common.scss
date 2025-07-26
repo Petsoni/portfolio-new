@@ -56,7 +56,7 @@ button {
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 
   &.hero-section {
 
@@ -65,7 +65,7 @@ button {
     }
 
     p {
-      padding-bottom: 1rem;
+      padding-bottom: 0.75rem;
 
       &:last-child {
         padding-bottom: 0;

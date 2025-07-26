@@ -12,7 +12,7 @@ function Projects() {
                        height={512}/>
                 <h2>Projects I've worked on</h2>
             </div>
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-10">
                 {projects.map((project) => (
                     <div className={"project-wrapper"} key={project.id}>
                         <div className="project-header-wrapper">
