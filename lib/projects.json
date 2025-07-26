@@ -1,0 +1,47 @@
+[
+  {
+    "id": 1,
+    "title": "Webique Agency",
+    "link": "https://webique-agency.vercel.app",
+    "duration": "August 2024 — Present",
+    "roles": [
+      "Frontend Developer",
+      "UI/UX Designer"
+    ],
+    "description": "Founded and operated a web development agency specializing in custom web applications and SaaS solutions. Led end-to-end project delivery from client consultation to deployment, managing multiple concurrent projects. Built scalable solutions using modern frameworks while establishing efficient development workflows and client communication processes, delivering 20+ projects across various industries."
+  },
+  {
+    "id": 2,
+    "title": "Dual SOFT",
+    "link": "https://dualsoft.net",
+    "duration": "April 2025 — July 2025",
+    "roles": [
+      "Full Stack Developer"
+    ],
+    "description": "Developed a high-performance real-time betting platform using microservices architecture. Implemented event-driven communication with Kafka and RabbitMQ, utilized Redis for caching and session management, and built responsive frontend with Angular. Integrated WebSocket connections for live odds updates and PostgreSQL for transaction processing, ensuring system reliability under high concurrent user loads."
+  },
+  {
+    "id": 3,
+    "title": "Mat Promet eShop",
+    "link": "https://matpromet-eshop.com",
+    "duration": "January 2025 — July 2025",
+    "roles": [
+      "Frontend Developer",
+      "Website Designer",
+      "UI/UX Designer"
+    ],
+    "description": "Built a comprehensive e-commerce platform using Next.js to digitize and expand the company's market reach. Implemented server-side rendering for optimal SEO performance and developed order tracking by using a mailing system. Increased online sales by 40% and streamlined order processing workflows."
+  },
+  {
+    "id": 4,
+    "title": "iMET",
+    "link": "https://imet.metropolitan.ac.rs",
+    "duration": "August 2021 — April 2025",
+    "roles": [
+      "Frontend Team Lead",
+      "Full Stack Developer",
+      "Pyton Developer"
+    ],
+    "description": "Developed a modular enterprise management system serving 20,000+ university students and staff using Angular frontend and Spring Boot backend. Created a separate Python/Flask application for automated report generation and data analytics. Designed scalable system architecture with role-based access control and integrated third-party APIs for enhanced functionality."
+  }
+]
