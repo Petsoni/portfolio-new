@@ -1,5 +1,6 @@
-// Container sa stagger animacijom
-export const containerVariants = {
+import {Variants} from "motion";
+
+export const containerVariants: Variants = {
     hidden: {
         y: 20,
         opacity: 0
@@ -9,26 +10,23 @@ export const containerVariants = {
         opacity: 1,
         transition: {
             duration: 0.5,
-            staggerChildren: 0.1, // delay između elemenata
-            delayChildren: 0.2,   // početni delay
+            staggerChildren: 0.1,
+            delayChildren: 0.2,
         }
     }
 };
 
-export const itemVariants = {
+export const itemVariants: Variants = {
     hidden: {
         opacity: 0,
-        filter: "blur(0.5em)",
+        filter: "blur(10px)"
     },
     visible: {
         opacity: 1,
         filter: "blur(0px)",
         transition: {
-            duration: 0.25,
-            type: 'spring',
-            filter: {
-                duration: 0.5,
-            }
+            duration: 0.5,
+            type: "spring" as const,
         }
     }
 };
