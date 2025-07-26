@@ -5,7 +5,7 @@ import Link from "next/link";
 
 function Contact() {
     return (
-        <div className={"section"}>
+        <div className={"section contact-section"}>
             <div className="section-title">
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/orange.webp"} alt={"Orange splash"} width={512}
                        height={512}/>

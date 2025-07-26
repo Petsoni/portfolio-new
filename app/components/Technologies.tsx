@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function Technologies() {
     return (
-        <div className="section">
+        <div className="section technologies-section">
             <div className="section-title">
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/blue.webp"} alt={"Blue splash"} width={512}
                        height={512}/>

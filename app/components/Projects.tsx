@@ -6,7 +6,7 @@ import {ArrowUpRight} from "lucide-react";
 
 function Projects() {
     return (
-        <div className="section">
+        <div className="section projects-section">
             <div className="section-title">
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/purple.webp"} alt={"Purple splash"} width={512}
                        height={512}/>

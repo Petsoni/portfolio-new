@@ -6,7 +6,7 @@ $border-color: #5d5d5d;
 
 $green: #6FDE77;
 $blue: #6FBBDE;
-$red: #DE6F7A;
+$orange: #FB8853;
 $purple: #C46FDE;
 
 h1, h2, h3, h4 {
@@ -51,6 +51,34 @@ button {
   font-size: clamp(16px, 2.8vw, 1rem);
 }
 
+.hero-section {
+  ::selection {
+    background-color: $green;
+    color: white;
+  }
+}
+
+.technologies-section {
+  ::selection {
+    background-color: $blue;
+    color: white;
+  }
+}
+
+.projects-section {
+  ::selection {
+    background-color: $purple;
+    color: white;
+  }
+}
+
+.contact-section {
+  ::selection {
+    background-color: $orange;
+    color: white;
+  }
+}
+
 .section {
   display: flex;
   flex-direction: column;
@@ -59,6 +87,11 @@ button {
   margin-bottom: 4rem;
 
   &.hero-section {
+
+    ::selection {
+      background-color: $green;
+      color: white;
+    }
 
     .section-title {
       margin: 0;
@@ -165,6 +198,7 @@ button {
 
     a:hover {
       text-decoration: underline;
+      text-decoration-color: $purple;
     }
 
     .project-title {
@@ -203,6 +237,7 @@ button {
 
     &:hover {
       text-decoration: underline;
+      text-decoration-color: $orange;
     }
   }
 }
