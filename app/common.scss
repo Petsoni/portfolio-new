@@ -9,36 +9,28 @@ $blue: #6FBBDE;
 $red: #DE6F7A;
 $purple: #C46FDE;
 
-h1, h2, h3, h4 {
-  letter-spacing: -2.5px;
-}
-
-h1, h2, h3, h4, h5 {
-  //font-weight: 550;
-}
-
 h1 {
-  font-size: 47.8px;
+  font-size: clamp(36px, 8vw, 47.8px);
 }
 
 h2 {
-  font-size: 39.8px
+  font-size: clamp(32px, 6.5vw, 39.8px);
 }
 
 h3 {
-  font-size: 33.2px
+  font-size: clamp(28px, 5.5vw, 33.2px);
 }
 
 h4 {
-  font-size: 27.6px
+  font-size: clamp(24px, 4.5vw, 27.6px);
 }
 
 h5 {
-  font-size: 23px;
+  font-size: clamp(20px, 3.8vw, 23px);
 }
 
 h6 {
-  font-size: 19px;
+  font-size: clamp(18px, 3.2vw, 19px);
   letter-spacing: -1.2px;
 }
 
@@ -47,12 +39,12 @@ span {
 }
 
 p, a, b, i, button {
-  font-size: 16px;
+  font-size: clamp(16px, 2.8vw, 16px);
   letter-spacing: -1px;
 }
 
 button {
-  font-size: 1rem;
+  font-size: clamp(16px, 2.8vw, 1rem);
 }
 
 .section {
@@ -85,9 +77,19 @@ button {
     width: 100%;
     margin-bottom: 1.5rem;
 
+    @media screen and (max-width: 768px) {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
     .ghibli-image {
       width: 7.5rem;
       height: auto;
+
+      @media screen and (max-width: 768px) {
+        align-self: center;
+      }
     }
   }
 
@@ -98,6 +100,13 @@ button {
     justify-content: center;
     gap: 0.5rem;
     margin-bottom: 1rem;
+
+    @media screen and (max-width: 768px) {
+      img {
+        //display: none;
+      }
+    }
+
   }
 
   p {
@@ -137,8 +146,17 @@ button {
     width: 100%;
     gap: 1rem;
 
+    @media screen and (max-width: 768px) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+    }
+
     .separator {
       flex: 1;
+      @media screen and (max-width: 768px) {
+        display: none;
+      }
     }
 
     a:hover {
@@ -160,6 +178,7 @@ button {
 
     h6 {
       justify-self: flex-end;
+      color: $light-text-color;
     }
   }
 }

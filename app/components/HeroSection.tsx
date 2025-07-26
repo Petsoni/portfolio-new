@@ -8,7 +8,7 @@ function HeroSection() {
                 <div className="section-title">
                     <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/green.webp"} alt={"Green splash"} width={512}
                            height={512}/>
-                    <h1>Hey, I'm Petar Marković!</h1>
+                    <h1>Hi there, I'm Petar!</h1>
                 </div>
                 <Image className={"ghibli-image"} src={"/ghibli.webp"}
                        alt={"Petar Marković profile picture"} width={512} height={512}/>
