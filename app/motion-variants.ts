@@ -10,7 +10,7 @@ export const containerVariants: Variants = {
         opacity: 1,
         transition: {
             duration: 0.5,
-            staggerChildren: 0.1,
+            stagger: 0.1,
             delayChildren: 0.2,
         }
     }
@@ -27,6 +27,9 @@ export const itemVariants: Variants = {
         transition: {
             duration: 0.5,
             type: "spring" as const,
+            filter: {
+                duration: 0.5,
+            }
         }
     }
 };
