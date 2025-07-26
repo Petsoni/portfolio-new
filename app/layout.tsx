@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import {Geist_Mono, Inter} from "next/font/google";
 import "./globals.scss";
+import {Analytics} from "@vercel/analytics/next";
 
 const interTight = Inter({
     variable: "--font-inter-tight-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({
         <body className={`${interTight.variable} ${geistMono.variable} antialiased`}>
         <main className={"w-[768px] mx-auto max-[769px]:w-[90%]"}>
             {children}
+            <Analytics/>
         </main>
         </body>
         </html>
