@@ -10,7 +10,7 @@ $orange: #FB8853;
 $purple: #C46FDE;
 
 h1, h2, h3, h4 {
-  letter-spacing: -2.5px;
+  letter-spacing: -1.5px;
 }
 
 h1, h2, h3, h4, h5, h6, p, a {
@@ -48,7 +48,7 @@ span {
 
 p, a, b, i, button {
   font-size: clamp(16px, 2.8vw, 16px);
-  letter-spacing: -1px;
+  letter-spacing: -0.3px;
 }
 
 button {
@@ -125,8 +125,11 @@ button {
     }
 
     .ghibli-image {
-      width: 7.5rem;
-      height: auto;
+      width: 8rem;
+      height: 8rem;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center -30px;
 
       @media screen and (max-width: 768px) {
         align-self: center;

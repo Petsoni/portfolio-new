@@ -1,10 +1,10 @@
 import type {Metadata} from "next";
-import {Geist_Mono, Inter} from "next/font/google";
+import {Geist_Mono, Inter, Mona_Sans} from "next/font/google";
 import "./globals.scss";
 import {Analytics} from "@vercel/analytics/next";
 
-const interTight = Inter({
-    variable: "--font-inter-tight-sans",
+const interTight = Mona_Sans({
+    variable: "--font-mona-sans",
     subsets: ["latin"],
 });
 

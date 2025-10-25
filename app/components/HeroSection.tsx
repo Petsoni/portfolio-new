@@ -14,7 +14,7 @@ function HeroSection() {
                            height={512}/>
                     <h1>Hi there, I'm Petar!</h1>
                 </div>
-                <Image className={"ghibli-image"} src={"/ghibli.webp"}
+                <Image className={"ghibli-image"} src={"/new-profile.webp"}
                        alt={"Petar Marković profile picture"} width={512} height={512}/>
             </motion.div>
             <motion.p variants={itemVariants}>A frontend developer who geeks out over clean code, intuitive design, and the magic of turning ideas
