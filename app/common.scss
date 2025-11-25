@@ -4,16 +4,26 @@ $light-text-color: #6d6d6d;
 $shade: #d1d1d1;
 $border-color: #5d5d5d;
 
-$green: #6FDE77;
-$blue: #6FBBDE;
-$orange: #FB8853;
-$purple: #C46FDE;
+$green: #6fde77;
+$blue: #6fbbde;
+$orange: #fb8853;
+$purple: #c46fde;
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
   letter-spacing: -1.5px;
 }
 
-h1, h2, h3, h4, h5, h6, p, a {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a {
   color: $text-color;
 }
 
@@ -46,7 +56,11 @@ span {
   font-size: inherit;
 }
 
-p, a, b, i, button {
+p,
+a,
+b,
+i,
+button {
   font-size: clamp(16px, 2.8vw, 16px);
   letter-spacing: -0.3px;
 }
@@ -91,7 +105,6 @@ button {
   margin-bottom: 4rem;
 
   &.hero-section {
-
     ::selection {
       background-color: $green;
       color: white;
@@ -150,7 +163,6 @@ button {
         //display: none;
       }
     }
-
   }
 
   p {
@@ -158,10 +170,10 @@ button {
   }
 
   .chip {
-    background-color: $text-color;
-    color: $background;
+    background-color: #cbe2ed;
+    color: #005075;
     border-radius: 0.5rem;
-    border: 1px solid $border-color;
+    border: 1px solid #95d4f0;
     padding: 0.15rem 0.35rem;
   }
 

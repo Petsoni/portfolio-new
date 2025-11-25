@@ -1,37 +1,37 @@
-@use 'common' as *;
+@use "common" as *;
 @import "tailwindcss";
 
 * {
-    font-family: "Mona Sans", sans-serif;
-    box-sizing: border-box;
+  font-family: "Geist", sans-serif;
+  box-sizing: border-box;
 }
 
 :root {
-    --background: #ffffff;
-    --foreground: #171717;
+  --background: #ffffff;
+  --foreground: #171717;
 }
 
 @theme {
 }
 
 @theme inline {
-    --color-background: var(--background);
-    --color-foreground: var(--foreground);
-    --font-sans: var(--font-mona-sans);
-    --font-mono: var(--font-geist-mono);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-mona-sans);
+  --font-mono: var(--font-geist-mono);
 
-    --color-green: #6FDE77;
-    --color-red: #DE6F7A;
-    --color-blue: #6FBBDE;
-    --color-purple: #C46FDE;
+  --color-green: #6fde77;
+  --color-red: #de6f7a;
+  --color-blue: #6fbbde;
+  --color-purple: #c46fde;
 }
 
 body {
-    background: var(--background);
-    color: var(--foreground);
-    font-weight: 500;
+  background: var(--background);
+  color: var(--foreground);
+  font-weight: 500;
 }
 
 .lucide {
-    stroke-width: 1.75px;
+  stroke-width: 1.75px;
 }
