@@ -1,17 +1,17 @@
 "use client";
 
 import React from "react";
-import projects from "@/lib/projects.json";
+import workHistory from "@/lib/work-history.json";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { containerVariants, itemVariants } from "@/app/motion-variants";
 
-function Projects() {
+function Experience() {
   return (
     <motion.div
-      className="section projects-section"
+      className="section experience-section"
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -19,37 +19,38 @@ function Projects() {
       <motion.div className="section-title" variants={itemVariants}>
         <Image
           className={"w-[2.5rem] h-[2.5rem]"}
-          src={"/red.webp"}
-          alt={"Red splash"}
+          src={"/purple.webp"}
+          alt={"Purple splash"}
           width={512}
           height={512}
         />
-        <h2>Selected projects</h2>
+        <h2>Experience</h2>
       </motion.div>
       <motion.div className="flex flex-col gap-10">
-        {projects.map((project) => (
+        {workHistory.map((work) => (
           <motion.div
-            className={"project-wrapper"}
-            key={project.id}
+            className={"experience-wrapper"}
+            key={work.id}
             variants={itemVariants}
           >
-            <div className="project-header-wrapper">
-              <Link href={project.link} target={"_blank"}>
-                <h4 className={"project-title"}>
-                  {project.title}
+            <div className="experience-header-wrapper">
+              <Link href={work.link} target={"_blank"}>
+                <h4 className={"experience-title"}>
+                  {work.title}
                   <ArrowUpRight size={"24"} />
                 </h4>
               </Link>
               <div className="separator"></div>
+              <h6>{work.duration}</h6>
             </div>
-            <p className={"project-description"}>{project.description}</p>
+            <p className={"experience-description"}>{work.description}</p>
             <div className="flex flex-row flex-wrap gap-3">
-              {project.techStack.map((technology, technologyIndex) => (
+              {work.roles.map((role, roleIndex) => (
                 <p
                   className={"chip-stroked shadow-xs"}
-                  key={`${technology}-${technologyIndex}`}
+                  key={`${role}-${roleIndex}`}
                 >
-                  {technology}
+                  {role}
                 </p>
               ))}
             </div>
@@ -60,4 +61,4 @@ function Projects() {
   );
 }
 
-export default Projects;
+export default Experience;

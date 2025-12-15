@@ -8,6 +8,7 @@ $green: #6fde77;
 $blue: #6fbbde;
 $orange: #fb8853;
 $purple: #c46fde;
+$red: #DF5361;
 
 h1,
 h2,
@@ -83,9 +84,16 @@ button {
   }
 }
 
-.projects-section {
+.experience-section {
   ::selection {
     background-color: $purple;
+    color: white;
+  }
+}
+
+.projects-section {
+  ::selection {
+    background-color: $red;
     color: white;
   }
 }
@@ -186,7 +194,7 @@ button {
   }
 }
 
-.project-wrapper {
+.project-wrapper, .experience-wrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -194,7 +202,7 @@ button {
   width: 100%;
   gap: 0.5rem;
 
-  .project-header-wrapper {
+  .project-header-wrapper, .experience-header-wrapper {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -215,12 +223,7 @@ button {
       }
     }
 
-    a:hover {
-      text-decoration: underline;
-      text-decoration-color: $purple;
-    }
-
-    .project-title {
+    .project-title, .experience-title {
       display: flex;
       align-items: center;
       justify-content: flex-start;
@@ -239,6 +242,17 @@ button {
     }
   }
 }
+
+.experience-header-wrapper a:hover {
+  text-decoration: underline;
+  text-decoration-color: $purple;
+}
+
+.project-header-wrapper a:hover {
+  text-decoration: underline;
+  text-decoration-color: $red !important;
+}
+
 
 .contacts-wrapper {
   display: flex;

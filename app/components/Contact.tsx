@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Image from "next/image";
-import {Github, Linkedin, Mail, Twitter} from "lucide-react";
+import {FileUser, Github, Linkedin, Mail, Twitter} from "lucide-react";
 import Link from "next/link";
 import { motion } from 'motion/react';
 import {containerVariants, itemVariants} from "@/app/motion-variants";
@@ -16,6 +16,10 @@ function Contact() {
                 <h2>Let's get in touch</h2>
             </motion.div>
             <motion.div className="contacts-wrapper" variants={itemVariants}>
+                <Link className="contact" href={"/Petar_Marković_CV.pdf"} target={"_blank"}>
+                    <FileUser/>
+                    Resume
+                </Link>
                 <Link className="contact" href={"https://x.com/petsoni_"} target={"_blank"}>
                     <Twitter/>
                     petsoni_

@@ -5,18 +5,15 @@
   "Node.js",
   "Typescript",
   "SCSS",
-  "Tailwind",
+  "Tailwind CSS",
   "Web Sockets",
   "Framer Motion",
   "GSAP",
   "Spring Boot",
-  "Python",
-  "Flask",
+  "REST APIs",
   "Kafka",
   "Redis",
   "MySQL",
   "PostgreSQL",
-  "RabbitMQ",
-  "Maven",
-  "REST APIs"
+  "RabbitMQ"
 ]
