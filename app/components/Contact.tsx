@@ -20,9 +20,9 @@ function Contact() {
                     <FileUser/>
                     Resume
                 </Link>
-                <Link className="contact" href={"https://x.com/petsoni_"} target={"_blank"}>
+                <Link className="contact" href={"https://x.com/petsonii"} target={"_blank"}>
                     <Twitter/>
-                    petsoni_
+                    petsonii
                 </Link>
                 <Link className="contact" href={"https://www.linkedin.com/in/petar-markovic-a38596165/"} target={"_blank"}>
                     <Linkedin/>
