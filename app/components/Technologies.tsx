@@ -7,6 +7,9 @@ import { motion } from "motion/react";
 import { containerVariants, itemVariants } from "../motion-variants";
 
 function Technologies() {
+
+  const primaryTech = ["Angular", "React", "Tailwind CSS", "REST APIs", "MySQL", "Spring Boot"]
+
   return (
     <motion.div
       className="section technologies-section"

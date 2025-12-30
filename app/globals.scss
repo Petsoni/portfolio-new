@@ -11,38 +11,6 @@
   --foreground: #171717;
 }
 
-.theme-toggle-wrapper {
-  position: absolute;
-  top: 2.5rem;
-  z-index: 1000;
-
-  .theme-toggle {
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-}
-
-[data-theme="light"] {
-  .theme-toggle {
-    border: 1px solid $shade-light;
-    color: $light-text-color-light;
-    background: $background-light;
-  }
-}
-
-[data-theme="dark"] {
-  .theme-toggle {
-    border: 1px solid $shade-dark;
-    color: $light-text-color-dark;
-    background: $background-dark;
-  }
-}
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

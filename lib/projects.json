@@ -3,6 +3,7 @@
     "id": 1,
     "title": "Mat Promet eShop",
     "link": "https://matpromet-eshop.com",
+    "githubLink": null,
     "techStack": [
       "Next.js",
       "Tailwind CSS",
@@ -14,6 +15,7 @@
     "id": 2,
     "title": "Easy Testimonials",
     "link": "https://easytestimonial.xyz",
+    "githubLink": "https://github.com/Petsoni/testimonial-creator",
     "techStack": [
       "Next.js",
       "Tailwind CSS",
@@ -24,7 +26,8 @@
   {
     "id": 3,
     "title": "Build Beacon",
-    "link": "https://github.com/Petsoni/build-beacon-platform",
+    "link": "https://buildbeacon.vercel.app",
+    "githubLink": "https://github.com/Petsoni/build-beacon-platform",
     "techStack": [
       "Bun",
       "Hono",

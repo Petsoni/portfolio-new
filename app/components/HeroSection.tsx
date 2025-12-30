@@ -44,7 +44,7 @@ function HeroSection() {
       <motion.a className="contact hero-contact" variants={itemVariants} href={"/Petar_Marković_CV.pdf"}
                 target={"_blank"}>
         <FileUser/>
-        Resume
+        Download CV
       </motion.a>
     </motion.div>
   )

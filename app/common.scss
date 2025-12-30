@@ -291,9 +291,25 @@ button {
   }
 }
 
+.project-link {
+  border-radius: 0.5rem;
+}
+
 [data-theme="dark"] {
   .contact.hero-contact {
     border: 1px solid $shade-dark;
+    color: $light-text-color-dark;
+
+    &:hover {
+      background: $text-color-light;
+      text-decoration-color: transparent;
+    }
+  }
+
+  .project-link {
+    &:hover {
+      background: $text-color-light ;
+    }
   }
 
   .project-header-wrapper, .experience-header-wrapper {
@@ -333,6 +349,18 @@ button {
 [data-theme="light"] {
   .contact.hero-contact {
     border: 1px solid $shade-light;
+    color: $light-text-color-light;
+
+    &:hover {
+      background: $text-color-dark;
+      text-decoration-color: transparent;
+    }
+  }
+
+  .project-link {
+    &:hover {
+      background: $text-color-dark;
+    }
   }
 
   .project-header-wrapper, .experience-header-wrapper {
@@ -366,5 +394,46 @@ button {
 
   .separator {
     background-color: $shade-light;
+  }
+}
+
+
+.theme-toggle-wrapper {
+  position: absolute;
+  top: 2.5rem;
+  z-index: 1000;
+
+  .theme-toggle {
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+}
+
+[data-theme="light"] {
+  .theme-toggle {
+    border: 1px solid $shade-light;
+    color: $light-text-color-light;
+    background: $background-light;
+
+    &:hover {
+      background: $text-color-dark;
+    }
+  }
+}
+
+[data-theme="dark"] {
+  .theme-toggle {
+    border: 1px solid $shade-dark;
+    color: $light-text-color-dark;
+    background: $background-dark;
+
+    &:hover {
+      background: $text-color-light;
+    }
   }
 }
