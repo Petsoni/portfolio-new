@@ -279,14 +279,14 @@ button {
 
 [data-theme="dark"] {
   .section {
-    .hero-paragraph {
+    p {
       color: $light-text-color-dark;
     }
   }
 
   .chip {
     background-color: #1a3a4a;
-    color: #7dd3fc;
+    color: #7dd3fc !important;
     border-radius: 0.5rem;
     border: 1px solid #0c4a6e;
     padding: 0.15rem 0.35rem;
@@ -307,14 +307,14 @@ button {
 
 [data-theme="light"] {
   .section {
-    .hero-paragraph {
+    p {
       color: $light-text-color-light;
     }
   }
 
   .chip {
     background-color: #cbe2ed;
-    color: #005075;
+    color: #005075 !important;
     border-radius: 0.5rem;
     border: 1px solid #95d4f0;
     padding: 0.15rem 0.35rem;
