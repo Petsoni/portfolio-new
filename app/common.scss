@@ -1,8 +1,14 @@
-$background: #ffffff;
-$text-color: #3b3b3b;
-$light-text-color: #6d6d6d;
-$shade: #d1d1d1;
-$border-color: #5d5d5d;
+$background-light: #ffffff;
+$text-color-light: #3b3b3b;
+$light-text-color-light: #6d6d6d;
+$shade-light: #d1d1d1;
+$border-color-light: #5d5d5d;
+
+$background-dark: #010101;
+$text-color-dark: #bababa;
+$light-text-color-dark: #878787;
+$shade-dark: #383838;
+$border-color-dark: #424242;
 
 $green: #6fde77;
 $blue: #6fbbde;
@@ -17,15 +23,30 @@ h4 {
   letter-spacing: -1.5px;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-a {
-  color: $text-color;
+[data-theme="light"] {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  a {
+    color: $text-color-light;
+  }
+}
+
+[data-theme="dark"] {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  a {
+    color: $text-color-dark;
+  }
 }
 
 h1 {
@@ -173,25 +194,7 @@ button {
     }
   }
 
-  p {
-    color: $light-text-color;
-  }
 
-  .chip {
-    background-color: #cbe2ed;
-    color: #005075;
-    border-radius: 0.5rem;
-    border: 1px solid #95d4f0;
-    padding: 0.15rem 0.35rem;
-  }
-
-  .chip-stroked {
-    background-color: $background;
-    color: $light-text-color;
-    border-radius: 0.5rem;
-    border: 1px solid $shade;
-    padding: 0.15rem 0.35rem;
-  }
 }
 
 .project-wrapper, .experience-wrapper {
@@ -233,12 +236,11 @@ button {
     .separator {
       width: 100%;
       height: 1px;
-      background-color: $shade;
     }
 
     h6 {
       justify-self: flex-end;
-      color: $light-text-color;
+      color: $light-text-color-light;
     }
   }
 }
@@ -272,5 +274,61 @@ button {
       text-decoration: underline;
       text-decoration-color: $orange;
     }
+  }
+}
+
+[data-theme="dark"] {
+  .section {
+    .hero-paragraph {
+      color: $light-text-color-dark;
+    }
+  }
+
+  .chip {
+    background-color: #1a3a4a;
+    color: #7dd3fc;
+    border-radius: 0.5rem;
+    border: 1px solid #0c4a6e;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .chip-stroked {
+    background-color: $background-dark;
+    color: $light-text-color-dark;
+    border-radius: 0.5rem;
+    border: 1px solid $shade-dark;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .separator {
+    background-color: $shade-dark !important;
+  }
+}
+
+[data-theme="light"] {
+  .section {
+    .hero-paragraph {
+      color: $light-text-color-light;
+    }
+  }
+
+  .chip {
+    background-color: #cbe2ed;
+    color: #005075;
+    border-radius: 0.5rem;
+    border: 1px solid #95d4f0;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .chip-stroked {
+    background-color: $background-light;
+    color: $light-text-color-light;
+    border-radius: 0.5rem;
+    border: 1px solid $shade-light;
+    padding: 0.15rem 0.35rem;
+  }
+
+  .separator {
+    background-color: $shade-light;
   }
 }
