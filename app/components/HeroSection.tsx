@@ -4,6 +4,8 @@ import React from 'react';
 import Image from "next/image";
 import {motion} from 'motion/react';
 import {containerVariants, itemVariants} from "@/app/motion-variants";
+import Link from "next/link";
+import {FileUser} from "lucide-react";
 
 function HeroSection() {
 
@@ -28,17 +30,21 @@ function HeroSection() {
       <motion.p className={"hero-paragraph"} variants={itemVariants}>
         By day, I’m crafting full-stack solutions, balancing frontend flair with backend logic (Angular,
         React, Spring Boot, etc.) By night, I’m either deep-diving into some new tech rabbit hole or producing
-        electronic music—because creativity shouldn’t stop at the keyboard.
+        electronic music, because creativity shouldn’t stop at the keyboard.
       </motion.p>
-      <motion.p className={"hero-paragraph"} variants={itemVariants}>
-        I’m all about that "aha" moment. Whether it’s nailing a tricky feature, designing an interface that
-        just
-        clicks, or stumbling on the perfect synth riff.
-      </motion.p>
+      {/*<motion.p className={"hero-paragraph"} variants={itemVariants}>*/}
+      {/*  I’m all about that "aha" moment. Whether it’s nailing a tricky feature, designing an interface that*/}
+      {/*  just*/}
+      {/*  clicks, or stumbling on the perfect synth riff.*/}
+      {/*</motion.p>*/}
       <motion.p className={"hero-paragraph"} variants={itemVariants}>
         If you’re looking for someone who cares as much about the Why as the How, let’s chat.
         Coffee’s on me ☕
       </motion.p>
+      <Link className="contact hero-contact" href={"/Petar_Marković_CV.pdf"} target={"_blank"}>
+        <FileUser/>
+        Resume
+      </Link>
     </motion.div>
   )
     ;

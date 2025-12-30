@@ -19,12 +19,16 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  position: absolute;
+  top: 2.5rem;
+  z-index: 1000;
 }
 
 [data-theme="light"] {
   .theme-toggle {
     border: 1px solid $shade-light;
     color: $light-text-color-light;
+    background: $background-light;
   }
 }
 
@@ -32,6 +36,7 @@
   .theme-toggle {
     border: 1px solid $shade-dark;
     color: $light-text-color-dark;
+    background: $background-dark;
   }
 }
 

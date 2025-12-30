@@ -5,8 +5,8 @@ $shade-light: #d1d1d1;
 $border-color-light: #5d5d5d;
 
 $background-dark: #010101;
-$text-color-dark: #bababa;
-$light-text-color-dark: #878787;
+$text-color-dark: #ededed;
+$light-text-color-dark: #a1a1a1;
 $shade-dark: #383838;
 $border-color-dark: #424242;
 
@@ -238,10 +238,6 @@ button {
       height: 1px;
     }
 
-    h6 {
-      justify-self: flex-end;
-      color: $light-text-color-light;
-    }
   }
 }
 
@@ -277,7 +273,36 @@ button {
   }
 }
 
+.contact {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-items: center;
+  gap: 0.5rem;
+
+  &.hero-contact {
+    border-radius: 0.5rem;
+    padding: 0.35rem 0.5rem;
+  }
+
+  &:hover {
+    text-decoration: underline;
+    text-decoration-color: $orange;
+  }
+}
+
 [data-theme="dark"] {
+  .contact.hero-contact {
+    border: 1px solid $shade-dark;
+  }
+
+  .project-header-wrapper, .experience-header-wrapper {
+    h6 {
+      justify-self: flex-end;
+      color: $light-text-color-dark;
+    }
+  }
+
   .section {
     p {
       color: $light-text-color-dark;
@@ -306,6 +331,17 @@ button {
 }
 
 [data-theme="light"] {
+  .contact.hero-contact {
+    border: 1px solid $shade-light;
+  }
+
+  .project-header-wrapper, .experience-header-wrapper {
+    h6 {
+      justify-self: flex-end;
+      color: $light-text-color-light;
+    }
+  }
+
   .section {
     p {
       color: $light-text-color-light;
