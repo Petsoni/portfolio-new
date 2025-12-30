@@ -11,17 +11,20 @@
   --foreground: #171717;
 }
 
-.theme-toggle {
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
+.theme-toggle-wrapper {
   position: absolute;
   top: 2.5rem;
   z-index: 1000;
+
+  .theme-toggle {
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
 }
 
 [data-theme="light"] {

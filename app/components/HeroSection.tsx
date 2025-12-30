@@ -4,7 +4,6 @@ import React from 'react';
 import Image from "next/image";
 import {motion} from 'motion/react';
 import {containerVariants, itemVariants} from "@/app/motion-variants";
-import Link from "next/link";
 import {FileUser} from "lucide-react";
 
 function HeroSection() {
@@ -20,7 +19,8 @@ function HeroSection() {
         <Image className={"ghibli-image"} src={"/new-profile.webp"}
                alt={"Petar Marković profile picture"} width={512} height={512}/>
       </motion.div>
-      <motion.p className={"hero-paragraph"} variants={itemVariants}>A frontend developer who geeks out over clean code, intuitive design, and the
+      <motion.p className={"hero-paragraph"} variants={itemVariants}>A frontend developer who geeks out over clean code,
+        intuitive design, and the
         magic of turning ideas
         into
         real, working things. Web apps? Love ‘em. Websites? Can’t get enough. Give me a problem to solve or
@@ -41,10 +41,11 @@ function HeroSection() {
         If you’re looking for someone who cares as much about the Why as the How, let’s chat.
         Coffee’s on me ☕
       </motion.p>
-      <Link className="contact hero-contact" href={"/Petar_Marković_CV.pdf"} target={"_blank"}>
+      <motion.a className="contact hero-contact" variants={itemVariants} href={"/Petar_Marković_CV.pdf"}
+                target={"_blank"}>
         <FileUser/>
         Resume
-      </Link>
+      </motion.a>
     </motion.div>
   )
     ;
