@@ -19,25 +19,24 @@ function HeroSection() {
         <Image className={"ghibli-image"} src={"/new-profile.webp"}
                alt={"Petar Marković profile picture"} width={512} height={512}/>
       </motion.div>
-      <motion.p className={"hero-paragraph"} variants={itemVariants}>A frontend developer who geeks out over clean code,
-        intuitive design, and the
-        magic of turning ideas
-        into
-        real, working things. Web apps? Love ‘em. Websites? Can’t get enough. Give me a problem to solve or
-        a
-        concept to build, and I’ll happily lose track of time making it happen.
+      <motion.p className={"hero-paragraph"} variants={itemVariants}>Frontend developer based in Serbia, building
+        full-stack web applications.
       </motion.p>
-      <motion.p className={"hero-paragraph"} variants={itemVariants}>
-        By day, I’m crafting full-stack solutions, balancing frontend flair with backend logic (Angular,
-        React, Spring Boot, etc.) By night, I’m either deep-diving into some new tech rabbit hole or producing
-        electronic music, because creativity shouldn’t stop at the keyboard.
+      <motion.p className={"hero-paragraph"} variants={itemVariants}>I create interfaces and full-stack
+        solutions, working across the entire development cycle, from concept to deployment. When I'm not coding, I'm
+        exploring new technologies or producing electronic music.
       </motion.p>
+      {/*<motion.p className={"hero-paragraph"} variants={itemVariants}>*/}
+      {/*  By day, I’m crafting full-stack solutions, balancing frontend flair with backend logic (Angular,*/}
+      {/*  React, Spring Boot, etc.) By night, I’m either deep-diving into some new tech rabbit hole or producing*/}
+      {/*  electronic music, because creativity shouldn’t stop at the keyboard.*/}
+      {/*</motion.p>*/}
       {/*<motion.p className={"hero-paragraph"} variants={itemVariants}>*/}
       {/*  I’m all about that "aha" moment. Whether it’s nailing a tricky feature, designing an interface that*/}
       {/*  just*/}
       {/*  clicks, or stumbling on the perfect synth riff.*/}
       {/*</motion.p>*/}
-      <motion.p className={"hero-paragraph"} variants={itemVariants}>
+      <motion.p className={"hero-paragraph"} variants={itemVariants}>Open to collaborations and interesting projects.
         If you’re looking for someone who cares as much about the Why as the How, let’s chat.
         Coffee’s on me ☕
       </motion.p>

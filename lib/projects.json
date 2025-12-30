@@ -9,7 +9,7 @@
       "Tailwind CSS",
       "Radix UI"
     ],
-    "description": "Built a comprehensive e-commerce platform using Next.js to digitize and expand the company's market reach. Implemented server-side rendering for optimal SEO performance and developed order tracking by using a mailing system. Increased online sales by 40% and streamlined order processing workflows."
+    "description": "Built full-stack e-commerce solution with SSR for SEO optimization and automated email-based order tracking. Drove 40% sales increase and reduced order processing time."
   },
   {
     "id": 2,
@@ -21,7 +21,7 @@
       "Tailwind CSS",
       "Shadcn"
     ],
-    "description": "Built a dynamic web application to allow businesses to easily generate and customize professional-looking client testimonials. Implemented a user-friendly interface for rapid styling and a responsive design. Successfully developed a reusable component architecture to accelerate future feature development and significantly streamlined the process of collecting and displaying social proof."
+    "description": "Developed customizable testimonial platform with intuitive styling interface. Built reusable component architecture for rapid feature deployment and streamlined social proof collection."
   },
   {
     "id": 3,
@@ -37,6 +37,6 @@
       "better-auth",
       "Docker"
     ],
-    "description": "This platform is being developed to directly address the pervasive visibility and engagement challenges faced by indie developers on crowded social media spaces, particularly platforms like X (formerly Twitter). The goal is to move beyond short-lived posts by providing a structured, dedicated environment where creators can showcase the full, transparent journey of their projects, fostering deeper connections with genuine followers."
+    "description": "Building structured alternative to social media for indie developers to document complete project journeys. Addresses visibility issues on crowded platforms like X by enabling transparent, long-form storytelling that cultivates engaged audiences beyond ephemeral posts."
   }
 ]

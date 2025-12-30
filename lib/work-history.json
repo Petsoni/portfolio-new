@@ -8,7 +8,7 @@
       "Frontend Developer",
       "UI/UX Designer"
     ],
-    "description": "Founded and operated a web development agency specializing in custom web applications and SaaS solutions. Led end-to-end project delivery from client consultation to deployment, managing multiple concurrent projects. Built scalable solutions using modern frameworks while establishing efficient development workflows and client communication processes, delivering 20+ projects across various industries."
+    "description": "Founded agency specializing in custom web applications and SaaS solutions across multiple industries. Led end-to-end project delivery from consultation to deployment, managing 20+ projects. Established development workflows, built client relationships, and delivered scalable solutions using modern frameworks."
   },
   {
     "id": 2,
@@ -18,7 +18,7 @@
     "roles": [
       "Full Stack Developer"
     ],
-    "description": "Developed a high-performance real-time betting platform using microservices architecture. Implemented event-driven communication with Kafka and RabbitMQ, utilized Redis for caching and session management, and built responsive frontend with Angular. Integrated WebSocket connections for live odds updates and PostgreSQL for transaction processing, ensuring system reliability under high concurrent user loads."
+    "description": "Built high-performance Angular application with real-time WebSocket integration for live odds updates. Implemented state management, Redis-based session handling, and optimized rendering for data-intensive interfaces. Ensured consistent performance under heavy concurrent traffic loads."
   },
   {
     "id": 3,
@@ -30,6 +30,6 @@
       "Full Stack Developer",
       "Pyton Developer"
     ],
-    "description": "Developed a modular enterprise management system serving 20,000+ university students and staff using Angular frontend and Spring Boot backend. Created a separate Python/Flask application for automated report generation and data analytics. Designed scalable system architecture with role-based access control and integrated third-party APIs for enhanced functionality."
+    "description": "Developed university platform serving 20,000+ users with Angular frontend and Spring Boot backend. Created Python/Flask service for automated analytics and reporting. Implemented RBAC, multi-tenant architecture, and third-party integrations enabling scalable feature deployment."
   }
 ]
