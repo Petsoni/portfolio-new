@@ -16,10 +16,10 @@ function Contact() {
                 <h2>Let's get in touch</h2>
             </motion.div>
             <motion.div className="contacts-wrapper" variants={itemVariants}>
-                <Link className="contact" href={"/Petar_Marković_CV.pdf"} target={"_blank"}>
-                    <FileUser/>
-                    Resume
-                </Link>
+                {/*<Link className="contact" href={"/Petar_Marković_CV.pdf"} target={"_blank"}>*/}
+                {/*    <FileUser/>*/}
+                {/*    Resume*/}
+                {/*</Link>*/}
                 <Link className="contact" href={"https://x.com/petsonii"} target={"_blank"}>
                     <Twitter/>
                     petsonii
