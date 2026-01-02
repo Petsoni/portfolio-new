@@ -35,7 +35,9 @@ function Technologies() {
           // <motion.p className={"chip shadow-xs"} key={tech[0]}>
           //   {tech}
           // </motion.p>
-          <motion.img src={tech[1]} key={tech[0]} className={"chip-stroked tech shadow-xs"} width={56} height={56} alt={tech[0]}/>
+          <motion.p key={tech[0]} className={"chip shadow-xs"}>
+            {tech[0]}
+          </motion.p>
         ))}
       </motion.div>
     </motion.div>

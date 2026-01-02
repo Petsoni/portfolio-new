@@ -1,8 +1,5 @@
 @use "common" as *;
-
-@plugin "tailwindcss-animate";
-@import "tailwindcss";
-@import "tw-animate-css";
+@use "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
