@@ -3,8 +3,8 @@
 import React from "react";
 import techStack from "@/lib/tech-stack.json";
 import Image from "next/image";
-import { motion } from "motion/react";
-import { containerVariants, itemVariants } from "../motion-variants";
+import {motion} from "motion/react";
+import {containerVariants, itemVariants} from "../motion-variants";
 
 function Technologies() {
 
@@ -31,10 +31,11 @@ function Technologies() {
         className="flex flex-row flex-wrap gap-3"
         variants={itemVariants}
       >
-        {techStack.map((tech) => (
-          <motion.p className={"chip shadow-xs"} key={tech}>
-            {tech}
-          </motion.p>
+        {Object.entries(techStack).map((tech) => (
+          // <motion.p className={"chip shadow-xs"} key={tech[0]}>
+          //   {tech}
+          // </motion.p>
+          <motion.img src={tech[1]} key={tech[0]} className={"chip-stroked tech shadow-xs"} width={56} height={56} alt={tech[0]}/>
         ))}
       </motion.div>
     </motion.div>

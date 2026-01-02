@@ -295,6 +295,26 @@ button {
   border-radius: 0.5rem;
 }
 
+.chip {
+  border-radius: 0.5rem;
+  padding: 0.15rem 0.35rem;
+}
+
+.chip-stroked {
+  border-radius: 0.5rem;
+  padding: 0.15rem 0.35rem;
+
+  &.tech {
+    padding: 0.25rem 0.75rem !important;
+    min-height: 3rem !important;
+    min-width: 3rem !important;
+    filter: saturate(0);
+
+    img {
+    }
+  }
+}
+
 [data-theme="dark"] {
   .contact.hero-contact {
     border: 1px solid $shade-dark;
@@ -326,19 +346,14 @@ button {
   }
 
   .chip {
-    background-color: #1a3a4a;
-    color: #7dd3fc !important;
     border-radius: 0.5rem;
-    border: 1px solid #0c4a6e;
     padding: 0.15rem 0.35rem;
   }
 
   .chip-stroked {
     background-color: $background-dark;
     color: $light-text-color-dark;
-    border-radius: 0.5rem;
     border: 1px solid $shade-dark;
-    padding: 0.15rem 0.35rem;
   }
 
   .separator {
@@ -377,18 +392,12 @@ button {
   }
 
   .chip {
-    background-color: #cbe2ed;
-    color: #005075 !important;
     border-radius: 0.5rem;
-    border: 1px solid #95d4f0;
     padding: 0.15rem 0.35rem;
   }
 
   .chip-stroked {
-    background-color: $background-light;
-    color: $light-text-color-light;
     border-radius: 0.5rem;
-    border: 1px solid $shade-light;
     padding: 0.15rem 0.35rem;
   }
 
