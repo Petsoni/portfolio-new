@@ -1,9 +1,9 @@
 [
   {
     "id": 1,
-    "title": "Webique Agency",
-    "link": "https://webique-agency.vercel.app",
-    "duration": "August 2024 — Present",
+    "title": "Ashkin Studio",
+    "link": "https://ashkin-studio.vercel.app",
+    "duration": "February 2026 — Present",
     "roles": [
       "Frontend Developer",
       "UI/UX Designer"
@@ -12,6 +12,17 @@
   },
   {
     "id": 2,
+    "title": "Webique Agency",
+    "link": "https://webique-agency.vercel.app",
+    "duration": "August 2024 — January 2026",
+    "roles": [
+      "Frontend Developer",
+      "UI/UX Designer"
+    ],
+    "description": "Founded agency specializing in custom web applications and SaaS solutions across multiple industries. Led end-to-end project delivery from consultation to deployment, managing 20+ projects. Established development workflows, built client relationships, and delivered scalable solutions using modern frameworks."
+  },
+  {
+    "id": 3,
     "title": "Dual SOFT",
     "link": "https://dualsoft.net",
     "duration": "April 2025 — July 2025",
@@ -21,7 +32,7 @@
     "description": "Built high-performance Angular application with real-time WebSocket integration for live odds updates. Implemented state management, Redis-based session handling, and optimized rendering for data-intensive interfaces. Ensured consistent performance under heavy concurrent traffic loads."
   },
   {
-    "id": 3,
+    "id": 4,
     "title": "iMET",
     "link": "https://imet.metropolitan.ac.rs",
     "duration": "August 2021 — April 2025",
