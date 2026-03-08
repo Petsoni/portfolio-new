@@ -29,7 +29,7 @@
     "roles": [
       "Frontend Team Lead",
       "Full Stack Developer",
-      "Pyton Developer"
+      "Python Developer"
     ],
     "description": "Developed university platform serving 20,000+ users with Angular frontend and Spring Boot backend. Created Python/Flask service for automated analytics and reporting. Implemented RBAC, multi-tenant architecture, and third-party integrations enabling scalable feature deployment."
   }
