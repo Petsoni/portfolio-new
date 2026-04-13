@@ -13,15 +13,18 @@
   },
   {
     "id": 2,
-    "title": "Easy Testimonials",
-    "link": "https://easytestimonial.xyz",
-    "githubLink": "https://github.com/Petsoni/testimonial-creator",
+    "title": "Noturo — Thesis Project",
+    "link": null,
+    "githubLink": null,
     "techStack": [
-      "Next.js",
-      "Tailwind CSS",
-      "Shadcn"
+      "Angular",
+      "Spring Boot",
+      "FastAPI",
+      "Cloudflare R2",
+      "PostgreSQL",
+      "OAuth 2.0"
     ],
-    "description": "Developed customizable testimonial platform with intuitive styling interface. Built reusable component architecture for rapid feature deployment and streamlined social proof collection."
+    "description": "Engineered a peer-to-peer academic marketplace where students monetize study materials through a points economy, upload PDFs, DOCX, and PPTX files, set a price, earn on every sale. Referral mechanics reward network growth with a 10% points kickback. An AI-powered study planner generates adaptive schedules based on exam proximity, subject weight, and intensity preference — including weekend allocation. Gamification layer with badges drives sustained engagement across the platform."
   },
   {
     "id": 3,
@@ -38,5 +41,17 @@
       "Docker"
     ],
     "description": "Building structured alternative to social media for indie developers to document complete project journeys. Addresses visibility issues on crowded platforms like X by enabling transparent, long-form storytelling that cultivates engaged audiences beyond ephemeral posts."
+  },
+  {
+    "id": 4,
+    "title": "Easy Testimonials",
+    "link": "https://easytestimonial.xyz",
+    "githubLink": "https://github.com/Petsoni/testimonial-creator",
+    "techStack": [
+      "Next.js",
+      "Tailwind CSS",
+      "Shadcn"
+    ],
+    "description": "Developed customizable testimonial platform with intuitive styling interface. Built reusable component architecture for rapid feature deployment and streamlined social proof collection."
   }
 ]
