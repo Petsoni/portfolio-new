@@ -4,10 +4,16 @@ import React from "react";
 import projects from "@/lib/projects.json";
 import Link from "next/link";
 import Image from "next/image";
-import {ArrowUpRight, Earth, Github, Globe} from "lucide-react";
+import {ArrowUpRight, Earth, EllipsisVertical, Github, Globe} from "lucide-react";
 import {motion} from "motion/react";
 import {containerVariants, itemVariants} from "@/app/motion-variants";
 import {hapticOnEnter} from "@/app/haptics";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export interface ProjectModel {
   id: number,
@@ -50,7 +56,7 @@ function Projects() {
                 {project.title}
               </h4>
               <div className="separator"></div>
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2 max-[768px]:hidden">
                 {project.githubLink ? (
                   <Link href={project.githubLink} target={"_blank"}
                         className={"project-link flex items-center justify-center gap-2 p-2"}>
@@ -62,6 +68,30 @@ function Projects() {
                     <Globe size={"24"}/>
                   </Link>) : null}
               </div>
+              {(project.githubLink || project.link) ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    aria-label={"Project links"}
+                    className={"project-link hidden max-[768px]:flex items-center justify-center p-2"}>
+                    <EllipsisVertical size={"24"}/>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align={"end"}>
+                    {project.githubLink ? (
+                      <DropdownMenuItem asChild>
+                        <Link href={project.githubLink} target={"_blank"}>
+                          <Github size={"18"}/>
+                          GitHub
+                        </Link>
+                      </DropdownMenuItem>) : null}
+                    {project.link ? (
+                      <DropdownMenuItem asChild>
+                        <Link href={project.link} target={"_blank"}>
+                          <Globe size={"18"}/>
+                          Website
+                        </Link>
+                      </DropdownMenuItem>) : null}
+                  </DropdownMenuContent>
+                </DropdownMenu>) : null}
             </div>
             <p className={"project-description"}>{project.description}</p>
             {project.techStack.length > 0 && (
