@@ -14,7 +14,8 @@ function Experience() {
       className="section experience-section"
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
     >
       <motion.div className="section-title" variants={itemVariants}>
         <Image
@@ -41,19 +42,22 @@ function Experience() {
                 </h4>
               </Link>
               <div className="separator"></div>
-              <h6>{work.duration}</h6>
+              <p>{work.duration}</p>
             </div>
             <p className={"experience-description"}>{work.description}</p>
-            <div className="flex flex-row flex-wrap gap-3">
-              {work.roles.map((role, roleIndex) => (
-                <p
-                  className={"chip-stroked shadow-xs"}
-                  key={`${role}-${roleIndex}`}
-                >
-                  {role}
-                </p>
-              ))}
-            </div>
+            {/* TODO: Do not remove */}
+            {/* {work.roles.length > 0 && (
+              <div className="experience-roles flex flex-row flex-wrap gap-3">
+                {work.roles.map((role, roleIndex) => (
+                  <p
+                    className={"chip-stroked shadow-xs"}
+                    key={`${role}-${roleIndex}`}
+                  >
+                    {role}
+                  </p>
+                ))}
+              </div>
+            )} */}
           </motion.div>
         ))}
       </motion.div>

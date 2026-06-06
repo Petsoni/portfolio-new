@@ -9,7 +9,7 @@ import {FileUser} from "lucide-react";
 function HeroSection() {
 
 	return (
-		<motion.div className="section hero-section" variants={containerVariants} initial="hidden" animate="visible">
+		<motion.div className="section hero-section" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
 			<motion.div className="hero-section-title-wrapper" variants={itemVariants}>
 				<div className="section-title">
 					<Image className={"w-[2.5rem] h-[2.5rem]"} src={"/green.webp"} alt={"Green splash"} width={512}
@@ -19,27 +19,21 @@ function HeroSection() {
 				<Image className={"ghibli-image"} src={"/new-profile.webp"}
 				       alt={"Petar Marković profile picture"} width={512} height={512}/>
 			</motion.div>
-			<motion.p className={"hero-paragraph"} variants={itemVariants}>Software developer based in Serbia, building
-				full-stack web applications.
-			</motion.p>
-			<motion.p className={"hero-paragraph"} variants={itemVariants}>I create interfaces and full-stack
-				solutions, working across the entire development cycle, from concept to deployment. When I'm not coding, I'm
-				exploring new technologies or producing electronic music.
-			</motion.p>
-			{/*<motion.p className={"hero-paragraph"} variants={itemVariants}>*/}
-			{/*  By day, I’m crafting full-stack solutions, balancing frontend flair with backend logic (Angular,*/}
-			{/*  React, Spring Boot, etc.) By night, I’m either deep-diving into some new tech rabbit hole or producing*/}
-			{/*  electronic music, because creativity shouldn’t stop at the keyboard.*/}
-			{/*</motion.p>*/}
-			{/*<motion.p className={"hero-paragraph"} variants={itemVariants}>*/}
-			{/*  I’m all about that "aha" moment. Whether it’s nailing a tricky feature, designing an interface that*/}
-			{/*  just*/}
-			{/*  clicks, or stumbling on the perfect synth riff.*/}
-			{/*</motion.p>*/}
-			<motion.p className={"hero-paragraph"} variants={itemVariants}>Open to collaborations and interesting projects.
-				If you’re looking for someone who cares as much about the Why as the How, let’s chat.
-				Coffee’s on me ☕
-			</motion.p>
+			<motion.div className={"hero-bio"} variants={itemVariants}>
+				<div className={"hero-bio-inner"}>
+					<p className={"hero-paragraph"}>Software developer based in Serbia, building
+						full-stack web applications.
+					</p>
+					<p className={"hero-paragraph"}>I create interfaces and full-stack
+						solutions, working across the entire development cycle, from concept to deployment. When I'm not coding, I'm
+						exploring new technologies or producing electronic music.
+					</p>
+					<p className={"hero-paragraph"}>Open to collaborations and interesting projects.
+						If you’re looking for someone who cares as much about the Why as the How, let’s chat.
+						Coffee’s on me ☕
+					</p>
+				</div>
+			</motion.div>
 			<motion.a className="contact hero-contact" variants={itemVariants} href={"/Petar_Marković_CV.pdf"}
 			          target={"_blank"}>
 				<FileUser/>

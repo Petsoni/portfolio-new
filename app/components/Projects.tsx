@@ -23,7 +23,8 @@ function Projects() {
       className="section projects-section"
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
     >
       <motion.div className="section-title" variants={itemVariants}>
         <Image
@@ -61,16 +62,18 @@ function Projects() {
               </div>
             </div>
             <p className={"project-description"}>{project.description}</p>
-            <div className="flex flex-row flex-wrap gap-3">
-              {project.techStack.map((technology, technologyIndex) => (
-                <p
-                  className={"chip-stroked shadow-xs"}
-                  key={`${technology}-${technologyIndex}`}
-                >
-                  {technology}
-                </p>
-              ))}
-            </div>
+            {project.techStack.length > 0 && (
+              <div className="project-techstack flex flex-row flex-wrap gap-3">
+                {project.techStack.map((technology, technologyIndex) => (
+                  <p
+                    className={"chip-stroked shadow-xs"}
+                    key={`${technology}-${technologyIndex}`}
+                  >
+                    {technology}
+                  </p>
+                ))}
+              </div>
+            )}
           </motion.div>
         ))}
       </motion.div>

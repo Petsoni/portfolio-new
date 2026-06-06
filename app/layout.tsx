@@ -1,12 +1,30 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./global.scss";
 import { Analytics } from "@vercel/analytics/next";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const interTight = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+const openRunde = localFont({
+  variable: "--font-open-runde",
+  display: "swap",
+  src: [
+    {
+      path: "../public/fonts/OpenRunde-Regular-BF64ee9c6978988.woff",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/OpenRunde-Medium-BF64ee9c695513a.woff",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/OpenRunde-Semibold-BF64ee9c69788f3.woff",
+      weight: "600",
+      style: "normal",
+    },
+  ],
 });
 
 const geistMono = Geist_Mono({
@@ -28,7 +46,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${interTight.variable} ${geistMono.variable} antialiased`}
+        className={`${openRunde.variable} ${geistMono.variable} antialiased`}
       >
         <main className={"w-[768px] mx-auto max-[769px]:w-[90%]"}>
           <TooltipProvider>{children}</TooltipProvider>

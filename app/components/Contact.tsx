@@ -9,7 +9,7 @@ import {containerVariants, itemVariants} from "@/app/motion-variants";
 
 function Contact() {
     return (
-        <motion.div className={"section contact-section"} variants={containerVariants} initial="hidden" animate="visible">
+        <motion.div className={"section contact-section"} variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
             <motion.div className="section-title" variants={itemVariants}>
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/orange.webp"} alt={"Orange splash"} width={512}
                        height={512}/>

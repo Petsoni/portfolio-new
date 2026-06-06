@@ -15,7 +15,8 @@ function Technologies() {
       className="section technologies-section"
       variants={containerVariants}
       initial="hidden"
-      animate="visible"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
     >
       <motion.div className="section-title" variants={itemVariants}>
         <Image
@@ -32,12 +33,9 @@ function Technologies() {
         variants={itemVariants}
       >
         {Object.entries(techStack).map((tech) => (
-          // <motion.p className={"chip shadow-xs"} key={tech[0]}>
-          //   {tech}
-          // </motion.p>
-          <motion.p key={tech[0]} className={"chip shadow-xs"}>
-            {tech[0]}
-          </motion.p>
+          <motion.div key={tech[0]} className={"chip"}>
+            <span className={"chip-inner"}>{tech[0]}</span>
+          </motion.div>
         ))}
       </motion.div>
     </motion.div>
