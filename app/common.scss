@@ -246,6 +246,12 @@ button {
       gap: 0.25rem;
     }
 
+    &.experience-header-wrapper {
+      @media screen and (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+
     .separator {
       flex: 1;
       width: 100%;

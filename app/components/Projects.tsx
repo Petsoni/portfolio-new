@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import projects from "@/lib/projects.json";
 import Link from "next/link";
 import Image from "next/image";
-import {ArrowUpRight, Earth, EllipsisVertical, Github, Globe} from "lucide-react";
-import {motion} from "motion/react";
-import {containerVariants, itemVariants} from "@/app/motion-variants";
-import {hapticOnEnter} from "@/app/haptics";
+import { ArrowUpRight, Earth, EllipsisVertical, Github, Globe } from "lucide-react";
+import { motion } from "motion/react";
+import { containerVariants, itemVariants } from "@/app/motion-variants";
+import { hapticOnEnter } from "@/app/haptics";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,6 +25,13 @@ export interface ProjectModel {
 }
 
 function Projects() {
+  const [openId, setOpenId] = useState<number | null>(null);
+
+  useEffect(() => {
+    document.body.classList.toggle("dropdown-spotlight", openId !== null);
+    return () => document.body.classList.remove("dropdown-spotlight");
+  }, [openId]);
+
   return (
     <motion.div
       className="section projects-section"
@@ -46,7 +53,7 @@ function Projects() {
       <motion.div className="flex flex-col gap-10">
         {(projects as ProjectModel[]).map((project) => (
           <motion.div
-            className={"project-wrapper"}
+            className={`project-wrapper${openId === project.id ? " is-focused" : ""}`}
             key={project.id}
             variants={itemVariants}
             onAnimationStart={hapticOnEnter}
@@ -59,34 +66,37 @@ function Projects() {
               <div className="flex items-center justify-between gap-2 max-[768px]:hidden">
                 {project.githubLink ? (
                   <Link href={project.githubLink} target={"_blank"}
-                        className={"project-link flex items-center justify-center gap-2 p-2"}>
-                    <Github size={"24"}/>
+                    className={"project-link flex items-center justify-center gap-2 p-2"}>
+                    <Github size={"24"} />
                   </Link>) : null}
                 {project.link ? (
                   <Link href={project.link} target={"_blank"}
-                        className={"project-link flex items-center justify-center p-2 gap-2"}>
-                    <Globe size={"24"}/>
+                    className={"project-link flex items-center justify-center p-2 gap-2"}>
+                    <Globe size={"24"} />
                   </Link>) : null}
               </div>
               {(project.githubLink || project.link) ? (
-                <DropdownMenu>
+                <DropdownMenu
+                  open={openId === project.id}
+                  onOpenChange={(open) => setOpenId(open ? project.id : null)}
+                >
                   <DropdownMenuTrigger
                     aria-label={"Project links"}
                     className={"project-link hidden max-[768px]:flex items-center justify-center p-2"}>
-                    <EllipsisVertical size={"24"}/>
+                    <EllipsisVertical size={"24"} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align={"end"}>
                     {project.githubLink ? (
                       <DropdownMenuItem asChild>
                         <Link href={project.githubLink} target={"_blank"}>
-                          <Github size={"18"}/>
+                          <Github size={"18"} />
                           GitHub
                         </Link>
                       </DropdownMenuItem>) : null}
                     {project.link ? (
                       <DropdownMenuItem asChild>
                         <Link href={project.link} target={"_blank"}>
-                          <Globe size={"18"}/>
+                          <Globe size={"18"} />
                           Website
                         </Link>
                       </DropdownMenuItem>) : null}
@@ -95,7 +105,7 @@ function Projects() {
             </div>
             <p className={"project-description"}>{project.description}</p>
             {project.techStack.length > 0 && (
-              <div className="project-techstack flex flex-row flex-wrap gap-3">
+              <div className="project-techstack flex flex-row flex-wrap gap-1.5">
                 {project.techStack.map((technology, technologyIndex) => (
                   <p
                     className={"chip-stroked shadow-xs"}
