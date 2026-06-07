@@ -1,10 +1,10 @@
 'use client';
 
-import {useEffect, useState} from 'react';
-import {Moon, Sun} from 'lucide-react';
-import {containerVariants, itemVariants} from "@/app/motion-variants";
-import {hapticOnEnter} from "@/app/haptics";
-import {motion} from 'motion/react';
+import { useEffect, useState } from 'react';
+import { Moon, Sun } from 'lucide-react';
+import { containerVariants, itemVariants } from "@/app/motion-variants";
+import { hapticOnEnter } from "@/app/haptics";
+import { motion } from 'motion/react';
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -24,6 +24,17 @@ export default function ThemeToggle() {
     setTheme(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
+
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const root = document.documentElement;
+    root.classList.remove('dots-animating');
+    // force reflow so the animation restarts on every toggle
+    void root.offsetWidth;
+    root.classList.add('dots-animating');
   };
 
   if (!mounted) return null;
@@ -37,7 +48,7 @@ export default function ThemeToggle() {
         className="theme-toggle"
         aria-label="Toggle theme"
       >
-        {theme === 'dark' ? <Sun size={20}/> : <Moon size={20}/>}
+        {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
       </motion.button>
     </motion.div>
   );
