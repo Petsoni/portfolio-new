@@ -1,14 +1,16 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import workHistory from "@/lib/work-history.json";
-import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { containerVariants, itemVariants } from "@/app/motion-variants";
+import ExperienceModal, { WorkModel } from "@/app/components/ExperienceModal";
 
 function Experience() {
+  const [selected, setSelected] = useState<WorkModel | null>(null);
+
   return (
     <motion.div
       className="section experience-section"
@@ -27,40 +29,26 @@ function Experience() {
         />
         <h2>Experience</h2>
       </motion.div>
-      <motion.div className="flex flex-col gap-10">
-        {workHistory.map((work) => (
-          <motion.div
-            className={"experience-wrapper"}
+      <motion.div className="experience-list">
+        {(workHistory as WorkModel[]).map((work) => (
+          <motion.button
+            type="button"
+            className={"experience-row"}
             key={work.id}
             variants={itemVariants}
+            onClick={() => setSelected(work)}
+            aria-haspopup="dialog"
           >
-            <div className="experience-header-wrapper">
-              <Link href={work.link} target={"_blank"}>
-                <h4 className={"experience-title"}>
-                  {work.title}
-                  <ArrowUpRight size={"24"} />
-                </h4>
-              </Link>
-              <div className="separator"></div>
-              <p>{work.duration}</p>
-            </div>
-            <p className={"experience-description"}>{work.description}</p>
-            {/* TODO: Do not remove */}
-            {/* {work.roles.length > 0 && (
-              <div className="experience-roles flex flex-row flex-wrap gap-3">
-                {work.roles.map((role, roleIndex) => (
-                  <p
-                    className={"chip-stroked shadow-xs"}
-                    key={`${role}-${roleIndex}`}
-                  >
-                    {role}
-                  </p>
-                ))}
-              </div>
-            )} */}
-          </motion.div>
+            <h6 className={"experience-title"}>
+              {work.title}
+              <ArrowUpRight className="experience-title-icon" size={20} />
+            </h6>
+            <div className="separator"></div>
+            <p className={"experience-duration"}>{work.duration}</p>
+          </motion.button>
         ))}
       </motion.div>
+      <ExperienceModal work={selected} onClose={() => setSelected(null)} />
     </motion.div>
   );
 }

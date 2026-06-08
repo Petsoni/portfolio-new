@@ -34,9 +34,9 @@ function HeroSection() {
 					</p>
 				</div>
 			</motion.div>
-			<motion.a className="contact hero-contact" variants={itemVariants} href={"/Petar_Marković_CV.pdf"}
+			<motion.a className="pill-button" variants={itemVariants} href={"/Petar_Marković_CV.pdf"}
 			          target={"_blank"}>
-				<FileUser/>
+				<FileUser size={20}/>
 				Download CV
 			</motion.a>
 		</motion.div>

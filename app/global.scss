@@ -205,6 +205,20 @@ body.dropdown-spotlight {
   }
 }
 
+body.sheet-open {
+
+  .hero-section,
+  .technologies-section,
+  .experience-section,
+  .projects-section,
+  .contact-section,
+  .theme-toggle-wrapper {
+    opacity: 0.3 !important;
+    filter: blur(2px) !important;
+    pointer-events: none;
+  }
+}
+
 [data-theme="light"] {
   .dropdown-content-animated {
     background-color: #fafafa;
