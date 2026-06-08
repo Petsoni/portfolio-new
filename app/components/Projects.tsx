@@ -7,7 +7,6 @@ import Image from "next/image";
 import { ArrowUpRight, Earth, EllipsisVertical, Github, Globe } from "lucide-react";
 import { motion } from "motion/react";
 import { containerVariants, itemVariants } from "@/app/motion-variants";
-import { hapticOnEnter } from "@/app/haptics";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,7 +39,7 @@ function Projects() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <motion.div className="section-title" variants={itemVariants} onAnimationStart={hapticOnEnter}>
+      <motion.div className="section-title" variants={itemVariants}>
         <Image
           className={"w-[2.5rem] h-[2.5rem]"}
           src={"/red.webp"}
@@ -56,7 +55,6 @@ function Projects() {
             className={`project-wrapper${openId === project.id ? " is-focused" : ""}`}
             key={project.id}
             variants={itemVariants}
-            onAnimationStart={hapticOnEnter}
           >
             <div className="project-header-wrapper">
               <h4 className={"project-title"}>

@@ -7,7 +7,6 @@ import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
 import { containerVariants, itemVariants } from "@/app/motion-variants";
-import { hapticOnEnter } from "@/app/haptics";
 
 function Experience() {
   return (
@@ -18,7 +17,7 @@ function Experience() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <motion.div className="section-title" variants={itemVariants} onAnimationStart={hapticOnEnter}>
+      <motion.div className="section-title" variants={itemVariants}>
         <Image
           className={"w-[2.5rem] h-[2.5rem]"}
           src={"/purple.webp"}
@@ -34,7 +33,6 @@ function Experience() {
             className={"experience-wrapper"}
             key={work.id}
             variants={itemVariants}
-            onAnimationStart={hapticOnEnter}
           >
             <div className="experience-header-wrapper">
               <Link href={work.link} target={"_blank"}>

@@ -6,17 +6,16 @@ import {FileUser, Github, Linkedin, Mail, Twitter} from "lucide-react";
 import Link from "next/link";
 import { motion } from 'motion/react';
 import {containerVariants, itemVariants} from "@/app/motion-variants";
-import {hapticOnEnter} from "@/app/haptics";
 
 function Contact() {
     return (
         <motion.div className={"section contact-section"} variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-            <motion.div className="section-title" variants={itemVariants} onAnimationStart={hapticOnEnter}>
+            <motion.div className="section-title" variants={itemVariants}>
                 <Image className={"w-[2.5rem] h-[2.5rem]"} src={"/orange.webp"} alt={"Orange splash"} width={512}
                        height={512}/>
                 <h2>Let's get in touch</h2>
             </motion.div>
-            <motion.div className="contacts-wrapper" variants={itemVariants} onAnimationStart={hapticOnEnter}>
+            <motion.div className="contacts-wrapper" variants={itemVariants}>
                 {/*<Link className="contact" href={"/Petar_Marković_CV.pdf"} target={"_blank"}>*/}
                 {/*    <FileUser/>*/}
                 {/*    Resume*/}

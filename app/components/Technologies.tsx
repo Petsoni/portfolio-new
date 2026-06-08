@@ -5,7 +5,6 @@ import techStack from "@/lib/tech-stack.json";
 import Image from "next/image";
 import {motion} from "motion/react";
 import {containerVariants, itemVariants} from "../motion-variants";
-import {hapticOnEnter} from "@/app/haptics";
 
 function Technologies() {
 
@@ -19,7 +18,7 @@ function Technologies() {
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
-      <motion.div className="section-title" variants={itemVariants} onAnimationStart={hapticOnEnter}>
+      <motion.div className="section-title" variants={itemVariants}>
         <Image
           className={"w-[2.5rem] h-[2.5rem]"}
           src={"/blue.webp"}
@@ -32,7 +31,6 @@ function Technologies() {
       <motion.div
         className="flex flex-row flex-wrap gap-3"
         variants={itemVariants}
-        onAnimationStart={hapticOnEnter}
       >
         {Object.entries(techStack).map((tech) => (
           <motion.div key={tech[0]} className={"chip"}>

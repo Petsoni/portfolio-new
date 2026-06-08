@@ -12,13 +12,3 @@ function getHaptics(): WebHaptics | null {
 export function playHaptic(pattern: HapticInput = "selection") {
   getHaptics()?.trigger(pattern);
 }
-
-/**
- * `onAnimationStart` handler for motion elements. Fires a haptic tick when the
- * element starts animating into its "visible" (enter) state.
- */
-export function hapticOnEnter(definition: unknown) {
-  if (definition === "visible") {
-    playHaptic("light");
-  }
-}

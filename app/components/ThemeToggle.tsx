@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { containerVariants, itemVariants } from "@/app/motion-variants";
-import { hapticOnEnter } from "@/app/haptics";
 import { motion } from 'motion/react';
 
 export default function ThemeToggle() {
@@ -43,7 +42,6 @@ export default function ThemeToggle() {
     <motion.div className={"theme-toggle-wrapper"} variants={containerVariants} initial="hidden" animate={"visible"}>
       <motion.button
         variants={itemVariants}
-        onAnimationStart={hapticOnEnter}
         onClick={toggleTheme}
         className="theme-toggle"
         aria-label="Toggle theme"

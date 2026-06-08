@@ -5,14 +5,12 @@ import Experience from "@/app/components/Experience";
 import Contact from "@/app/components/Contact";
 import Projects from "@/app/components/Projects";
 import ThemeToggle from "@/app/components/ThemeToggle";
-import ScrollHaptics from "@/app/components/ScrollHaptics";
-import ClickSound from "@/app/components/ClickSound";
+import UiSounds from "@/app/components/UiSounds";
 
 export default function Home() {
   return (
     <div className="pt-12 relative">
-      <ScrollHaptics/>
-      <ClickSound/>
+      <UiSounds/>
       <ThemeToggle/>
       <HeroSection/>
       <Technologies/>

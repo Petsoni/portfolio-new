@@ -4,14 +4,13 @@ import React from 'react';
 import Image from "next/image";
 import {motion} from 'motion/react';
 import {containerVariants, itemVariants} from "@/app/motion-variants";
-import {hapticOnEnter} from "@/app/haptics";
 import {FileUser} from "lucide-react";
 
 function HeroSection() {
 
 	return (
 		<motion.div className="section hero-section" variants={containerVariants} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }}>
-			<motion.div className="hero-section-title-wrapper" variants={itemVariants} onAnimationStart={hapticOnEnter}>
+			<motion.div className="hero-section-title-wrapper" variants={itemVariants}>
 				<div className="section-title">
 					<Image className={"w-[2.5rem] h-[2.5rem]"} src={"/green.webp"} alt={"Green splash"} width={512}
 					       height={512}/>
@@ -20,7 +19,7 @@ function HeroSection() {
 				<Image className={"ghibli-image"} src={"/new-profile.webp"}
 				       alt={"Petar Marković profile picture"} width={512} height={512}/>
 			</motion.div>
-			<motion.div className={"hero-bio"} variants={itemVariants} onAnimationStart={hapticOnEnter}>
+			<motion.div className={"hero-bio"} variants={itemVariants}>
 				<div className={"hero-bio-inner"}>
 					<p className={"hero-paragraph"}>Software developer based in Serbia, building
 						full-stack web applications.
@@ -35,7 +34,7 @@ function HeroSection() {
 					</p>
 				</div>
 			</motion.div>
-			<motion.a className="contact hero-contact" variants={itemVariants} onAnimationStart={hapticOnEnter} href={"/Petar_Marković_CV.pdf"}
+			<motion.a className="contact hero-contact" variants={itemVariants} href={"/Petar_Marković_CV.pdf"}
 			          target={"_blank"}>
 				<FileUser/>
 				Download CV
