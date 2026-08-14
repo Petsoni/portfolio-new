@@ -1,28 +1,53 @@
-@use "sass:color" as *;
+// ---------------------------------------------------------------------------
+// Palette — grayscale ramp from the Figma design (Woodsmoke scale)
+// ---------------------------------------------------------------------------
 
 $background-light: #ffffff;
-$text-color-light: #3b3b3b;
-$light-text-color-light: hsl(0, 0%, 52%);
-$shade-light: #dedede;
-$border-color-light: #5d5d5d;
+$heading-light: #3d3d3d; // Woodsmoke/900 — headings, company names
+$link-light: #454545; // Woodsmoke/800 — hero text links
+$muted-light: #6d6d6d; // Woodsmoke/500 — bio, body copy
+$faint-light: #888888; // Woodsmoke/400 — durations, secondary meta
+$rule-light: #d1d1d1; // Woodsmoke/200 — hairline rules
+$border-light: #e7e7e7;
+$hover-light: #f5f5f5;
 
 $background-dark: #010101;
-$text-color-dark: #ededed;
-$light-text-color-dark: hsl(0, 0%, 52%);
-$shade-dark: hsl(0, 0%, 10%);
-$border-color-dark: #424242;
+$heading-dark: #ededed;
+$link-dark: #cfcfcf;
+$muted-dark: #9a9a9a;
+$faint-dark: #767676;
+$rule-dark: #2a2a2a;
+$border-dark: #1f1f1f;
+$hover-dark: #131313;
 
-$green: #6fde77;
-$blue: #6fbbde;
-$orange: #fb8853;
-$purple: #c46fde;
-$red: #DF5361;
+// ---------------------------------------------------------------------------
+// Typography
+// ---------------------------------------------------------------------------
 
-h1,
-h2,
-h3,
-h4 {
-  letter-spacing: -0.4px;
+h1 {
+  font-size: clamp(34px, 6vw, 48px);
+  font-weight: 550;
+  letter-spacing: -0.04em;
+  line-height: 1.2;
+  text-box: trim-both cap alphabetic;
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: 550;
+  letter-spacing: -0.03em;
+  line-height: 1.5;
+}
+
+p,
+a,
+b,
+i,
+span,
+button {
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  line-height: 21px;
 }
 
 [data-theme="light"] {
@@ -32,10 +57,16 @@ h4 {
   h3,
   h4,
   h5,
-  h6,
-  p,
+  h6 {
+    color: $heading-light;
+  }
+
+  p {
+    color: $muted-light;
+  }
+
   a {
-    color: $text-color-light;
+    color: $link-light;
   }
 }
 
@@ -46,274 +77,109 @@ h4 {
   h3,
   h4,
   h5,
-  h6,
-  p,
+  h6 {
+    color: $heading-dark;
+  }
+
+  p {
+    color: $muted-dark;
+  }
+
   a {
-    color: $text-color-dark;
+    color: $link-dark;
   }
 }
 
-h1 {
-  font-size: clamp(34px, 8vw, 45.8px);
-}
+// ---------------------------------------------------------------------------
+// Page layout
+// ---------------------------------------------------------------------------
 
-h2 {
-  font-size: clamp(30px, 6.5vw, 37.8px);
-}
-
-h3 {
-  font-size: clamp(26px, 5.5vw, 31.2px);
-}
-
-h4 {
-  font-size: clamp(22px, 4.5vw, 25.6px);
-}
-
-h5 {
-  font-size: clamp(18px, 3.8vw, 21px);
-}
-
-h6 {
-  font-size: clamp(16px, 3.2vw, 17px);
-  letter-spacing: -1.2px;
-}
-
-span {
-  font-size: inherit;
-}
-
-p,
-a,
-b,
-i,
-button {
-  font-size: clamp(15px, 2.8vw, 15px);
-  letter-spacing: -0.2px;
-}
-
-button {
-  font-size: clamp(15px, 2.8vw, 15px);
-}
-
-.hero-section {
-  ::selection {
-    background-color: $green;
-    color: white;
-  }
-}
-
-.technologies-section {
-  ::selection {
-    background-color: $blue;
-    color: white;
-  }
-}
-
-.experience-section {
-  ::selection {
-    background-color: $purple;
-    color: white;
-  }
-}
-
-.projects-section {
-  ::selection {
-    background-color: $red;
-    color: white;
-  }
-}
-
-.contact-section {
-  ::selection {
-    background-color: $orange;
-    color: white;
-  }
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 64px;
+  padding-top: clamp(4.5rem, 20vh, 13rem);
+  padding-bottom: clamp(4rem, 12vh, 8rem);
 }
 
 .section {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  margin-bottom: 4rem;
-
-  &.hero-section {
-    ::selection {
-      background-color: $green;
-      color: white;
-    }
-
-    .section-title {
-      margin: 0;
-    }
-
-    p {
-      padding-bottom: 0.75rem;
-
-      &:last-child {
-        padding-bottom: 0;
-      }
-    }
-
-    .hero-bio {
-      width: 100%;
-      border-radius: 12px;
-      padding: 6px;
-      margin-bottom: 1.5rem;
-
-      .hero-bio-inner {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        width: 100%;
-        border-radius: 8px;
-        padding: 12px;
-
-        p {
-          width: 100%;
-          padding-bottom: 0;
-          line-height: 22px;
-          letter-spacing: -0.32px;
-        }
-      }
-    }
-  }
-
-  .hero-section-title-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 1.5rem;
-
-    @media screen and (max-width: 768px) {
-      flex-direction: column-reverse;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .ghibli-image {
-      width: 8rem;
-      height: 8rem;
-      border-radius: 50%;
-      object-fit: cover;
-      object-position: center -30px;
-
-      @media screen and (max-width: 768px) {
-        align-self: center;
-      }
-    }
-  }
-
-  .section-title {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-
-    @media screen and (max-width: 768px) {
-      img {
-        //display: none;
-      }
-    }
-  }
-
-
-}
-
-.project-wrapper,
-.experience-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-items: center;
   width: 100%;
-  gap: 0.5rem;
+}
 
-  .project-header-wrapper,
-  .experience-header-wrapper {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    gap: 1rem;
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
 
-    @media screen and (max-width: 768px) {
-      align-items: flex-start;
-      gap: 0.25rem;
-    }
+.hero-section {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 48px;
 
-    &.experience-header-wrapper {
-      @media screen and (max-width: 768px) {
-        flex-direction: column;
-      }
-    }
-
-    .separator {
-      flex: 1;
-      width: 100%;
-      height: 1px;
-
-      &.experience-separator {
-        background: $purple;
-      }
-
-      &.selected-projects-separator {
-        background: $red;
-      }
-
-      @media screen and (max-width: 768px) {
-        display: none;
-      }
-    }
-
-    .project-title,
-    .experience-title {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 1rem;
-    }
-
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    gap: 28px;
   }
 }
 
-.project-wrapper,
-.experience-wrapper {
-  gap: 6px;
-  padding: 6px;
-  border-radius: 12px;
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 28px;
+}
 
-  .project-header-wrapper,
-  .experience-header-wrapper {
-    padding: 12px;
-    gap: 12px;
+.hero-links {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hero-link {
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-position: from-font;
+  transition: color 0.2s ease;
+}
+
+[data-theme="light"] .hero-link:hover {
+  color: $heading-light;
+}
+
+[data-theme="dark"] .hero-link:hover {
+  color: $heading-dark;
+}
+
+.hero-bio {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 323px;
+  flex-shrink: 0;
+
+  p {
+    font-weight: 500;
   }
 
-  .project-description,
-  .experience-description {
+  @media screen and (max-width: 768px) {
     width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    line-height: 22px;
   }
+}
 
-  .project-techstack,
-  .experience-roles {
-    width: 100%;
-    padding: 0 0;
-  }
+// ---------------------------------------------------------------------------
+// Experience
+// ---------------------------------------------------------------------------
+
+.experience-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .experience-list {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   width: 100%;
   gap: 12px;
 }
@@ -324,8 +190,8 @@ button {
   align-items: center;
   width: 100%;
   gap: 12px;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 8px;
+  border-radius: 8px;
   background: transparent;
   border: none;
   margin: 0;
@@ -334,19 +200,9 @@ button {
   cursor: pointer;
   transition: background-color 0.2s ease;
 
-  .experience-title {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 19px;
+  .experience-name {
     font-weight: 500;
-    letter-spacing: -0.76px;
     white-space: nowrap;
-    transition: text-decoration-color 0.2s ease;
-
-    svg {
-      transition: transform 0.2s ease;
-    }
   }
 
   .separator {
@@ -358,254 +214,263 @@ button {
   .experience-duration {
     flex-shrink: 0;
     white-space: nowrap;
-    font-size: 16px;
-    line-height: 22px;
-    letter-spacing: -0.32px;
-  }
-
-  &:hover {
-    .experience-title {
-      text-decoration-color: $purple;
-
-      svg {
-        transform: translate(2px, -2px);
-      }
-    }
-  }
-
-  @media screen and (max-width: 600px) {
-    justify-content: space-between;
-    gap: 0.75rem;
-
-    .separator {
-      display: none;
-    }
-
-    .experience-title {
-      font-size: 17px;
-    }
-
-    .experience-duration {
-      font-size: 14px;
-    }
+    font-weight: 500;
   }
 }
 
-.experience-sheet-overlay {
+[data-theme="light"] .experience-row {
+  .experience-name {
+    color: $heading-light;
+  }
+
+  .experience-duration {
+    color: $faint-light;
+  }
+
+  &:hover {
+    background-color: $hover-light;
+  }
+}
+
+[data-theme="dark"] .experience-row {
+  .experience-name {
+    color: $heading-dark;
+  }
+
+  .experience-duration {
+    color: $faint-dark;
+  }
+
+  &:hover {
+    background-color: $hover-dark;
+  }
+}
+
+.separator {
+  height: 1px;
+}
+
+[data-theme="light"] .separator {
+  background-color: $rule-light;
+}
+
+[data-theme="dark"] .separator {
+  background-color: $rule-dark;
+}
+
+// ---------------------------------------------------------------------------
+// Experience modal
+// ---------------------------------------------------------------------------
+
+.experience-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 1500;
 }
 
-.experience-sheet {
+.experience-modal-root {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   z-index: 1600;
-  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  // Let clicks in the empty area fall through to the overlay.
+  pointer-events: none;
+}
+
+.experience-modal {
+  pointer-events: auto;
+  display: flex;
+  gap: 12px;
   width: 100%;
-  max-width: 780px;
-  padding: 6px 6px 0;
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  max-width: 763px;
+  // Figma frame height — keeps the bottom-pinned roles from squishing up
+  // against the visit link when the description is short.
+  min-height: min(320px, 82dvh);
+  max-height: min(640px, 82dvh);
+  padding: 20px;
+  border-radius: 12px;
   outline: none;
 
-  .experience-sheet-inner {
+  // Left column — stretches to card height so roles pin to the bottom.
+  .experience-modal-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    width: 255px;
+    flex-shrink: 0;
+  }
+
+  .experience-modal-side-top {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
-    width: 100%;
-    padding: 20px;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
-    max-height: min(537px, 82vh);
-    overflow-y: auto;
+    gap: 12px;
   }
 
-  .experience-sheet-header {
+  .experience-modal-heading {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    width: 100%;
+    flex-direction: column;
+    gap: 4px;
   }
 
-  .experience-sheet-identity {
+  .experience-modal-title {
+    font-size: 22px;
+    font-weight: 550;
+    letter-spacing: -0.03em;
+    line-height: 1.5;
+  }
+
+  .experience-modal-duration {
+    font-weight: 500;
+  }
+
+  .experience-modal-roles {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 4px;
+
+    span {
+      font-weight: 600;
+    }
+  }
+
+  // Only the description scrolls on overflow; the left column keeps the
+  // card's full height with the roles pinned at the bottom.
+  .experience-modal-body {
+    flex: 1;
     min-width: 0;
-
-    .experience-sheet-logo {
-      width: auto;
-      height: 3rem;
-      // max-width: 3.25rem;
-      object-fit: cover;
-      flex-shrink: 0;
-    }
-
-    .experience-sheet-title {
-      font-size: clamp(22px, 5vw, 27.65px);
-      font-weight: 500;
-      letter-spacing: -0.83px;
-      line-height: 1.1;
-    }
-  }
-
-  .experience-sheet-meta-group {
+    min-height: 0;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 100%;
-  }
-
-  .experience-sheet-meta {
-    font-size: 16px;
-    line-height: 22px;
-    letter-spacing: -0.32px;
-  }
-
-  .experience-sheet-muted {
-    font-size: 16px;
-    line-height: 22px;
-    letter-spacing: -0.32px;
-  }
-
-  .experience-sheet-roles {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .experience-role-chip {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2px 8px;
-    border-radius: 8px;
-    font-size: 16px;
-    line-height: 22px;
-    letter-spacing: -0.32px;
-    white-space: nowrap;
-  }
-
-  .experience-sheet-divider {
-    width: 100%;
-    height: 1px;
-    flex: none;
-  }
-
-  .experience-sheet-body {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    width: 100%;
 
     p {
       width: 100%;
-      font-size: 16px;
-      line-height: 22px;
-      letter-spacing: -0.32px;
+      font-weight: 500;
+    }
+  }
+
+  .experience-modal-visit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+
+    span {
+      position: relative;
+
+      // Underline slides in from the left on hover, out to the right on leave.
+      &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 2px;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: 100% 50%;
+        transition: transform 0.25s ease;
+      }
+    }
+
+    svg {
+      stroke-width: 1.5px;
+      transition: transform 0.2s ease;
+    }
+
+    &:hover {
+      span::after {
+        transform: scaleX(1);
+        transform-origin: 0 50%;
+      }
+
+      svg {
+        transform: translate(1px, -1px);
+      }
     }
   }
 
   @media screen and (max-width: 600px) {
-    .experience-sheet-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-    }
+    flex-direction: column;
+    // Stacked layout has no bottom-pinned roles, so no height floor needed.
+    min-height: 0;
 
-    .experience-sheet-visit {
-      align-self: flex-start;
+    .experience-modal-side {
+      width: 100%;
     }
   }
 }
 
-.experience-header-wrapper a:hover {
-  text-decoration: underline;
-  text-decoration-color: $purple;
-}
-
-.project-header-wrapper a:hover {
-  text-decoration: underline;
-  text-decoration-color: $red !important;
-}
-
-
-.contacts-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-items: center;
-  gap: 0.75rem;
-
-  .contact {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    justify-items: center;
-    gap: 0.5rem;
-
-    &:hover {
-      text-decoration: underline;
-      text-decoration-color: $orange;
-    }
+[data-theme="light"] {
+  .experience-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.18);
   }
-}
 
-.contact {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-  justify-items: center;
-  gap: 0.5rem;
-
-  &.hero-contact {
-    border-radius: 0.5rem;
-    padding: 0.35rem 0.5rem;
+  .experience-modal {
     background: $background-light;
-  }
+    border: 1px solid $border-light;
 
-  &:hover {
-    text-decoration: underline;
-    text-decoration-color: $orange;
-  }
-}
+    .experience-modal-title {
+      color: $link-light;
+    }
 
-.project-link {
-  border-radius: 0.5rem;
-}
+    .experience-modal-roles {
+      color: $heading-light;
+    }
 
-.chip {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 2px;
-  border-radius: 8px;
+    .experience-modal-duration {
+      color: $faint-light;
+    }
 
-  .chip-inner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 15px;
-    line-height: 22px;
-    white-space: nowrap;
+    .experience-modal-body p {
+      color: $muted-light;
+    }
+
+    .experience-modal-visit {
+      color: $heading-light;
+    }
   }
 }
 
-.chip-stroked {
-  border-radius: 0.5rem;
-  padding: 0.15rem 0.35rem;
-  background: $background-light;
+[data-theme="dark"] {
+  .experience-modal-overlay {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  .experience-modal {
+    background: $background-dark;
+    border: 1px solid $border-dark;
+
+    .experience-modal-title {
+      color: $link-dark;
+    }
+
+    .experience-modal-roles {
+      color: $heading-dark;
+    }
+
+    .experience-modal-duration {
+      color: $faint-dark;
+    }
+
+    .experience-modal-body p {
+      color: $muted-dark;
+    }
+
+    .experience-modal-visit {
+      color: $heading-dark;
+    }
+  }
 }
+
+// ---------------------------------------------------------------------------
+// Buttons
+// ---------------------------------------------------------------------------
 
 .pill-button {
   display: inline-flex;
@@ -613,14 +478,11 @@ button {
   justify-content: center;
   gap: 8px;
   flex-shrink: 0;
-  padding: 8px 10px;
-  border-radius: 12px;
-  font-size: 16px;
-  line-height: 22px;
-  letter-spacing: -0.32px;
+  padding: 6px 10px;
+  border-radius: 10px;
   white-space: nowrap;
   cursor: pointer;
-  transition: all 0.4s ease;
+  transition: all 0.2s ease;
 
   svg {
     flex-shrink: 0;
@@ -628,188 +490,28 @@ button {
 }
 
 [data-theme="light"] .pill-button {
-  background: #ffffff;
-  border: 1px solid #e7e7e7;
-  color: $text-color-light;
+  background: $background-light;
+  border: 1px solid $border-light;
+  color: $heading-light;
 
   &:hover {
-    transition: all 0.2s ease;
-    background: $shade-light;
+    background: $hover-light;
   }
 }
 
 [data-theme="dark"] .pill-button {
   background: $background-dark;
-  border: 1px solid $shade-dark;
-  color: $text-color-dark;
+  border: 1px solid $border-dark;
+  color: $heading-dark;
 
   &:hover {
-    transition: all 0.2s ease;
-    background: $shade-dark;
+    background: $hover-dark;
   }
 }
 
-[data-theme="dark"] {
-  .contact.hero-contact {
-    border: 1px solid $shade-dark;
-    color: $light-text-color-dark;
-    background: $background-dark;
-
-    &:hover {
-      background: $text-color-light;
-      text-decoration-color: transparent;
-    }
-  }
-
-  .project-link {
-    &:hover {
-      background: $text-color-light;
-    }
-  }
-
-  .project-header-wrapper,
-  .experience-header-wrapper {
-    h6 {
-      justify-self: flex-end;
-      color: $light-text-color-dark;
-    }
-  }
-
-  .section {
-    p {
-      color: $light-text-color-dark;
-    }
-  }
-
-  .hero-bio {
-    background: #0c0c0c;
-    border: 1px solid $shade-dark;
-
-    .hero-bio-inner {
-      background: $background-dark;
-      border: 1px solid $shade-dark;
-
-      p {
-        color: $light-text-color-dark;
-      }
-    }
-  }
-
-  .project-wrapper,
-  .experience-wrapper {
-    background: #0c0c0c;
-    border: 1px solid $shade-dark;
-
-    .project-description,
-    .experience-description {
-      background: $background-dark;
-      border: 1px solid $shade-dark;
-      color: $light-text-color-dark;
-    }
-  }
-
-  .chip {
-    background-color: hsl(199, 66%, 22%);
-    border: 1px solid hsl(199, 66%, 18%);
-
-    .chip-inner {
-      background-color: hsl(199, 66%, 18%);
-      border: 1px solid hsl(199, 66%, 14%);
-      color: #8fd0ee !important;
-    }
-  }
-
-  .chip-stroked {
-    background-color: $background-dark;
-    color: $light-text-color-dark;
-    border: 1px solid $shade-dark !important;
-  }
-
-  .separator {
-    background-color: $shade-dark !important;
-  }
-}
-
-[data-theme="light"] {
-  .contact.hero-contact {
-    border: 1px solid $shade-light;
-    color: $light-text-color-light;
-
-    &:hover {
-      background: $text-color-dark;
-      text-decoration-color: transparent;
-    }
-  }
-
-  .project-link {
-    &:hover {
-      background: $text-color-dark;
-    }
-  }
-
-  .project-header-wrapper,
-  .experience-header-wrapper {
-    h6 {
-      justify-self: flex-end;
-      color: $light-text-color-light;
-    }
-  }
-
-  .section {
-    p {
-      color: $light-text-color-light;
-    }
-  }
-
-  .hero-bio {
-    background: #f6f6f6;
-    border: 1px solid #e7e7e7;
-
-    .hero-bio-inner {
-      background: #ffffff;
-      border: 1px solid #e7e7e7;
-
-      p {
-        color: #6d6d6d;
-      }
-    }
-  }
-
-  .project-wrapper,
-  .experience-wrapper {
-    background: #fafafa;
-    border: 1px solid #e7e7e7;
-
-    .project-description,
-    .experience-description {
-      background: #ffffff;
-      border: 1px solid #e7e7e7;
-      color: #6d6d6d;
-    }
-  }
-
-  .chip {
-    background-color: #9bd0e8;
-    border: 1px solid #72bcdf;
-
-    .chip-inner {
-      background-color: #d6ebf5;
-      border: 1px solid #83c4e2;
-      color: #04567b !important;
-    }
-  }
-
-  .chip-stroked {
-    border-radius: 0.5rem;
-    padding: 0.15rem 0.35rem;
-    border: 1px solid $shade-light !important;
-  }
-
-  .separator {
-    background-color: $shade-light;
-  }
-}
-
+// ---------------------------------------------------------------------------
+// Theme toggle
+// ---------------------------------------------------------------------------
 
 .theme-toggle-wrapper {
   position: absolute;
@@ -827,118 +529,24 @@ button {
   }
 }
 
-[data-theme="light"] {
-  .theme-toggle {
-    border: 1px solid $shade-light;
-    color: $light-text-color-light;
-    background: $background-light;
+[data-theme="light"] .theme-toggle {
+  border: 1px solid $border-light;
+  color: $faint-light;
+  background: $background-light;
 
-    &:hover {
-      background: $text-color-dark;
-    }
+  &:hover {
+    background: $hover-light;
+    color: $heading-light;
   }
 }
 
-[data-theme="dark"] {
-  .theme-toggle {
-    border: 1px solid $shade-dark;
-    color: $light-text-color-dark;
-    background: $background-dark;
+[data-theme="dark"] .theme-toggle {
+  border: 1px solid $border-dark;
+  color: $faint-dark;
+  background: $background-dark;
 
-    &:hover {
-      background: $text-color-light;
-    }
-  }
-}
-
-[data-theme="light"] {
-  .experience-row:hover {
-    background-color: adjust($purple, $lightness: 32%);
-
-    .lucide {
-      stroke: $purple;
-      stroke-width: 2px;
-    }
-  }
-
-  .experience-sheet-overlay {
-    background-color: rgba(0, 0, 0, 0.18);
-  }
-
-  .experience-sheet {
-    background: #f6f6f6;
-    border: 1px solid #e7e7e7;
-    border-bottom: none;
-
-    .experience-sheet-inner {
-      background: #ffffff;
-      border: 1px solid #e7e7e7;
-      border-bottom: none;
-    }
-
-    .experience-sheet-meta,
-    .experience-sheet-muted {
-      color: $light-text-color-light;
-    }
-
-    .experience-sheet-strong {
-      color: $text-color-light;
-    }
-
-    .experience-role-chip {
-      background: #ffffff;
-      border: 1px solid #d1d1d1;
-      color: $text-color-light;
-    }
-
-    .experience-sheet-body p {
-      color: $light-text-color-light;
-    }
-  }
-}
-
-[data-theme="dark"] {
-  .experience-row:hover {
-    background-color: adjust($purple, $lightness: -60%);
-
-    .lucide {
-      stroke: $purple;
-      stroke-width: 2px;
-    }
-  }
-
-  .experience-sheet-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-  }
-
-  .experience-sheet {
-    background: #0c0c0c;
-    border: 1px solid $shade-dark;
-    border-bottom: none;
-
-    .experience-sheet-inner {
-      background: $background-dark;
-      border: 1px solid $shade-dark;
-      border-bottom: none;
-    }
-
-    .experience-sheet-meta,
-    .experience-sheet-muted {
-      color: $light-text-color-dark;
-    }
-
-    .experience-sheet-strong {
-      color: $text-color-dark;
-    }
-
-    .experience-role-chip {
-      background: $background-dark;
-      border: 1px solid $shade-dark;
-      color: $text-color-dark;
-    }
-
-    .experience-sheet-body p {
-      color: $light-text-color-dark;
-    }
+  &:hover {
+    background: $hover-dark;
+    color: $heading-dark;
   }
 }

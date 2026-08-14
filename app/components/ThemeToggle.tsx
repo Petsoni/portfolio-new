@@ -23,17 +23,6 @@ export default function ThemeToggle() {
     setTheme(newTheme);
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
-
-    const prefersReducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    ).matches;
-    if (prefersReducedMotion) return;
-
-    const root = document.documentElement;
-    root.classList.remove('dots-animating');
-    // force reflow so the animation restarts on every toggle
-    void root.offsetWidth;
-    root.classList.add('dots-animating');
   };
 
   if (!mounted) return null;

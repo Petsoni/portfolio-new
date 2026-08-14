@@ -3,8 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import Image from "next/image";
-import { Globe } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 
 export interface WorkModel {
@@ -17,62 +16,6 @@ export interface WorkModel {
   description: string;
 }
 
-function WorkedLine({ duration }: { duration: string }) {
-  const [start, end] = duration.split("—").map((part) => part.trim());
-
-  if (end && end.toLowerCase() === "present") {
-    return (
-      <p className="experience-sheet-meta">
-        <span>Working here since </span>
-        <span className="experience-sheet-strong">{start}</span>
-        <span>.</span>
-      </p>
-    );
-  }
-
-  return (
-    <p className="experience-sheet-meta">
-      <span>Worked here from </span>
-      <span className="experience-sheet-strong">{start}</span>
-      <span> until </span>
-      <span className="experience-sheet-strong">{end}</span>
-      <span>.</span>
-    </p>
-  );
-}
-
-function RolesLine({
-  roles,
-  isPresent,
-}: {
-  roles: string[];
-  isPresent: boolean;
-}) {
-  if (!roles || roles.length === 0) return null;
-
-  return (
-    <div className="experience-sheet-roles">
-      {roles.map((role, index) => {
-        const connector =
-          index === 0
-            ? isPresent
-              ? "Here I am a"
-              : "During my time here, I was a"
-            : index === roles.length - 1
-              ? "and a"
-              : "a";
-
-        return (
-          <React.Fragment key={`${role}-${index}`}>
-            <span className="experience-sheet-muted">{connector}</span>
-            <span className="experience-role-chip">{role}</span>
-          </React.Fragment>
-        );
-      })}
-    </div>
-  );
-}
-
 interface ExperienceModalProps {
   work: WorkModel | null;
   onClose: () => void;
@@ -80,7 +23,7 @@ interface ExperienceModalProps {
 
 function ExperienceModal({ work, onClose }: ExperienceModalProps) {
   const [mounted, setMounted] = useState(false);
-  const sheetRef = useRef<HTMLDivElement | null>(null);
+  const cardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -94,15 +37,15 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
     };
 
     document.addEventListener("keydown", onKeyDown);
-    document.body.classList.add("sheet-open");
+    document.body.classList.add("modal-open");
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    sheetRef.current?.focus();
+    cardRef.current?.focus();
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.classList.remove("sheet-open");
+      document.body.classList.remove("modal-open");
       document.body.style.overflow = previousOverflow;
     };
   }, [work, onClose]);
@@ -113,78 +56,71 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
     ? work.description.split("\n").map((line) => line.trim()).filter(Boolean)
     : [];
 
-  const isPresent = work
-    ? work.duration.split("—").pop()?.trim().toLowerCase() === "present"
-    : false;
-
   return createPortal(
     <AnimatePresence>
       {work && (
         <>
           <motion.div
-            key="experience-sheet-overlay"
-            className="experience-sheet-overlay"
+            key="experience-modal-overlay"
+            className="experience-modal-overlay"
             onClick={onClose}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           />
-          <motion.div
-            key="experience-sheet"
-            ref={sheetRef}
-            className="experience-sheet"
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${work.title} experience details`}
-            tabIndex={-1}
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ type: "spring", stiffness: 320, damping: 34, mass: 0.9 }}
-          >
-            <div className="experience-sheet-inner">
-              <div className="experience-sheet-header">
-                <div className="experience-sheet-identity">
-                  {/* <Image
-                    className="experience-sheet-logo"
-                    src={work.image}
-                    alt={`${work.title} logo`}
-                    width={512}
-                    height={512}
-                  /> */}
-                  <h3 className="experience-sheet-title">{work.title}</h3>
+          <div key="experience-modal-root" className="experience-modal-root">
+            <motion.div
+              ref={cardRef}
+              className="experience-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label={`${work.title} experience details`}
+              tabIndex={-1}
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{
+                type: "spring",
+                stiffness: 360,
+                damping: 30,
+                mass: 0.9,
+                opacity: { duration: 0.2, ease: "easeOut" },
+              }}
+            >
+              <div className="experience-modal-side">
+                <div className="experience-modal-side-top">
+                  <div className="experience-modal-heading">
+                    <h3 className="experience-modal-title">{work.title}</h3>
+                    <span className="experience-modal-duration">
+                      {work.duration}.
+                    </span>
+                  </div>
+                  {work.link && (
+                    <Link
+                      href={work.link}
+                      target="_blank"
+                      className="experience-modal-visit"
+                    >
+                      <span>Visit website</span>
+                      <ArrowUpRight size={20} />
+                    </Link>
+                  )}
                 </div>
-                {work.link && (
-                  <Link
-                    href={work.link}
-                    target="_blank"
-                    className="pill-button experience-sheet-visit"
-                  >
-                    <Globe size={20} />
-                    <span>Visit website</span>
-                  </Link>
-                )}
+                <div className="experience-modal-roles">
+                  {work.roles.map((role) => (
+                    <span key={role}>{role}</span>
+                  ))}
+                </div>
               </div>
 
-              <div className="experience-sheet-meta-group">
-                <WorkedLine duration={work.duration} />
-                <RolesLine roles={work.roles} isPresent={isPresent} />
+              <div className="experience-modal-body">
+                {paragraphs.map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
               </div>
-
-              <div className="separator experience-sheet-divider"></div>
-
-              <div className="experience-sheet-body">
-                {paragraphs.length > 0 ? (
-                  paragraphs.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))
-                ) : (
-                  <p>{work.description}</p>
-                )}
-              </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>,
