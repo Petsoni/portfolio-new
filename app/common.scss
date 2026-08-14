@@ -137,18 +137,113 @@ button {
 }
 
 .hero-link {
+  position: relative;
   font-weight: 500;
   text-decoration: underline;
   text-underline-position: from-font;
   transition: color 0.2s ease;
 }
 
-[data-theme="light"] .hero-link:hover {
-  color: $heading-light;
+// Peek-on-hover: a small artwork (PDF page for CV, glyph tiles for the rest)
+// slips out from behind the row. The window clips it, and the mask fades its
+// lower edge so the art emerges softly instead of looking sliced by the text.
+.hero-link-peek {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 2px);
+  width: 44px;
+  height: 38px;
+  margin-left: -22px;
+  overflow: hidden;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to top, transparent 0, #000 8px);
+  mask-image: linear-gradient(to top, transparent 0, #000 8px);
 }
 
-[data-theme="dark"] .hero-link:hover {
-  color: $heading-dark;
+.hero-peek-page,
+.hero-peek-tile {
+  position: absolute;
+  left: 50%;
+  transform-origin: 50% 100%;
+  // Exit: quick tuck back in.
+  transition: transform 0.17s ease;
+  will-change: transform;
+}
+
+.hero-peek-page {
+  bottom: -7px;
+  width: 26px;
+  height: 34px;
+  margin-left: -13px;
+  transform: translateY(112%) rotate(-14deg);
+}
+
+.hero-peek-tile {
+  display: grid;
+  place-items: center;
+  bottom: -4px;
+  width: 24px;
+  height: 24px;
+  margin-left: -12px;
+  border-radius: 6px;
+  background: var(--peek-paper);
+  border: 1px solid var(--peek-border);
+  color: var(--peek-ink);
+  transform: translateY(130%) rotate(-14deg);
+
+  .lucide {
+    stroke-width: 2.2px;
+  }
+}
+
+.hero-link:hover,
+.hero-link:focus-visible {
+
+  .hero-peek-page,
+  .hero-peek-tile {
+    // Enter: springy rise with a hint of overshoot.
+    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .hero-peek-page {
+    transform: translateY(18%) rotate(-8deg);
+  }
+
+  .hero-peek-tile {
+    transform: translateY(6%) rotate(-8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .hero-peek-page,
+  .hero-peek-tile {
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-theme="light"] .hero-link {
+  --peek-paper: #{$background-light};
+  --peek-border: #{$rule-light};
+  --peek-fold: #{$hover-light};
+  --peek-line: #{$border-light};
+  --peek-ink: #{$heading-light};
+
+  &:hover {
+    color: $heading-light;
+  }
+}
+
+[data-theme="dark"] .hero-link {
+  --peek-paper: #{$hover-dark};
+  --peek-border: #{$rule-dark};
+  --peek-fold: #{$border-dark};
+  --peek-line: #{$rule-dark};
+  --peek-ink: #{$heading-dark};
+
+  &:hover {
+    color: $heading-dark;
+  }
 }
 
 .hero-bio {
