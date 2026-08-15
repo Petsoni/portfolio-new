@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 
 export interface WorkModel {
   id: number;
@@ -16,6 +16,34 @@ export interface WorkModel {
   description: string;
 }
 
+// Shared between the experience rows and the modal card so the clicked row
+// morphs into the card on open and back into the list on close.
+export const workLayoutId = (id: number) => `experience-work-${id}`;
+
+// Springier than critical damping — the card arrives with a soft overshoot.
+export const morphSpring = {
+  type: "spring" as const,
+  stiffness: 300,
+  damping: 22,
+  mass: 0.9,
+};
+
+// Near-critically damped spring for the close morph. The row drives the
+// return animation (it becomes the lead element when the card exits), and any
+// overshoot there makes the row text look squished as the box wobbles.
+export const returnSpring = {
+  type: "spring" as const,
+  stiffness: 380,
+  damping: 34,
+  mass: 0.9,
+};
+
+const contentGroup = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.05, delayChildren: 0.12 } },
+  exit: {},
+};
+
 interface ExperienceModalProps {
   work: WorkModel | null;
   onClose: () => void;
@@ -24,6 +52,7 @@ interface ExperienceModalProps {
 function ExperienceModal({ work, onClose }: ExperienceModalProps) {
   const [mounted, setMounted] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     setMounted(true);
@@ -37,7 +66,6 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
     };
 
     document.addEventListener("keydown", onKeyDown);
-    document.body.classList.add("modal-open");
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -45,12 +73,28 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
-      document.body.classList.remove("modal-open");
       document.body.style.overflow = previousOverflow;
     };
   }, [work, onClose]);
 
   if (!mounted) return null;
+
+  // Content blooms in with the site's blur-stagger signature.
+  const contentItem = {
+    hidden: reducedMotion
+      ? { opacity: 0 }
+      : { opacity: 0, y: 8, filter: "blur(8px)" },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: "blur(0px)",
+      transition: { duration: 0.25, ease: "easeOut" as const },
+    },
+    exit: {
+      opacity: 0,
+      transition: { duration: 0.1, ease: "easeOut" as const },
+    },
+  };
 
   const paragraphs = work
     ? work.description.split("\n").map((line) => line.trim()).filter(Boolean)
@@ -77,49 +121,64 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
               aria-modal="true"
               aria-label={`${work.title} experience details`}
               tabIndex={-1}
-              initial={{ opacity: 0, scale: 0.96, y: 12 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.96, y: 12 }}
-              transition={{
-                type: "spring",
-                stiffness: 360,
-                damping: 30,
-                mass: 0.9,
-                opacity: { duration: 0.2, ease: "easeOut" },
-              }}
+              layoutId={workLayoutId(work.id)}
+              style={{ borderRadius: 12 }}
+              transition={{ layout: morphSpring }}
             >
-              <div className="experience-modal-side">
+              <motion.div
+                className="experience-modal-side"
+                variants={contentGroup}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
                 <div className="experience-modal-side-top">
-                  <div className="experience-modal-heading">
+                  <motion.div
+                    className="experience-modal-heading"
+                    variants={contentItem}
+                  >
                     <h3 className="experience-modal-title">{work.title}</h3>
                     <span className="experience-modal-duration">
                       {work.duration}.
                     </span>
-                  </div>
+                  </motion.div>
                   {work.link && (
-                    <Link
-                      href={work.link}
-                      target="_blank"
-                      className="experience-modal-visit"
-                      data-sound="swoosh"
-                    >
-                      <span>Visit website</span>
-                      <ArrowUpRight size={20} />
-                    </Link>
+                    <motion.div variants={contentItem}>
+                      <Link
+                        href={work.link}
+                        target="_blank"
+                        className="experience-modal-visit"
+                        data-sound="swoosh"
+                      >
+                        <span>Visit website</span>
+                        <ArrowUpRight size={20} />
+                      </Link>
+                    </motion.div>
                   )}
                 </div>
-                <div className="experience-modal-roles">
+                <motion.div
+                  className="experience-modal-roles"
+                  variants={contentItem}
+                >
                   {work.roles.map((role) => (
                     <span key={role}>{role}</span>
                   ))}
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
-              <div className="experience-modal-body">
+              <motion.div
+                className="experience-modal-body"
+                variants={contentGroup}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
                 {paragraphs.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
+                  <motion.p key={index} variants={contentItem}>
+                    {paragraph}
+                  </motion.p>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
           </div>
         </>

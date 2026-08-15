@@ -214,6 +214,24 @@ button {
   }
 }
 
+// Touch devices and small screens have no hover to reveal the peek art,
+// so keep it permanently in its revealed position there.
+@media (hover: none), screen and (max-width: 768px) {
+
+  // Breathing room between the title and the always-visible art.
+  .hero-links {
+    margin-top: 12px;
+  }
+
+  .hero-peek-page {
+    transform: translateY(18%) rotate(-8deg);
+  }
+
+  .hero-peek-tile {
+    transform: translateY(6%) rotate(-8deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
 
   .hero-peek-page,
@@ -357,10 +375,14 @@ button {
 // Experience modal
 // ---------------------------------------------------------------------------
 
+// Frosted glass — replaces the old body.modal-open page dim, so the list the
+// card just morphed out of stays readable behind the blur.
 .experience-modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 1500;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .experience-modal-root {
@@ -503,7 +525,7 @@ button {
 
 [data-theme="light"] {
   .experience-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.18);
+    background-color: rgba(255, 255, 255, 0.45);
   }
 
   .experience-modal {
@@ -534,7 +556,7 @@ button {
 
 [data-theme="dark"] {
   .experience-modal-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(1, 1, 1, 0.55);
   }
 
   .experience-modal {
