@@ -75,7 +75,14 @@ function HeroSection() {
         <motion.h1 variants={itemVariants}>Hi there, I’m Petar.</motion.h1>
         <motion.nav className="hero-links" variants={itemVariants} aria-label="Contact links">
           {heroLinks.map(({ label, href, art }) => (
-            <a key={label} className="hero-link" href={href} target="_blank" rel="noreferrer">
+            <a
+              key={label}
+              className="hero-link"
+              href={href}
+              target="_blank"
+              rel="noreferrer"
+              data-sound="send"
+            >
               {label}
               <span className="hero-link-peek" aria-hidden="true">
                 {art}

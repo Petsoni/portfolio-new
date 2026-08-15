@@ -2,15 +2,22 @@
 
 import { useEffect } from "react";
 import { defineSound, ensureReady } from "@web-kits/audio";
-import { tap, hover } from "@/.web-kits/minimal";
+import { tap, hover, send, swoosh } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
 
-// Both play functions must come from "@web-kits/audio" (not "/react"):
+// All play functions must come from "@web-kits/audio" (not "/react"):
 // each entry point bundles its own private AudioContext, so unlocking the
 // context from one entry while playing through the other leaves all sounds
 // muted until the browser happens to allow a resume() inside a click.
 const playClick = defineSound(tap);
 const playHover = defineSound(hover);
+
+// Per-element click-sound overrides, opted into with data-sound="<name>",
+// e.g. <a data-sound="swoosh">. Unknown names fall back to the default tap.
+const clickSounds: Record<string, () => unknown> = {
+  send: defineSound(send),
+  swoosh: defineSound(swoosh),
+};
 
 const prefersReducedMotion = () =>
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -26,7 +33,9 @@ type UseUiSoundsOptions = {
 
 /**
  * Adds audible feedback to interactive elements using @web-kits/audio:
- * the "tap" and "hover" sounds from the Minimal patch (.web-kits/minimal).
+ * the "tap" and "hover" sounds from the Core patch (.web-kits/core).
+ * Individual elements can swap the click sound via data-sound="<name>"
+ * for any name registered in `clickSounds`.
  *
  * The AudioContext is unlocked as early as the browser allows: immediately on
  * mount when autoplay is permitted (e.g. returning visitors), otherwise on the
@@ -77,9 +86,14 @@ export function useUiSounds({
 
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
+      const interactive = target?.closest(selector);
       // No running-state guard here: the click itself unlocks the context,
       // so a voice scheduled during resume plays the instant it completes.
-      if (target?.closest(selector) && !prefersReducedMotion()) playClick();
+      if (interactive && !prefersReducedMotion()) {
+        const override = interactive.getAttribute("data-sound");
+        const play = (override && clickSounds[override]) || playClick;
+        play();
+      }
       // Haptic feedback only for button presses.
       if (target?.closest(hapticSelector)) playHaptic("rigid");
     };

@@ -101,6 +101,7 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
                       href={work.link}
                       target="_blank"
                       className="experience-modal-visit"
+                      data-sound="swoosh"
                     >
                       <span>Visit website</span>
                       <ArrowUpRight size={20} />
