@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import Dropdown from "@/app/components/playground/Dropdown";
+import { playgroundMorphId } from "@/app/motion-variants";
 
 const dropdownOptions = [
   "Software Development",
@@ -23,6 +24,7 @@ export default function DropdownPage() {
       <UiSounds />
       <ComponentShowcase
         title="Dropdown"
+        morphId={playgroundMorphId("dropdown")}
         description="An expanding select. The closed pill grows a soft panel around itself,
           the options bloom in with a blur stagger, and the whole thing is fully
           keyboard-accessible."

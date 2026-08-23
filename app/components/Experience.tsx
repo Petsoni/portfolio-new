@@ -9,9 +9,13 @@ import ExperienceModal, {
   returnSpring,
   workLayoutId,
 } from "@/app/components/ExperienceModal";
+import { useHomeEntrance } from "@/app/hooks/useHomeEntrance";
 
 function Experience() {
   const [selected, setSelected] = useState<WorkModel | null>(null);
+  // One-time entrance: plays on hard load/refresh, skipped when returning
+  // from a showcase page via back-navigation.
+  const entrance = useHomeEntrance();
 
   return (
     // reducedMotion="user" collapses the row-to-card morph (and other
@@ -21,7 +25,7 @@ function Experience() {
       <motion.section
         className="section experience-section"
         variants={containerVariants}
-        initial="hidden"
+        initial={entrance}
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
       >

@@ -11,7 +11,7 @@ import { Check } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import "./MultistateButton.scss";
 
-type Phase = "idle" | "generating" | "success";
+export type Phase = "idle" | "generating" | "success";
 
 // Cycle order — clicks only land in idle, the rest advances on timers.
 const PHASES: Phase[] = ["idle", "generating", "success"];
@@ -82,6 +82,16 @@ function buildCells(width: number, height: number): Cell[] {
   return cells;
 }
 
+interface MultistateButtonProps {
+  /**
+   * Pin the button to a phase for inspection (the demo's state picker drives
+   * this); the simulated flow's timers pause while pinned. Null runs free.
+   */
+  pinnedPhase?: Phase | null;
+  /** Fires whenever the button advances itself — a click or a flow timer. */
+  onPhaseChange?: (phase: Phase) => void;
+}
+
 /**
  * Action button from the Figma design, with the square-grid pattern frame
  * rebuilt as live SVG cells so every square can animate on its own. At rest
@@ -90,8 +100,13 @@ function buildCells(width: number, height: number): Cell[] {
  * generates. On success a single green ripple rolls outward from the center
  * as the label lands on "Report ready".
  */
-function MultistateButton() {
-  const [phase, setPhase] = useState<Phase>("idle");
+function MultistateButton({
+  pinnedPhase = null,
+  onPhaseChange,
+}: MultistateButtonProps) {
+  const [ownPhase, setOwnPhase] = useState<Phase>("idle");
+  // A pinned phase overrides the button's own flow wherever it stands.
+  const phase = pinnedPhase ?? ownPhase;
   const [size, setSize] = useState({ width: 0, height: 0 });
   const patternRef = useRef<HTMLSpanElement>(null);
   const reducedMotion = useReducedMotion();
@@ -111,15 +126,20 @@ function MultistateButton() {
 
   const cells = useMemo(() => buildCells(size.width, size.height), [size]);
 
-  // Advance the simulated flow; each phase cleans up its own timer.
+  // Every self-driven move (a click below, or the timers here) lands through
+  // onPhaseChange so an outside picker can follow the flow.
   useEffect(() => {
-    if (phase === "idle") return;
+    if (pinnedPhase != null || ownPhase === "idle") return;
     const timer = window.setTimeout(
-      () => setPhase(phase === "generating" ? "success" : "idle"),
-      phase === "generating" ? GENERATING_MS : SUCCESS_MS,
+      () => {
+        const next: Phase = ownPhase === "generating" ? "success" : "idle";
+        setOwnPhase(next);
+        onPhaseChange?.(next);
+      },
+      ownPhase === "generating" ? GENERATING_MS : SUCCESS_MS,
     );
     return () => window.clearTimeout(timer);
-  }, [phase]);
+  }, [ownPhase, pinnedPhase, onPhaseChange]);
 
   // Pulse engine: flash random cells while generating. Works on the DOM
   // directly so a hundred-plus cells don't re-render every tick; each pulse
@@ -175,7 +195,11 @@ function MultistateButton() {
       data-phase={phase}
       aria-busy={phase === "generating"}
       aria-live="polite"
-      onClick={() => phase === "idle" && setPhase("generating")}
+      onClick={() => {
+        if (phase !== "idle") return;
+        setOwnPhase("generating");
+        onPhaseChange?.("generating");
+      }}
       whileTap={
         phase === "idle" && !reducedMotion ? { scale: 0.97 } : undefined
       }

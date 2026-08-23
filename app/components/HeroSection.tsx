@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "motion/react";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { containerVariants, itemVariants } from "@/app/motion-variants";
+import { useHomeEntrance } from "@/app/hooks/useHomeEntrance";
 
 // Mini PDF page that peeks out from behind the CV link on hover.
 // Colors come from the --peek-* custom properties defined in common.scss.
@@ -63,11 +64,15 @@ const heroLinks = [
 ];
 
 function HeroSection() {
+  // One-time entrance: plays on hard load/refresh, skipped when returning
+  // from a showcase page via back-navigation.
+  const entrance = useHomeEntrance();
+
   return (
     <motion.section
       className="section hero-section"
       variants={containerVariants}
-      initial="hidden"
+      initial={entrance}
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
     >
