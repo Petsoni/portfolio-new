@@ -1,0 +1,36 @@
+// ---------------------------------------------------------------------------
+// Palette — design tokens from the Figma "Grays" collection.
+// Shared design tokens. Component style files pull these in with
+// `@use "../../palette" as *;` (path relative to the component).
+// ---------------------------------------------------------------------------
+
+// Gray ramp
+$gray-25: #fbfbfb;
+$gray-50: #f6f6f6;
+$gray-100: #e7e7e7;
+$gray-200: #d1d1d1;
+$gray-300: #b0b0b0;
+$gray-400: #888888;
+$gray-500: #6d6d6d;
+$gray-600: #5d5d5d;
+$gray-700: #4f4f4f;
+$gray-800: #454545;
+$gray-900: #3d3d3d;
+$gray-950: #171717;
+
+// Borders
+$border-lightest: #f0f0f0;
+$border-light: #e3e3e3;
+$border-dark: $gray-200; // #d1d1d1 — shares a value with Grays/200 in Figma
+
+// ---------------------------------------------------------------------------
+// Semantic aliases used across common.scss and components.
+// ---------------------------------------------------------------------------
+
+$background-light: #ffffff;
+$heading-light: $gray-900; // headings, company names
+$link-light: $gray-800; // hero text links
+$muted-light: $gray-500; // bio, body copy
+$faint-light: $gray-400; // durations, secondary meta
+$rule-light: $gray-200; // hairline rules
+$hover-light: $gray-50; // hover fills (was #f5f5f5 — snapped to the ramp)

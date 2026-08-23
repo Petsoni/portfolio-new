@@ -1,0 +1,25 @@
+---
+description: Component file structure — one component per file, each with its own SCSS file
+globs: **/*.tsx,**/*.scss
+alwaysApply: false
+---
+
+# Component structure
+
+Every React component gets its own file, and every component with styles gets
+its own SCSS file next to it — never append component styles to `common.scss`.
+
+```
+app/components/playground/
+  Dropdown.tsx    // the component
+  Dropdown.scss   // its styles, same base name
+```
+
+- Import the style file at the top of the component: `import "./Dropdown.scss";`
+- Class names are global BEM-ish, prefixed by the component root class
+  (`.dropdown`, `.dropdown-trigger`, `.dropdown-option`).
+- Shared design tokens live in `app/_palette.scss`. Pull them in with a
+  relative `@use`: `@use "../../palette" as *;`
+- `app/common.scss` keeps only shared, site-wide styles (typography, page
+  layout, styles reused by several components). It re-exports the palette via
+  `@forward "palette";` for `global.scss`.

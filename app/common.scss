@@ -1,24 +1,7 @@
-// ---------------------------------------------------------------------------
-// Palette — grayscale ramp from the Figma design (Woodsmoke scale)
-// ---------------------------------------------------------------------------
-
-$background-light: #ffffff;
-$heading-light: #3d3d3d; // Woodsmoke/900 — headings, company names
-$link-light: #454545; // Woodsmoke/800 — hero text links
-$muted-light: #6d6d6d; // Woodsmoke/500 — bio, body copy
-$faint-light: #888888; // Woodsmoke/400 — durations, secondary meta
-$rule-light: #d1d1d1; // Woodsmoke/200 — hairline rules
-$border-light: #e7e7e7;
-$hover-light: #f5f5f5;
-
-$background-dark: #010101;
-$heading-dark: #ededed;
-$link-dark: #cfcfcf;
-$muted-dark: #9a9a9a;
-$faint-dark: #767676;
-$rule-dark: #2a2a2a;
-$border-dark: #1f1f1f;
-$hover-dark: #131313;
+// Palette lives in _palette.scss so per-component style files can share the
+// tokens. @forward re-exports it for files that `@use "common"` (global.scss).
+@use "palette" as *;
+@forward "palette";
 
 // ---------------------------------------------------------------------------
 // Typography
@@ -50,44 +33,21 @@ button {
   line-height: 21px;
 }
 
-[data-theme="light"] {
-
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: $heading-light;
-  }
-
-  p {
-    color: $muted-light;
-  }
-
-  a {
-    color: $link-light;
-  }
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: $heading-light;
 }
 
-[data-theme="dark"] {
+p {
+  color: $muted-light;
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    color: $heading-dark;
-  }
-
-  p {
-    color: $muted-dark;
-  }
-
-  a {
-    color: $link-dark;
-  }
+a {
+  color: $link-light;
 }
 
 // ---------------------------------------------------------------------------
@@ -142,6 +102,15 @@ button {
   text-decoration: underline;
   text-underline-position: from-font;
   transition: color 0.2s ease;
+  --peek-paper: #{$background-light};
+  --peek-border: #{$rule-light};
+  --peek-fold: #{$hover-light};
+  --peek-line: #{$border-light};
+  --peek-ink: #{$heading-light};
+
+  &:hover {
+    color: $heading-light;
+  }
 }
 
 // Peek-on-hover: a small artwork (PDF page for CV, glyph tiles for the rest)
@@ -216,7 +185,8 @@ button {
 
 // Touch devices and small screens have no hover to reveal the peek art,
 // so keep it permanently in its revealed position there.
-@media (hover: none), screen and (max-width: 768px) {
+@media (hover: none),
+screen and (max-width: 768px) {
 
   // Breathing room between the title and the always-visible art.
   .hero-links {
@@ -237,30 +207,6 @@ button {
   .hero-peek-page,
   .hero-peek-tile {
     transition-duration: 0.01ms !important;
-  }
-}
-
-[data-theme="light"] .hero-link {
-  --peek-paper: #{$background-light};
-  --peek-border: #{$rule-light};
-  --peek-fold: #{$hover-light};
-  --peek-line: #{$border-light};
-  --peek-ink: #{$heading-light};
-
-  &:hover {
-    color: $heading-light;
-  }
-}
-
-[data-theme="dark"] .hero-link {
-  --peek-paper: #{$hover-dark};
-  --peek-border: #{$rule-dark};
-  --peek-fold: #{$border-dark};
-  --peek-line: #{$rule-dark};
-  --peek-ink: #{$heading-dark};
-
-  &:hover {
-    color: $heading-dark;
   }
 }
 
@@ -318,6 +264,7 @@ button {
   .experience-name {
     font-weight: 500;
     white-space: nowrap;
+    color: $heading-light;
   }
 
   .separator {
@@ -330,15 +277,6 @@ button {
     flex-shrink: 0;
     white-space: nowrap;
     font-weight: 500;
-  }
-}
-
-[data-theme="light"] .experience-row {
-  .experience-name {
-    color: $heading-light;
-  }
-
-  .experience-duration {
     color: $faint-light;
   }
 
@@ -347,30 +285,9 @@ button {
   }
 }
 
-[data-theme="dark"] .experience-row {
-  .experience-name {
-    color: $heading-dark;
-  }
-
-  .experience-duration {
-    color: $faint-dark;
-  }
-
-  &:hover {
-    background-color: $hover-dark;
-  }
-}
-
 .separator {
   height: 1px;
-}
-
-[data-theme="light"] .separator {
   background-color: $rule-light;
-}
-
-[data-theme="dark"] .separator {
-  background-color: $rule-dark;
 }
 
 // ---------------------------------------------------------------------------
@@ -383,6 +300,7 @@ button {
   position: fixed;
   inset: 0;
   z-index: 1500;
+  background-color: rgba(255, 255, 255, 0.45);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -410,6 +328,8 @@ button {
   max-height: min(640px, 82dvh);
   padding: 20px;
   border-radius: 12px;
+  background: $background-light;
+  border: 1px solid $border-light;
   outline: none;
 
   // Left column — stretches to card height so roles pin to the bottom.
@@ -440,16 +360,19 @@ button {
     font-weight: 550;
     letter-spacing: -0.03em;
     line-height: 1.5;
+    color: $link-light;
   }
 
   .experience-modal-duration {
     font-weight: 500;
+    color: $faint-light;
   }
 
   .experience-modal-roles {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    color: $heading-light;
 
     span {
       font-weight: 600;
@@ -470,6 +393,7 @@ button {
     p {
       width: 100%;
       font-weight: 500;
+      color: $muted-light;
     }
   }
 
@@ -478,6 +402,7 @@ button {
     align-items: center;
     gap: 4px;
     font-weight: 600;
+    color: $heading-light;
 
     span {
       position: relative;
@@ -525,68 +450,6 @@ button {
   }
 }
 
-[data-theme="light"] {
-  .experience-modal-overlay {
-    background-color: rgba(255, 255, 255, 0.45);
-  }
-
-  .experience-modal {
-    background: $background-light;
-    border: 1px solid $border-light;
-
-    .experience-modal-title {
-      color: $link-light;
-    }
-
-    .experience-modal-roles {
-      color: $heading-light;
-    }
-
-    .experience-modal-duration {
-      color: $faint-light;
-    }
-
-    .experience-modal-body p {
-      color: $muted-light;
-    }
-
-    .experience-modal-visit {
-      color: $heading-light;
-    }
-  }
-}
-
-[data-theme="dark"] {
-  .experience-modal-overlay {
-    background-color: rgba(1, 1, 1, 0.55);
-  }
-
-  .experience-modal {
-    background: $background-dark;
-    border: 1px solid $border-dark;
-
-    .experience-modal-title {
-      color: $link-dark;
-    }
-
-    .experience-modal-roles {
-      color: $heading-dark;
-    }
-
-    .experience-modal-duration {
-      color: $faint-dark;
-    }
-
-    .experience-modal-body p {
-      color: $muted-dark;
-    }
-
-    .experience-modal-visit {
-      color: $heading-dark;
-    }
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Buttons
 // ---------------------------------------------------------------------------
@@ -601,71 +464,78 @@ button {
   border-radius: 10px;
   white-space: nowrap;
   cursor: pointer;
+  background: $background-light;
+  border: 1px solid $border-light;
+  color: $heading-light;
   transition: all 0.2s ease;
 
   svg {
     flex-shrink: 0;
   }
-}
-
-[data-theme="light"] .pill-button {
-  background: $background-light;
-  border: 1px solid $border-light;
-  color: $heading-light;
 
   &:hover {
     background: $hover-light;
   }
 }
 
-[data-theme="dark"] .pill-button {
-  background: $background-dark;
-  border: 1px solid $border-dark;
-  color: $heading-dark;
+// ---------------------------------------------------------------------------
+// Playground page
+// The home-page Playground section reuses the experience-section styles.
+// ---------------------------------------------------------------------------
 
-  &:hover {
-    background: $hover-dark;
+.playground-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+
+  p {
+    max-width: 480px;
   }
 }
 
-// ---------------------------------------------------------------------------
-// Theme toggle
-// ---------------------------------------------------------------------------
-
-.theme-toggle-wrapper {
-  position: absolute;
-  top: 2.5rem;
-  z-index: 1000;
-
-  .theme-toggle {
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-  }
-}
-
-[data-theme="light"] .theme-toggle {
-  border: 1px solid $border-light;
+.playground-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
   color: $faint-light;
-  background: $background-light;
+  transition: color 0.2s ease;
+
+  svg {
+    transition: transform 0.2s ease;
+  }
 
   &:hover {
-    background: $hover-light;
     color: $heading-light;
+
+    svg {
+      transform: translateX(-2px);
+    }
   }
 }
 
-[data-theme="dark"] .theme-toggle {
-  border: 1px solid $border-dark;
-  color: $faint-dark;
-  background: $background-dark;
+.playground-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 
-  &:hover {
-    background: $hover-dark;
-    color: $heading-dark;
+  >p {
+    max-width: 520px;
+  }
+}
+
+.playground-stage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  // Tall enough for the dropdown's open panel to stay inside the frame.
+  min-height: 356px;
+  padding: 48px 24px;
+  border: 1px solid $border-light;
+  border-radius: 12px;
+
+  .dropdown {
+    width: 226px; // closed-state frame width from the Figma design
   }
 }

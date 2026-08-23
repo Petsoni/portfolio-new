@@ -6,7 +6,7 @@ import { Github, Linkedin, Mail } from "lucide-react";
 import { containerVariants, itemVariants } from "@/app/motion-variants";
 
 // Mini PDF page that peeks out from behind the CV link on hover.
-// Colors come from the --peek-* custom properties themed in common.scss.
+// Colors come from the --peek-* custom properties defined in common.scss.
 function PdfPeekPage() {
   return (
     <svg className="hero-peek-page" viewBox="0 0 26 34" fill="none">

@@ -1,8 +1,6 @@
 @use "common" as *;
 @use "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
-
 $font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
   "SF Pro", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
 
@@ -35,34 +33,16 @@ $font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
 
 body {
   font-weight: 500;
-  transition: background-color 0.5s ease, color 0.5s ease;
-}
-
-[data-theme="light"] body {
   background-color: $background-light;
   color: $heading-light;
-}
-
-[data-theme="dark"] body {
-  background-color: $background-dark;
-  color: $heading-dark;
 }
 
 .lucide {
   stroke-width: 1.75px;
 }
 
-*,
-*::before,
-*::after {
-  transition: background-color 0.45s ease, border-color 0.45s ease,
-    color 0.45s ease, fill 0.45s ease, stroke 0.45s ease;
-}
-
-.section,
-.theme-toggle-wrapper {
-  transition: opacity 0.25s ease, filter 0.25s ease,
-    background-color 0.45s ease, border-color 0.45s ease, color 0.45s ease;
+.section {
+  transition: opacity 0.25s ease, filter 0.25s ease;
 }
 
 :root {
@@ -77,19 +57,6 @@ body {
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.708 0 0);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
 }
 
 @layer base {
