@@ -48,4 +48,8 @@
   padding: 48px 24px;
   border: 1px solid $border-light;
   border-radius: 12px;
+
+  &[data-align="center"] {
+    align-items: center;
+  }
 }

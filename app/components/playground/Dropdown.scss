@@ -2,12 +2,8 @@
 
 // ---------------------------------------------------------------------------
 // Dropdown (playground component) — from the two-state Figma design.
+// The tactile shadow token lives in the shared palette.
 // ---------------------------------------------------------------------------
-
-// Layered "tactile" shadow lifted from the design.
-$tactile-shadow: 0 1px 1px rgba(48, 48, 48, 0.04),
-  0 2px 1px rgba(48, 48, 48, 0.03), 0 3px 1px rgba(48, 48, 48, 0.01),
-  0 5px 1px rgba(48, 48, 48, 0);
 
 .dropdown {
   // The open panel overlays the page, so the wrapper only reserves the closed
@@ -27,28 +23,45 @@ $tactile-shadow: 0 1px 1px rgba(48, 48, 48, 0.04),
 
 .dropdown-panel {
   position: absolute;
-  // Base values are the CLOSED geometry — hugging the trigger exactly. The
-  // component springs top/left/right, padding, border-width, and radius to
-  // the open values so the panel visibly expands out of the trigger.
-  top: 0;
-  left: 0;
-  right: 0;
+  // Static 5px structural halo (-5 + 5 = 0): the trigger and list sit at
+  // constant offsets, so their layout never depends on an animated value.
+  // The panel paints nothing itself — .dropdown-chrome draws the frame.
+  top: -5px;
+  left: -5px;
+  right: -5px;
   z-index: 20;
   display: flex;
   flex-direction: column;
-  padding: 0;
-  border: 0 solid transparent;
+  padding: 5px;
+  pointer-events: none;
+
+  &[data-open="true"] {
+    pointer-events: auto;
+  }
+}
+
+// Decorative layer behind the trigger and list. Motion springs its insets
+// from 5px (the trigger's exact box) to 0 (the panel's edge), so the frame
+// visibly expands out of the pill — without ever touching the trigger's
+// layout, which is what caused the old subpixel jitter.
+.dropdown-chrome {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  bottom: 5px;
+  left: 5px;
+  z-index: 0;
+  border: 1px solid transparent;
   border-radius: 12px;
   background: transparent;
   box-shadow: none;
   pointer-events: none;
-  // Chrome lingers a touch longer on close so the shrinking panel stays
+  // Chrome lingers a touch longer on close so the shrinking frame stays
   // visible while it tucks back into the pill.
   transition: background-color 0.3s ease, border-color 0.3s ease,
     box-shadow 0.3s ease;
 
-  &[data-open="true"] {
-    pointer-events: auto;
+  .dropdown-panel[data-open="true"] & {
     background: var(--dd-panel-bg);
     border-color: var(--dd-panel-border);
     box-shadow: $tactile-shadow;
@@ -59,6 +72,7 @@ $tactile-shadow: 0 1px 1px rgba(48, 48, 48, 0.04),
 
 .dropdown-trigger {
   pointer-events: auto;
+  z-index: 1; // above the chrome layer
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -102,6 +116,7 @@ $tactile-shadow: 0 1px 1px rgba(48, 48, 48, 0.04),
 }
 
 .dropdown-list-clip {
+  z-index: 1; // above the chrome layer
   overflow: hidden;
   border-radius: 12px;
 }

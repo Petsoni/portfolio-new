@@ -15,6 +15,12 @@ const playgroundItems = [
     meta: "Animated select",
     href: "/playground/dropdown",
   },
+  {
+    id: "multistate-button",
+    name: "Multistate Button",
+    meta: "Stateful action button",
+    href: "/playground/multistate-button",
+  },
 ];
 
 function PlaygroundSection() {

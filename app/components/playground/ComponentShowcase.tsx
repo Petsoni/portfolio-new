@@ -10,6 +10,11 @@ import "./ComponentShowcase.scss";
 interface ComponentShowcaseProps {
   title: string;
   description: string;
+  /**
+   * Vertical placement of the demo on the stage. "top" suits demos that
+   * expand downward (e.g. the dropdown); "center" suits fixed-size ones.
+   */
+  align?: "top" | "center";
   /** The live demo, rendered centered on the stage. */
   children: React.ReactNode;
 }
@@ -22,6 +27,7 @@ interface ComponentShowcaseProps {
 function ComponentShowcase({
   title,
   description,
+  align = "top",
   children,
 }: ComponentShowcaseProps) {
   return (
@@ -39,7 +45,11 @@ function ComponentShowcase({
       </motion.div>
       <motion.h1 variants={itemVariants}>{title}</motion.h1>
       <motion.p variants={itemVariants}>{description}</motion.p>
-      <motion.div className="component-showcase-stage" variants={itemVariants}>
+      <motion.div
+        className="component-showcase-stage"
+        data-align={align}
+        variants={itemVariants}
+      >
         {children}
       </motion.div>
     </motion.section>

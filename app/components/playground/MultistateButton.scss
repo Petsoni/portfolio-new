@@ -1,0 +1,154 @@
+@use "../../palette" as *;
+
+// ---------------------------------------------------------------------------
+// Multistate button (playground component) — the pill from the Figma design,
+// its square-grid pattern rebuilt as SVG cells so each square animates alone.
+// ---------------------------------------------------------------------------
+
+// The Figma pattern paints its ink at 5% — quiet enough to sit under text.
+$cell-ink: $gray-950;
+$cell-alpha: 0.05;
+// "Primary" stays on the gray ramp: pulses flash cells up to this.
+$pulse-ink: $gray-600;
+// Success green for the "Report ready" wave.
+$success-ink: #16a34a;
+// Darker text-grade green — the wave's hue at AA contrast for 14px text.
+$success-text: #15803d;
+
+.multistate-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  margin: 0;
+  border: 1px solid $border-lightest;
+  border-radius: 12px;
+  background: $background-light;
+  box-shadow: $tactile-shadow;
+  // Size, tracking, and line-height come from the base button rules and
+  // already match the design (14px / -0.02em / 21px).
+  font-weight: 500;
+  color: $gray-900;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &[data-phase="generating"],
+  &[data-phase="success"] {
+    cursor: default;
+  }
+}
+
+// Pattern layer hugs the inside of the border and clips to its rounding.
+.multistate-button-pattern {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 11px; // button radius minus the 1px border
+  pointer-events: none;
+
+  svg {
+    display: block;
+  }
+}
+
+.multistate-button-cell {
+  fill: $cell-ink;
+  // Idle: a corner patch — --glow fades 1 → 0 away from the bottom left.
+  fill-opacity: calc(var(--glow) * #{$cell-alpha});
+  transition: fill-opacity 0.5s ease;
+  // Returning to idle, the field retracts into its corner home: the cells
+  // farthest from it let go first (--spread is 0..1 from that corner).
+  transition-delay: calc((1 - var(--spread)) * 200ms);
+
+  // Working and settling, the field itself stays clear: the corner glow
+  // melts away at once and only the animated squares are visible.
+  .multistate-button[data-phase="generating"] &,
+  .multistate-button[data-phase="success"] & {
+    fill-opacity: 0;
+    transition-duration: 0.25s;
+    transition-delay: 0s;
+  }
+
+  // Random cells flash on the cleared field while the button works (class
+  // driven from JS); everything else stays transparent.
+  &.is-pulsing {
+    animation: multistate-button-pulse 0.55s ease-out;
+  }
+
+  // Success: a single green ripple rolls outward from the center — the
+  // keyframes rise from the transparent base, so only the green squares
+  // show. It outranks any still-running pulses, reading as one unified wave.
+  .multistate-button[data-phase="success"] & {
+    animation: multistate-button-ripple 0.55s ease-out;
+    animation-delay: calc(var(--mid) * 430ms);
+  }
+}
+
+// Flash up to the darker ramp gray, then decay back to transparent.
+@keyframes multistate-button-pulse {
+  0% {
+    fill-opacity: 0;
+  }
+
+  15% {
+    fill: $pulse-ink;
+    fill-opacity: 0.15;
+  }
+
+  100% {
+    fill-opacity: 0;
+  }
+}
+
+// Green crest for the success ripple; from/to inherit the transparent base.
+@keyframes multistate-button-ripple {
+  35% {
+    fill: $success-ink;
+    fill-opacity: 0.25;
+  }
+}
+
+// All three labels stay stacked in one grid cell, so the button's width is
+// pinned to the widest label and never shifts between states.
+.multistate-button-labels {
+  position: relative; // paints above the pattern layer
+  display: grid;
+}
+
+.multistate-button-label {
+  grid-area: 1 / 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+
+  .lucide {
+    flex-shrink: 0;
+  }
+
+  // The check inherits the green via currentColor.
+  &[data-label="success"] {
+    color: $success-text;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .multistate-button-cell {
+    transition: none;
+    animation: none !important;
+  }
+
+  // No pulses without motion — a static lit field says "working" instead.
+  .multistate-button[data-phase="generating"] .multistate-button-cell {
+    fill-opacity: $cell-alpha;
+  }
+
+  // No wave without motion — tint the field instead so success still reads.
+  .multistate-button[data-phase="success"] .multistate-button-cell {
+    fill: $success-ink;
+    fill-opacity: 0.2;
+  }
+}

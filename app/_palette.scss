@@ -23,6 +23,12 @@ $border-lightest: #f0f0f0;
 $border-light: #e3e3e3;
 $border-dark: $gray-200; // #d1d1d1 — shares a value with Grays/200 in Figma
 
+// Layered "tactile" shadow — Figma effect style "Tactile 1", shared by the
+// playground controls (dropdown trigger, multistate button).
+$tactile-shadow: 0 1px 1px rgba(48, 48, 48, 0.04),
+  0 2px 1px rgba(48, 48, 48, 0.03), 0 3px 1px rgba(48, 48, 48, 0.01),
+  0 5px 1px rgba(48, 48, 48, 0);
+
 // ---------------------------------------------------------------------------
 // Semantic aliases used across common.scss and components.
 // ---------------------------------------------------------------------------

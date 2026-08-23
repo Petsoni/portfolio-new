@@ -170,28 +170,29 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
   return (
     <div className="dropdown" ref={rootRef}>
       {/*
-        The panel expands out of the trigger: its edges push 5px past the pill,
-        the padding and border grow in, and the radius rounds up — all on the
-        same spring as the list height. top + borderWidth + padding always sum
-        to 0 (-5 + 1 + 4), so the trigger never moves a pixel while the panel
-        inflates around it.
+        The panel is a static 5px spacer around the trigger (-5 + 5 = 0), so
+        the trigger's layout never depends on an animated value — it can't
+        move or resize. The chrome is a purely decorative layer behind it
+        that springs from the trigger's exact box (inset 5) to the panel's
+        edge (inset 0), so the frame visibly grows out of the pill. Spring
+        overshoot is harmless here: nothing else reads the chrome's geometry.
       */}
-      <motion.div
-        className="dropdown-panel"
-        data-open={open}
-        initial={false}
-        animate={{
-          top: open ? -5 : 0,
-          left: open ? -5 : 0,
-          right: open ? -5 : 0,
-          padding: open ? 4 : 0,
-          borderWidth: open ? 1 : 0,
-          borderRadius: open ? 16 : 12,
-        }}
-        transition={
-          reducedMotion ? { duration: 0 } : open ? openSpring : closeSpring
-        }
-      >
+      <div className="dropdown-panel" data-open={open}>
+        <motion.div
+          className="dropdown-chrome"
+          aria-hidden="true"
+          initial={false}
+          animate={{
+            top: open ? 0 : 5,
+            right: open ? 0 : 5,
+            bottom: open ? 0 : 5,
+            left: open ? 0 : 5,
+            borderRadius: open ? 16 : 12,
+          }}
+          transition={
+            reducedMotion ? { duration: 0 } : open ? openSpring : closeSpring
+          }
+        />
         <button
           type="button"
           ref={triggerRef}
@@ -248,7 +249,7 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.div>
+      </div>
     </div>
   );
 }
