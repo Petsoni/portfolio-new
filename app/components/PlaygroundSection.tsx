@@ -23,6 +23,12 @@ const playgroundItems = [
     meta: "Stateful action button",
     href: "/playground/multistate-button",
   },
+  {
+    id: "slider",
+    name: "Slider",
+    meta: "Magnetic range control",
+    href: "/playground/slider",
+  },
 ];
 
 function PlaygroundSection() {

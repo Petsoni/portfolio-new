@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { playUiSound } from "@/app/hooks/useUiSounds";
+import { modalOpen, modalClose } from "@/.web-kits/core";
 
 export interface WorkModel {
   id: number;
@@ -57,6 +59,17 @@ function ExperienceModal({ work, onClose }: ExperienceModalProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Sound tracks the open state rather than any single trigger, so closing
+  // via the overlay, Escape, or anything added later all sound the same.
+  // The trigger row opts out of the default tap with data-sound="none".
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    const isOpen = work !== null;
+    if (isOpen && !wasOpen.current) playUiSound(modalOpen);
+    if (!isOpen && wasOpen.current) playUiSound(modalClose);
+    wasOpen.current = isOpen;
+  }, [work]);
 
   useEffect(() => {
     if (!work) return;

@@ -242,7 +242,7 @@ screen and (max-width: 768px) {
   display: flex;
   flex-direction: column;
   width: calc(100% + 16px);
-  gap: 12px;
+  gap: space(2);
 }
 
 .experience-row {
@@ -251,7 +251,7 @@ screen and (max-width: 768px) {
   align-items: center;
   width: 100%;
   gap: 12px;
-  padding: 8px;
+  padding: 12px;
   border-radius: 8px;
   background: transparent;
   border: none;

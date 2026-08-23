@@ -1,0 +1,13 @@
+// ---------------------------------------------------------------------------
+// SliderDemo — the slider on stage with its mode picker below.
+// ---------------------------------------------------------------------------
+
+.slider-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  // Give the slider the stage's full width to cap itself against on narrow
+  // screens (it stops at its natural 356px everywhere else).
+  width: 100%;
+}

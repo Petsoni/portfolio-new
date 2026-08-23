@@ -90,6 +90,7 @@ function Picker<T extends string>({
             aria-checked={active}
             tabIndex={active ? 0 : -1}
             className="picker-option"
+            data-sound="focus"
             onClick={() => onChange(option.value)}
           >
             {active && (

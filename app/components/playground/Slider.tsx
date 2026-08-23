@@ -1,0 +1,456 @@
+"use client";
+
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  animate,
+  motion,
+  MotionValue,
+  useMotionTemplate,
+  useMotionValue,
+  useMotionValueEvent,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
+import { defineSound } from "@web-kits/audio";
+import { complete, progressTick } from "@/.web-kits/core";
+import { playHaptic } from "@/app/haptics";
+import "./Slider.scss";
+
+// Detents sit every 10% — the interior ones marked by ruler ticks, 0% and
+// 100% by the track's own edges.
+const DETENT_STEP = 10;
+const TICKS = Array.from({ length: 9 }, (_, i) => (i + 1) * DETENT_STEP);
+
+// The readout's inset from the track's left edge (the fill's inner padding
+// in the Figma design). Mirrored by `left` in Slider.scss.
+const VALUE_INSET = 10;
+
+// The track's fixed height (see Slider.scss) and the breathing room between
+// the track and the readout when it floats above.
+const TRACK_HEIGHT = 40;
+const LIFT_GAP = 6;
+
+// Max-value celebration cells — the same 5px squares on a 6px pitch as the
+// multistate button's pattern, so the two components speak one language.
+const CELL = 5;
+const PITCH = 6;
+const CORNER = 1.5;
+// A fresh twinkle sparks roughly this often while the slider sits at 100%.
+const TWINKLE_TICK_MS = 160;
+
+interface Dot {
+  x: number;
+  y: number;
+  /** 0..1 distance from the right edge — the wave's stagger, washing back
+   * from where the fill lands when it hits 100%. */
+  sweep: number;
+}
+
+/** Lay celebration cells across the measured track interior. */
+function buildDots(width: number, height: number): Dot[] {
+  const gap = PITCH - CELL;
+  const cols = Math.floor((width + gap) / PITCH);
+  const rows = Math.floor((height + gap) / PITCH);
+  if (cols < 1 || rows < 1) return [];
+
+  // Center the grid so partial pitches split evenly between the sides.
+  const x0 = (width - (cols * PITCH - gap)) / 2;
+  const y0 = (height - (rows * PITCH - gap)) / 2;
+
+  const dots: Dot[] = [];
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      const x = x0 + col * PITCH;
+      dots.push({
+        x,
+        y: y0 + row * PITCH,
+        sweep: (width - (x + CELL / 2)) / width,
+      });
+    }
+  }
+  return dots;
+}
+
+// The Core patch's progress tick, one per magnetic detent, and its
+// "complete" chord for landing on 100%. Defined through "@web-kits/audio"
+// (not "/react") so they play through the same AudioContext the site's other
+// sounds unlock — see useUiSounds for the full story.
+const playDetentTick = defineSound(progressTick);
+const playMaxChime = defineSound(complete);
+
+// Magnetic hop between detents: stiff and quick, with a hint of life.
+const detentSpring = { type: "spring", stiffness: 700, damping: 42 } as const;
+// Longer travels — press-jumps and keyboard steps — glide on a softer spring.
+const jumpSpring = { type: "spring", stiffness: 420, damping: 36 } as const;
+// Free-mode drags chase the pointer through a near-critical spring: tight
+// enough to feel 1:1, forgiving enough to absorb the press-jump handoff.
+const followSpring = { type: "spring", stiffness: 1200, damping: 80 } as const;
+// The readout's hop out of (and back into) the fill — quick, with a little
+// life at the top.
+const liftSpring = { type: "spring", stiffness: 550, damping: 32 } as const;
+
+const clamp = (value: number) => Math.min(100, Math.max(0, value));
+const nearestDetent = (value: number) =>
+  clamp(Math.round(value / DETENT_STEP) * DETENT_STEP);
+
+/**
+ * One ruler tick. It fades out just before the fill's edge reaches it, so no
+ * half-covered sliver ever pokes past the edge (ticks and fill share a color).
+ */
+function SliderTick({
+  pct,
+  fillPct,
+}: {
+  pct: number;
+  fillPct: MotionValue<number>;
+}) {
+  const opacity = useTransform(fillPct, [pct - 2.4, pct - 0.8], [1, 0]);
+  return (
+    <motion.span
+      className="slider-tick"
+      style={{ left: `${pct}%`, opacity }}
+      aria-hidden="true"
+    />
+  );
+}
+
+interface SliderProps {
+  /** Magnetic mode: the fill snaps between 10% detents while you drag. */
+  snap?: boolean;
+  /** Starting value, 0–100. */
+  defaultValue?: number;
+  /** Accessible name for the slider. */
+  label?: string;
+}
+
+/**
+ * Percentage slider from the Figma design: a bordered track with a ruler of
+ * ticks and a gray fill whose leading edge is the handle. Press or drag
+ * anywhere to move it — the readout inside the fill counts along, and hops
+ * above the track when the edge crowds it. In snap mode the fill moves
+ * between 10% detents with a magnetic spring, a soft tick, and a haptic.
+ * Landing on 100% sets off a wave of pattern dots that keep twinkling
+ * quietly until the value drops again.
+ */
+function Slider({
+  snap = false,
+  defaultValue = 45,
+  label = "Percentage",
+}: SliderProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const readoutRef = useRef<HTMLParagraphElement>(null);
+  const draggingRef = useRef(false);
+  // Mirror of `value` for pointer handlers and effects, so they never read a
+  // stale render's value mid-drag.
+  const valueRef = useRef(defaultValue);
+  const [value, setValue] = useState(defaultValue);
+  // Reactive twin of draggingRef — keeps the handle visible via the track's
+  // data attribute even when pointer capture carries the drag off-element.
+  const [dragging, setDragging] = useState(false);
+  const reducedMotion = useReducedMotion();
+
+  // The fill's width in percent — the single source of truth every visual
+  // reads from: the fill itself, the counting readout, the readout's lift,
+  // and the ticks ducking under the edge.
+  const fillPct = useMotionValue(defaultValue);
+  const fillWidth = useMotionTemplate`${fillPct}%`;
+  // The fill's 8px right rounding eases into the track's 12px as it closes
+  // in on the far edge, so the corners meet flush at 100%.
+  const fillRadius = useTransform(fillPct, [96, 100], [8, 12]);
+  // The hover handle straddles the fill's leading edge, clamped just inside
+  // the track's rounding at the extremes so it never spills past a corner.
+  const handleLeft = useMotionTemplate`clamp(8px, ${fillPct}%, calc(100% - 8px))`;
+
+  // The readout counts along with the live edge, not the target — a keyboard
+  // jump from 45% to 100% rolls the number up as the fill glides.
+  const readout = useTransform(fillPct, (v) => `${Math.round(v)}%`);
+
+  // Track and readout sizes for the lift math below.
+  const sizesRef = useRef({ track: 0, readout: 0, readoutHeight: 0 });
+
+  // When the fill's edge crowds the number, it hops above the track instead
+  // of letting the edge run it over — and drops back in once there's room
+  // again. The two thresholds overlap (hysteresis) so spring wobble around
+  // the boundary can't make it flutter.
+  const liftedRef = useRef(false);
+  const [lifted, setLifted] = useState(false);
+  const updateLift = useCallback(() => {
+    const { track, readout: readoutWidth } = sizesRef.current;
+    if (!track || !readoutWidth) return;
+    const edge = (fillPct.get() / 100) * track;
+    const tail = VALUE_INSET + readoutWidth;
+    const next = liftedRef.current ? edge < tail + 22 : edge < tail + 10;
+    if (next !== liftedRef.current) {
+      liftedRef.current = next;
+      setLifted(next);
+    }
+  }, [fillPct]);
+
+  useMotionValueEvent(fillPct, "change", updateLift);
+
+  // At 100% the celebration dots wake up: `maxed` follows the live edge, so
+  // the wave starts the moment the fill actually lands, not when the target
+  // is set. The threshold is the readout's own rounding boundary — whenever
+  // the number says "100%", it celebrates. No hysteresis needed: no pointer
+  // pixel, keyboard step, or detent can rest exactly on 99.5.
+  const maxedRef = useRef(defaultValue >= 99.5);
+  const [maxed, setMaxed] = useState(maxedRef.current);
+  // The fanfare re-arms only once the fill clearly leaves the max zone, so
+  // pixel wiggles across the boundary replay the (quiet) wave but not the
+  // chord. The visual can afford to be trigger-happy; the sound can't.
+  const chimeArmedRef = useRef(true);
+  useMotionValueEvent(fillPct, "change", (v) => {
+    if (v < 97) chimeArmedRef.current = true;
+    const next = v >= 99.5;
+    if (next === maxedRef.current) return;
+    maxedRef.current = next;
+    setMaxed(next);
+    if (next && chimeArmedRef.current && !reducedMotion) {
+      chimeArmedRef.current = false;
+      playMaxChime();
+      playHaptic("success");
+    }
+  });
+
+  // The dot grid fits the measured interior (only track resizes change it).
+  const [gridSize, setGridSize] = useState({ width: 0, height: 0 });
+  const dots = useMemo(
+    () => buildDots(gridSize.width, gridSize.height),
+    [gridSize],
+  );
+  const dotsRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    const readoutEl = readoutRef.current;
+    if (!track || !readoutEl) return;
+    const measure = () => {
+      sizesRef.current = {
+        track: track.clientWidth,
+        readout: readoutEl.offsetWidth,
+        readoutHeight: readoutEl.offsetHeight,
+      };
+      updateLift();
+      const { clientWidth: width, clientHeight: height } = track;
+      setGridSize((prev) =>
+        prev.width === width && prev.height === height
+          ? prev
+          : { width, height },
+      );
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(track);
+    observer.observe(readoutEl); // the number's width changes as it counts
+    return () => observer.disconnect();
+  }, [updateLift]);
+
+  // Twinkle engine, borrowed from the multistate button: while maxed, random
+  // cells glimmer on a timer. It works on the DOM directly so hundreds of
+  // cells never re-render; each twinkle removes its own class when its
+  // animation ends (checking the name — the arrival wave ends on the same
+  // elements). Leaving 100% clears any in-flight twinkles.
+  useEffect(() => {
+    if (!maxed || reducedMotion) return;
+    const rects = Array.from(
+      dotsRef.current?.querySelectorAll<SVGRectElement>("rect") ?? [],
+    );
+    if (rects.length === 0) return;
+    const timer = window.setInterval(() => {
+      const rect = rects[Math.floor(Math.random() * rects.length)];
+      if (!rect || rect.classList.contains("is-twinkling")) return;
+      const onEnd = (event: AnimationEvent) => {
+        if (event.animationName !== "slider-dot-twinkle") return;
+        rect.classList.remove("is-twinkling");
+        rect.removeEventListener("animationend", onEnd);
+      };
+      rect.addEventListener("animationend", onEnd);
+      rect.classList.add("is-twinkling");
+    }, TWINKLE_TICK_MS);
+    return () => {
+      window.clearInterval(timer);
+      for (const rect of rects) rect.classList.remove("is-twinkling");
+    };
+  }, [maxed, reducedMotion, dots]);
+
+  // Lifted, the readout's center moves from the track's middle to just above
+  // its top edge.
+  const liftY = -(TRACK_HEIGHT / 2 + LIFT_GAP + sizesRef.current.readoutHeight / 2);
+
+  // Land on a value with a spring. Detent landings get the stiffer magnetic
+  // spring plus the ratchet tick; everything else glides.
+  const settle = (next: number, opts: { detent?: boolean } = {}) => {
+    const target = clamp(next);
+    if (target === valueRef.current) return;
+    valueRef.current = target;
+    setValue(target);
+    if (reducedMotion) fillPct.jump(target);
+    else animate(fillPct, target, opts.detent ? detentSpring : jumpSpring);
+    if (opts.detent && !reducedMotion) {
+      playDetentTick();
+      playHaptic("selection");
+    }
+  };
+
+  // Free-mode drag: chase the pointer 1:1 through the tight follow spring.
+  const follow = (next: number) => {
+    const target = clamp(next);
+    valueRef.current = target;
+    setValue(target);
+    if (reducedMotion) fillPct.jump(target);
+    else animate(fillPct, target, followSpring);
+  };
+
+  // Entering snap mode pulls the value onto its nearest detent — without the
+  // tick, the picker's own click is feedback enough.
+  useEffect(() => {
+    if (!snap) return;
+    const target = nearestDetent(valueRef.current);
+    if (target === valueRef.current) return;
+    valueRef.current = target;
+    setValue(target);
+    if (reducedMotion) fillPct.jump(target);
+    else animate(fillPct, target, detentSpring);
+  }, [snap, reducedMotion, fillPct]);
+
+  const valueAtPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+    const track = event.currentTarget;
+    // clientWidth/clientLeft exclude the 1px border — the same box the
+    // fill's percentage width resolves against.
+    const x = event.clientX - track.getBoundingClientRect().left - track.clientLeft;
+    return clamp((x / track.clientWidth) * 100);
+  };
+
+  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!event.isPrimary || event.button !== 0) return;
+    // No explicit focus() here: the tabIndex makes mousedown focus the track
+    // natively, and script-initiated focus would wrongly match :focus-visible
+    // — pinning the handle and the focus ring after every mouse drag.
+    event.currentTarget.setPointerCapture(event.pointerId);
+    draggingRef.current = true;
+    setDragging(true);
+    const raw = valueAtPointer(event);
+    if (snap) settle(nearestDetent(raw), { detent: true });
+    else settle(raw);
+  };
+
+  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
+    if (!draggingRef.current) return;
+    const raw = valueAtPointer(event);
+    if (snap) settle(nearestDetent(raw), { detent: true });
+    else follow(raw);
+  };
+
+  const endDrag = () => {
+    draggingRef.current = false;
+    setDragging(false);
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    const current = Math.round(valueRef.current);
+    const step = snap ? DETENT_STEP : 1;
+    let next: number;
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowUp":
+        next = current + step;
+        break;
+      case "ArrowLeft":
+      case "ArrowDown":
+        next = current - step;
+        break;
+      case "PageUp":
+        next = current + DETENT_STEP;
+        break;
+      case "PageDown":
+        next = current - DETENT_STEP;
+        break;
+      case "Home":
+        next = 0;
+        break;
+      case "End":
+        next = 100;
+        break;
+      default:
+        return;
+    }
+    event.preventDefault();
+    if (snap) settle(nearestDetent(next), { detent: true });
+    else settle(next);
+  };
+
+  return (
+    <div
+      ref={trackRef}
+      className="slider"
+      role="slider"
+      tabIndex={0}
+      aria-label={label}
+      aria-orientation="horizontal"
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuenow={Math.round(value)}
+      aria-valuetext={`${Math.round(value)}%`}
+      data-dragging={dragging || undefined}
+      data-maxed={maxed || undefined}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onKeyDown={onKeyDown}
+    >
+      {/* Clipping layer: everything that must stay inside the track's
+          rounding. The readout lives outside it so it can hop above. */}
+      <div className="slider-surface" aria-hidden="true">
+        {TICKS.map((tick) => (
+          <SliderTick key={tick} pct={tick} fillPct={fillPct} />
+        ))}
+        <motion.div
+          className="slider-fill"
+          style={{
+            width: fillWidth,
+            borderTopRightRadius: fillRadius,
+            borderBottomRightRadius: fillRadius,
+          }}
+        />
+        <span className="slider-dots" ref={dotsRef}>
+          {dots.length > 0 && (
+            <svg width={gridSize.width} height={gridSize.height}>
+              {dots.map((dot, index) => (
+                <rect
+                  key={index}
+                  className="slider-dot"
+                  x={dot.x}
+                  y={dot.y}
+                  width={CELL}
+                  height={CELL}
+                  rx={CORNER}
+                  style={{ "--sweep": dot.sweep } as React.CSSProperties}
+                />
+              ))}
+            </svg>
+          )}
+        </span>
+        <motion.span className="slider-handle" style={{ left: handleLeft }} />
+      </div>
+      <motion.p
+        ref={readoutRef}
+        className="slider-value"
+        initial={false}
+        animate={{ y: lifted ? liftY : 0 }}
+        transition={reducedMotion ? { duration: 0 } : liftSpring}
+        aria-hidden="true"
+      >
+        {readout}
+      </motion.p>
+    </div>
+  );
+}
+
+export default Slider;

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function MultistateButtonPage() {
   return (
     <div className="page">
-      <UiSounds />
+      <UiSounds hover={false} />
       <ComponentShowcase
         title="Multistate Button"
         align="center"

@@ -200,6 +200,7 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
           aria-haspopup="listbox"
           aria-expanded={open}
           aria-controls={listId}
+          data-sound="focus"
           onClick={() => setOpen(!open)}
           onKeyDown={onTriggerKeyDown}
         >
@@ -239,6 +240,7 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
                     role="option"
                     className="dropdown-option"
                     aria-selected={option === value}
+                    data-sound="tick"
                     variants={optionVariants}
                     onClick={() => select(option)}
                   >

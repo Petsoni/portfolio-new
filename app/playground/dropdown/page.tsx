@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export default function DropdownPage() {
   return (
     <div className="page">
-      <UiSounds />
+      <UiSounds hover={false} />
       <ComponentShowcase
         title="Dropdown"
         morphId={playgroundMorphId("dropdown")}

@@ -44,6 +44,7 @@ function Experience() {
               transition={{ layout: returnSpring }}
               onClick={() => setSelected(work)}
               aria-haspopup="dialog"
+              data-sound="none"
             >
               <span className={"experience-name"}>{work.title}</span>
               <span className="separator"></span>
