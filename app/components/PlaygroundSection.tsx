@@ -7,9 +7,14 @@ import { containerVariants, itemVariants } from "@/app/motion-variants";
 
 const MotionLink = motion.create(Link);
 
-// One entry per component showcased on the playground page.
+// One entry per component; each links to its dedicated showcase page.
 const playgroundItems = [
-  { id: "dropdown", name: "Dropdown", meta: "Animated select" },
+  {
+    id: "dropdown",
+    name: "Dropdown",
+    meta: "Animated select",
+    href: "/playground/dropdown",
+  },
 ];
 
 function PlaygroundSection() {
@@ -26,7 +31,7 @@ function PlaygroundSection() {
         {playgroundItems.map((item) => (
           <MotionLink
             key={item.id}
-            href="/playground"
+            href={item.href}
             className="experience-row"
             variants={itemVariants}
             data-sound="swoosh"

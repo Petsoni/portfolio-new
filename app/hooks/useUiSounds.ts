@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { defineSound, ensureReady } from "@web-kits/audio";
-import { tap, hover, send, swoosh } from "@/.web-kits/core";
+import { tap, hover, send, swoosh } from "@/.web-kits/minimal";
 import { playHaptic } from "@/app/haptics";
 
 // All play functions must come from "@web-kits/audio" (not "/react"):
@@ -33,7 +33,7 @@ type UseUiSoundsOptions = {
 
 /**
  * Adds audible feedback to interactive elements using @web-kits/audio:
- * the "tap" and "hover" sounds from the Core patch (.web-kits/core).
+ * the "tap" and "hover" sounds from the Minimal patch (.web-kits/minimal).
  * Individual elements can swap the click sound via data-sound="<name>"
  * for any name registered in `clickSounds`.
  *

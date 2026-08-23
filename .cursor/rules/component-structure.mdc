@@ -13,7 +13,18 @@ its own SCSS file next to it — never append component styles to `common.scss`.
 app/components/playground/
   Dropdown.tsx    // the component
   Dropdown.scss   // its styles, same base name
+app/playground/dropdown/
+  page.tsx        // its dedicated showcase page
 ```
+
+Every showcased playground component also gets its own page:
+
+- `app/playground/<component>/page.tsx` exports `metadata` and renders
+  `ComponentShowcase` (back link, title, description, stage) with the live
+  demo as children — see `app/playground/dropdown/page.tsx`.
+- Add a row for it in `PlaygroundSection` (home page) linking to that route.
+- There is deliberately no `/playground` index page; the home section is the
+  index.
 
 - Import the style file at the top of the component: `import "./Dropdown.scss";`
 - Class names are global BEM-ish, prefixed by the component root class

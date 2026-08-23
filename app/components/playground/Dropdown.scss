@@ -14,6 +14,7 @@ $tactile-shadow: 0 1px 1px rgba(48, 48, 48, 0.04),
   // trigger's footprint: 21px line-height + 2×10px padding + 2×1px border.
   position: relative;
   height: 43px;
+  width: 226px; // closed-state frame width from the Figma design
 
   --dd-panel-bg: #{$gray-50};
   --dd-panel-border: #{$border-lightest};
