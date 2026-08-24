@@ -60,7 +60,7 @@ function PlaygroundSection() {
               href={item.href}
               className="experience-row"
               variants={itemVariants}
-              data-sound="swoosh"
+              data-sound="expand"
             >
               {/* Shared element: this name morphs into the showcase page's
                   title on navigation (and back again). */}

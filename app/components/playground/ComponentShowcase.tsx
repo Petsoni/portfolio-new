@@ -71,7 +71,7 @@ function ComponentShowcase({
         <motion.div variants={itemVariants}>
           {/* Anchor to the playground section so the morph target is on
               screen when the reverse flight plays. */}
-          <Link href="/#playground" className="component-showcase-back" data-sound="swoosh">
+          <Link href="/#playground" className="component-showcase-back" data-sound="collapse">
             <ArrowLeft size={16} />
             <span>Back</span>
           </Link>

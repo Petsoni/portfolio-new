@@ -7,14 +7,16 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import "./MultistateButton.scss";
 
-export type Phase = "idle" | "generating" | "success";
+export type Phase = "idle" | "generating" | "success" | "error";
 
-// Cycle order — clicks only land in idle, the rest advances on timers.
-const PHASES: Phase[] = ["idle", "generating", "success"];
+// Stack order for the label column. Clicks land in idle (start a run) and
+// error (retry one); generating and success advance on timers. The simulated
+// run itself always succeeds — error is only ever reached by pinning.
+const PHASES: Phase[] = ["idle", "generating", "success", "error"];
 
 // Grid geometry lifted from the Figma pattern: 5px squares with 1.5px
 // corner radii laid on a 6px pitch (1px gutters).
@@ -40,7 +42,7 @@ interface Cell {
   glow: number;
   /** 0..1 distance from the bottom-left corner, for flood/drain timing. */
   spread: number;
-  /** 0..1 distance from the button center, for the success ripple. */
+  /** 0..1 distance from the button center, for the success/error ripples. */
   mid: number;
 }
 
@@ -98,7 +100,9 @@ interface MultistateButtonProps {
  * a subtle patch of squares glows in the bottom-left corner; clicking clears
  * it and random cells flash on the empty field while the (simulated) report
  * generates. On success a single green ripple rolls outward from the center
- * as the label lands on "Report ready".
+ * as the label lands on "Report ready"; on error the same wave runs in
+ * reverse — a red ripple collapsing into the center — and a click on the
+ * failed button retries the run.
  */
 function MultistateButton({
   pinnedPhase = null,
@@ -110,6 +114,17 @@ function MultistateButton({
   const [size, setSize] = useState({ width: 0, height: 0 });
   const patternRef = useRef<HTMLSpanElement>(null);
   const reducedMotion = useReducedMotion();
+
+  // Where the stack just came from. With error branching off the line
+  // (success and error both follow generating), a fixed cycle can't place
+  // the departing label anymore — so remember it and park it above.
+  const previousPhase = useRef(phase);
+  useEffect(() => {
+    previousPhase.current = phase;
+  }, [phase]);
+
+  // Clicks start a run from idle — or retry one from a pinned error.
+  const clickable = phase === "idle" || phase === "error";
 
   // Size the grid to the button interior. The label stack keeps the button
   // at the widest label's width, so state changes never resize the grid.
@@ -174,16 +189,21 @@ function MultistateButton({
         Report ready
       </>
     ),
+    error: (
+      <>
+        <X size={16} aria-hidden="true" />
+        Report failed
+      </>
+    ),
   };
 
-  // The stack cycles forward: the active label sits at rest, the next one
-  // waits below, the one just shown parks above — swaps always march upward.
+  // The active label sits at rest, the one just shown parks above, and
+  // everything else waits below — swaps always march upward.
   const labelAnimation = (label: Phase) => {
-    const step = (PHASES.indexOf(label) - PHASES.indexOf(phase) + 3) % 3;
-    if (step === 0) return { opacity: 1, y: 0, filter: "blur(0px)" };
+    if (label === phase) return { opacity: 1, y: 0, filter: "blur(0px)" };
     return {
       opacity: 0,
-      y: reducedMotion ? 0 : step === 1 ? 7 : -7,
+      y: reducedMotion ? 0 : label === previousPhase.current ? -7 : 7,
       filter: reducedMotion ? "blur(0px)" : "blur(5px)",
     };
   };
@@ -196,13 +216,11 @@ function MultistateButton({
       aria-busy={phase === "generating"}
       aria-live="polite"
       onClick={() => {
-        if (phase !== "idle") return;
+        if (!clickable) return;
         setOwnPhase("generating");
         onPhaseChange?.("generating");
       }}
-      whileTap={
-        phase === "idle" && !reducedMotion ? { scale: 0.97 } : undefined
-      }
+      whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
     >
       <span
         className="multistate-button-pattern"

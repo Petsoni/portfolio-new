@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { defineSound, ensureReady, type SoundDefinition } from "@web-kits/audio";
-import { tap, hover, send, swoosh, focus, tick } from "@/.web-kits/core";
+import { tap, hover, send, swoosh, focus, tick, expand, collapse } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
 
 // All play functions must come from "@web-kits/audio" (not "/react"):
@@ -17,6 +17,9 @@ const playHover = defineSound(hover);
 const clickSounds: Record<string, (() => unknown) | null> = {
   send: defineSound(send),
   swoosh: defineSound(swoosh),
+  // Page-transition pair: drilling into a showcase page vs. backing out.
+  expand: defineSound(expand),
+  collapse: defineSound(collapse),
   focus: defineSound(focus),
   tick: defineSound(tick),
   // Suppresses the default tap for elements whose feedback is played

@@ -14,6 +14,9 @@ $pulse-ink: $gray-600;
 $success-ink: #16a34a;
 // Darker text-grade green — the wave's hue at AA contrast for 14px text.
 $success-text: #15803d;
+// Error red for the "Report failed" wave, same two-grade logic as the green.
+$error-ink: #dc2626;
+$error-text: #b91c1c;
 
 .multistate-button {
   position: relative;
@@ -34,6 +37,7 @@ $success-text: #15803d;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
+  // Error keeps the pointer — a failed run invites a retry click.
   &[data-phase="generating"],
   &[data-phase="success"] {
     cursor: default;
@@ -65,7 +69,8 @@ $success-text: #15803d;
   // Working and settling, the field itself stays clear: the corner glow
   // melts away at once and only the animated squares are visible.
   .multistate-button[data-phase="generating"] &,
-  .multistate-button[data-phase="success"] & {
+  .multistate-button[data-phase="success"] &,
+  .multistate-button[data-phase="error"] & {
     fill-opacity: 0;
     transition-duration: 0.25s;
     transition-delay: 0s;
@@ -83,6 +88,13 @@ $success-text: #15803d;
   .multistate-button[data-phase="success"] & {
     animation: multistate-button-ripple 0.55s ease-out;
     animation-delay: calc(var(--mid) * 430ms);
+  }
+
+  // Error: the same wave played backwards — a red ripple collapses from the
+  // edges into the center, success's roll in reverse.
+  .multistate-button[data-phase="error"] & {
+    animation: multistate-button-error-ripple 0.55s ease-out;
+    animation-delay: calc((1 - var(--mid)) * 430ms);
   }
 }
 
@@ -110,6 +122,14 @@ $success-text: #15803d;
   }
 }
 
+// Red crest for the error ripple; from/to inherit the transparent base.
+@keyframes multistate-button-error-ripple {
+  35% {
+    fill: $error-ink;
+    fill-opacity: 0.25;
+  }
+}
+
 // All three labels stay stacked in one grid cell, so the button's width is
 // pinned to the widest label and never shifts between states.
 .multistate-button-labels {
@@ -127,11 +147,19 @@ $success-text: #15803d;
 
   .lucide {
     flex-shrink: 0;
+    // Match the icon strokes to the letters' weight: the label's system font
+    // (SF Pro Medium here) draws ~1.5px stems at 14px, and these 16px icons
+    // paint at 16/24 viewBox scale — 2.3 × 16⁄24 ≈ 1.53px rendered.
+    stroke-width: 2.3px;
   }
 
-  // The check inherits the green via currentColor.
+  // The check and cross inherit their colors via currentColor.
   &[data-label="success"] {
     color: $success-text;
+  }
+
+  &[data-label="error"] {
+    color: $error-text;
   }
 }
 
@@ -146,9 +174,15 @@ $success-text: #15803d;
     fill-opacity: $cell-alpha;
   }
 
-  // No wave without motion — tint the field instead so success still reads.
+  // No waves without motion — tint the field instead so the outcome still
+  // reads.
   .multistate-button[data-phase="success"] .multistate-button-cell {
     fill: $success-ink;
+    fill-opacity: 0.2;
+  }
+
+  .multistate-button[data-phase="error"] .multistate-button-cell {
+    fill: $error-ink;
     fill-opacity: 0.2;
   }
 }

@@ -69,7 +69,7 @@ function Picker<T extends string>({
     onChange(options[next].value);
     groupRef.current
       ?.querySelectorAll<HTMLButtonElement>('[role="radio"]')
-      [next]?.focus();
+    [next]?.focus();
   };
 
   return (

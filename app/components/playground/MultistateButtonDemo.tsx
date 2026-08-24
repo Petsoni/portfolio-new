@@ -9,14 +9,15 @@ const STATE_OPTIONS: { value: Phase; label: string }[] = [
   { value: "idle", label: "Idle" },
   { value: "generating", label: "Generating" },
   { value: "success", label: "Success" },
+  { value: "error", label: "Error" },
 ];
 
 /**
  * Demo wiring for the multistate-button page. The picker pins the button to
- * any of its three states for inspection — pinned "generating" pulses
- * forever, re-picking "success" replays the ripple. Clicking the button
- * itself releases the pin and runs the real simulated flow, with the
- * picker's selection following along.
+ * any of its states for inspection — pinned "generating" pulses forever,
+ * re-picking "success" or "error" replays its ripple. Clicking the button
+ * itself releases the pin and runs the real simulated flow (a retry, when
+ * clicked on a pinned error), with the picker's selection following along.
  */
 function MultistateButtonDemo() {
   const [phase, setPhase] = useState<Phase>("idle");
