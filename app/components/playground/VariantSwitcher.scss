@@ -1,0 +1,64 @@
+@use "../../palette" as *;
+
+// ---------------------------------------------------------------------------
+// VariantSwitcher — the stage bar's button row from the Figma design: flat
+// gray buttons sharing the width equally, with the white tactile chrome
+// riding on the active one.
+// ---------------------------------------------------------------------------
+
+.variant-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+}
+
+.variant-switcher-option {
+  position: relative;
+  // Equal widths from a zero basis, per the design; fit-content floors each
+  // button at its label so a tight stage wraps the row instead of clipping.
+  flex: 1 1 0;
+  min-width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  margin: 0;
+  border: 1px solid $border-lightest;
+  border-radius: 12px;
+  background: $gray-50;
+  font-weight: 500;
+  color: $gray-500;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s ease;
+
+  &[aria-checked="true"] {
+    color: $gray-900;
+
+    .variant-switcher-thumb {
+      opacity: 1;
+    }
+  }
+}
+
+// The active button's chrome — one in every button, cross-faded by the
+// selection (in on the button picked, out on the one it leaves), on the
+// same clock as the label's color. Inset -1px seats its border exactly
+// over the button's own.
+.variant-switcher-thumb {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid $border-lightest;
+  border-radius: 12px;
+  background: $background-light;
+  box-shadow: $tactile-shadow;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.variant-switcher-option-label {
+  position: relative; // paints above the thumb
+  white-space: nowrap;
+}

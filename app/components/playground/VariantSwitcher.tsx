@@ -1,46 +1,43 @@
 "use client";
 
-import React, { useId, useRef } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import "./Picker.scss";
+import React, { useContext, useRef } from "react";
+import { createPortal } from "react-dom";
+import { StageBarContext } from "./ComponentShowcase";
+import "./VariantSwitcher.scss";
 
-// Quick, quiet spring — the thumb lands fast with barely a breath of overshoot.
-const thumbSpring = {
-  type: "spring" as const,
-  stiffness: 430,
-  damping: 34,
-  mass: 0.9,
-};
-
-interface PickerOption<T extends string> {
+interface VariantSwitcherOption<T extends string> {
   value: T;
   label: string;
 }
 
-interface PickerProps<T extends string> {
+interface VariantSwitcherProps<T extends string> {
   /** Accessible name for the radio group. */
   label: string;
-  options: PickerOption<T>[];
+  options: VariantSwitcherOption<T>[];
   value: T;
   onChange: (value: T) => void;
 }
 
 /**
- * Segmented picker from the Figma design: a gray pill of flat labels with a
- * white bordered thumb — carrying the tactile shadow — on the active one.
- * The thumb is a shared layout element, so it slides (and stretches) between
- * segments instead of blinking across. Semantics follow the radio-group
+ * The stage's variant switcher from the Figma design: a row of equal-width
+ * buttons across the top bar, the active one dressed white with the tactile
+ * shadow, the rest flat gray. Every button carries the chrome; picking one
+ * cross-fades it — in on the new selection, out on the old (a plain CSS
+ * opacity transition, no movement). Semantics follow the radio-group
  * pattern: one tab stop, arrows move the selection.
+ *
+ * Rendered inside a ComponentShowcase, the row teleports itself into the
+ * stage bar above the canvas (StageBarContext), so the demo that owns the
+ * selection state can render it like any other child.
  */
-function Picker<T extends string>({
+function VariantSwitcher<T extends string>({
   label,
   options,
   value,
   onChange,
-}: PickerProps<T>) {
+}: VariantSwitcherProps<T>) {
+  const stageBar = useContext(StageBarContext);
   const groupRef = useRef<HTMLDivElement>(null);
-  const thumbId = useId();
-  const reducedMotion = useReducedMotion();
 
   // Radio-group keyboard model: arrows select the previous/next option and
   // carry focus with the selection (roving tabindex), Home/End jump the ends.
@@ -69,12 +66,12 @@ function Picker<T extends string>({
     onChange(options[next].value);
     groupRef.current
       ?.querySelectorAll<HTMLButtonElement>('[role="radio"]')
-    [next]?.focus();
+      [next]?.focus();
   };
 
-  return (
+  const switcher = (
     <div
-      className="picker"
+      className="variant-switcher"
       role="radiogroup"
       aria-label={label}
       ref={groupRef}
@@ -89,26 +86,21 @@ function Picker<T extends string>({
             role="radio"
             aria-checked={active}
             tabIndex={active ? 0 : -1}
-            className="picker-option"
+            className="variant-switcher-option"
             data-sound="focus"
             onClick={() => onChange(option.value)}
           >
-            {active && (
-              <motion.span
-                className="picker-thumb"
-                layoutId={thumbId}
-                // Inline so Motion scale-corrects the rounding while the
-                // thumb stretches between differently sized segments.
-                style={{ borderRadius: 52 }}
-                transition={reducedMotion ? { duration: 0 } : thumbSpring}
-              />
-            )}
-            <span className="picker-option-label">{option.label}</span>
+            <span className="variant-switcher-thumb" />
+            <span className="variant-switcher-option-label">
+              {option.label}
+            </span>
           </button>
         );
       })}
     </div>
   );
+
+  return stageBar ? createPortal(switcher, stageBar) : switcher;
 }
 
-export default Picker;
+export default VariantSwitcher;

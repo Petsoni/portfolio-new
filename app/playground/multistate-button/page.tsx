@@ -22,8 +22,8 @@ export default function MultistateButtonPage() {
           edges at rest; clicking floods the field with pulsing cells while the
           work runs, and a soft green ripple rolls out when the report lands —
           on a failure the same wave collapses inward in red, and a click
-          retries. Use the picker to pin any state in place, or click the
-          button and watch the picker follow the flow."
+          retries. Use the switcher above to pin any state in place, or click
+          the button and watch the switcher follow the flow."
       >
         <MultistateButtonDemo />
       </ComponentShowcase>

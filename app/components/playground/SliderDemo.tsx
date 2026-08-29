@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Slider from "./Slider";
-import Picker from "./Picker";
+import VariantSwitcher from "./VariantSwitcher";
 import "./SliderDemo.scss";
 
 type Mode = "free" | "snap";
@@ -13,24 +13,26 @@ const MODE_OPTIONS: { value: Mode; label: string }[] = [
 ];
 
 /**
- * Demo wiring for the slider page: the slider on stage with a mode picker
- * below. "Free control" tracks the pointer continuously; "Snap" turns the
- * fill magnetic, hopping between 10% detents (and pulling the current value
- * onto one the moment you switch).
+ * Demo wiring for the slider page: the slider on the canvas with its mode
+ * switcher in the stage bar. "Free control" tracks the pointer continuously;
+ * "Snap" turns the fill magnetic, hopping between 10% detents (and pulling
+ * the current value onto one the moment you switch).
  */
 function SliderDemo() {
   const [mode, setMode] = useState<Mode>("free");
 
   return (
-    <div className="slider-demo">
-      <Slider snap={mode === "snap"} label="Percentage" />
-      <Picker
+    <>
+      <VariantSwitcher
         label="Slider mode"
         options={MODE_OPTIONS}
         value={mode}
         onChange={setMode}
       />
-    </div>
+      <div className="slider-demo">
+        <Slider snap={mode === "snap"} label="Percentage" />
+      </div>
+    </>
   );
 }
 

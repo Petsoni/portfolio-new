@@ -12,6 +12,12 @@ const MotionLink = motion.create(Link);
 // One entry per component; each links to its dedicated showcase page.
 const playgroundItems = [
   {
+    id: "container-morph",
+    name: "Container Morph",
+    meta: "Morphing payment flow",
+    href: "/playground/container-morph",
+  },
+  {
     id: "dropdown",
     name: "Dropdown",
     meta: "Animated select",

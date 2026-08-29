@@ -68,6 +68,19 @@ const followSpring = { type: "spring", stiffness: 1200, damping: 80 } as const;
 // The readout's hop out of (and back into) the fill — quick, with a little
 // life at the top.
 const liftSpring = { type: "spring", stiffness: 550, damping: 32 } as const;
+// Releasing an overdrag lets the stretch snap home — under-damped on
+// purpose, so the material visibly recoils once before settling.
+const reboundSpring = { type: "spring", stiffness: 480, damping: 26 } as const;
+
+// Dragging past either end keeps responding, iOS-volume-slider style: the
+// whole track stretches from its far edge. Overshoot px run through Apple's
+// rubber-band curve, so resistance grows the further you pull and the give
+// approaches (never reaches) ELASTIC_RANGE.
+const ELASTIC_RANGE = 48;
+const ELASTIC_GIVE = 0.55;
+const rubberband = (overshoot: number) =>
+  (overshoot * ELASTIC_RANGE * ELASTIC_GIVE) /
+  (ELASTIC_RANGE + ELASTIC_GIVE * Math.abs(overshoot));
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value));
 const nearestDetent = (value: number) =>
@@ -148,6 +161,34 @@ function Slider({
 
   // Track and readout sizes for the lift math below.
   const sizesRef = useRef({ track: 0, readout: 0, readoutHeight: 0 });
+
+  // Elastic overdrag: rubber-banded px of stretch past either end. The
+  // chrome (border, background, and everything clipped inside) scales from
+  // the edge opposite the pull — past 100% it anchors left, past 0% right —
+  // thinning slightly as it stretches. Positive is stretch; the rebound
+  // spring's overshoot swings it briefly negative, which reads as a squash.
+  const stretch = useMotionValue(0);
+  // 0 = anchored at the left edge (pulling past max), 1 = at the right.
+  const stretchOriginX = useMotionValue(0);
+  const stretchScaleX = useTransform(
+    stretch,
+    (v) => 1 + v / (sizesRef.current.track || 1),
+  );
+  const stretchScaleY = useTransform(
+    stretch,
+    [-ELASTIC_RANGE, 0, ELASTIC_RANGE],
+    [1.12, 1, 0.88],
+  );
+  // The readout stays outside the stretching chrome so its glyphs never
+  // distort — instead it translates with the material under it: ~1:1 when
+  // the left end is the free end, barely at all when the anchor is there.
+  const readoutStretchX = useTransform(
+    [stretch, stretchOriginX],
+    ([v, o]: number[]) => {
+      const width = sizesRef.current.track || 1;
+      return ((VALUE_INSET - (o === 1 ? width : 0)) / width) * v;
+    },
+  );
 
   // When the fill's edge crowds the number, it hops above the track instead
   // of letting the edge run it over — and drops back in once there's room
@@ -357,12 +398,26 @@ function Slider({
     else animate(fillPct, target, detentSpring);
   }, [snap, reducedMotion, fillPct]);
 
-  const valueAtPointer = (event: React.PointerEvent<HTMLDivElement>) => {
+  const pointerX = (event: React.PointerEvent<HTMLDivElement>) => {
     const track = event.currentTarget;
     // clientWidth/clientLeft exclude the 1px border — the same box the
-    // fill's percentage width resolves against.
+    // fill's percentage width resolves against. The root itself never
+    // transforms (the chrome inside it does), so this rect stays honest
+    // even mid-stretch.
     const x = event.clientX - track.getBoundingClientRect().left - track.clientLeft;
-    return clamp((x / track.clientWidth) * 100);
+    return { x, width: track.clientWidth };
+  };
+
+  // Overshoot past either end becomes stretch, chased through the same
+  // tight spring as the fill: dragging back onto the track unwinds it
+  // continuously, and grabbing the slider mid-rebound blends velocities
+  // instead of snapping.
+  const overdrag = (x: number, width: number) => {
+    if (reducedMotion) return;
+    const over = x < 0 ? x : x > width ? x - width : 0;
+    if (over === 0 && stretch.get() === 0) return;
+    if (over !== 0) stretchOriginX.set(over < 0 ? 1 : 0);
+    animate(stretch, rubberband(Math.abs(over)), followSpring);
   };
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -373,21 +428,37 @@ function Slider({
     event.currentTarget.setPointerCapture(event.pointerId);
     draggingRef.current = true;
     setDragging(true);
-    const raw = valueAtPointer(event);
+    const { x, width } = pointerX(event);
+    const raw = clamp((x / width) * 100);
     if (snap) settle(nearestDetent(raw), { detent: true });
     else settle(raw);
+    overdrag(x, width);
   };
 
   const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!draggingRef.current) return;
-    const raw = valueAtPointer(event);
+    // A release outside the window can go undelivered, leaving a phantom
+    // drag: the pointer comes back with no button held but the slider still
+    // following it. Treat the first buttonless move as the missed release.
+    // (Touch contacts always report a pressed button, so this only ever
+    // catches hover-capable pointers.)
+    if (event.buttons === 0) {
+      endDrag();
+      return;
+    }
+    const { x, width } = pointerX(event);
+    const raw = clamp((x / width) * 100);
     if (snap) settle(nearestDetent(raw), { detent: true });
     else follow(raw);
+    overdrag(x, width);
   };
 
   const endDrag = () => {
+    if (!draggingRef.current) return;
     draggingRef.current = false;
     setDragging(false);
+    // Let go while stretched and the material recoils home.
+    if (stretch.get() !== 0) animate(stretch, 0, reboundSpring);
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {
@@ -441,33 +512,51 @@ function Slider({
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
+      // The browser drops capture the instant it processes a release, even
+      // one it never delivers to us (e.g. off-window) — so this ends the
+      // drag right then, not on the pointer's return.
+      onLostPointerCapture={endDrag}
       onKeyDown={onKeyDown}
     >
-      {/* Clipping layer: everything that must stay inside the track's
-          rounding. The readout lives outside it so it can hop above. */}
-      <div className="slider-surface" aria-hidden="true">
-        {TICKS.map((tick) => (
-          <SliderTick key={tick} pct={tick} fillPct={fillPct} />
-        ))}
-        <motion.div
-          className="slider-fill"
-          style={{
-            width: fillWidth,
-            borderTopRightRadius: fillRadius,
-            borderBottomRightRadius: fillRadius,
-          }}
-        />
-        {/* Max-state weave — the engine effect above draws into this; CSS
-            fades it in with data-maxed. */}
-        <canvas ref={weaveRef} className="slider-weave" />
-        <motion.span className="slider-handle" style={{ left: handleLeft }} />
-      </div>
+      {/* The elastic body: border, background, and the clipping surface all
+          stretch together when a drag runs past an end. The readout lives
+          outside it so the number never distorts. */}
+      <motion.div
+        className="slider-chrome"
+        style={{
+          scaleX: stretchScaleX,
+          scaleY: stretchScaleY,
+          originX: stretchOriginX,
+        }}
+        aria-hidden="true"
+      >
+        {/* Clipping layer: everything that must stay inside the track's
+            rounding. */}
+        <div className="slider-surface">
+          {TICKS.map((tick) => (
+            <SliderTick key={tick} pct={tick} fillPct={fillPct} />
+          ))}
+          <motion.div
+            className="slider-fill"
+            style={{
+              width: fillWidth,
+              borderTopRightRadius: fillRadius,
+              borderBottomRightRadius: fillRadius,
+            }}
+          />
+          {/* Max-state weave — the engine effect above draws into this; CSS
+              fades it in with data-maxed. */}
+          <canvas ref={weaveRef} className="slider-weave" />
+          <motion.span className="slider-handle" style={{ left: handleLeft }} />
+        </div>
+      </motion.div>
       <motion.p
         ref={readoutRef}
         className="slider-value"
         initial={false}
         animate={{ y: lifted ? liftY : 0 }}
         transition={reducedMotion ? { duration: 0 } : liftSpring}
+        style={{ x: readoutStretchX }}
         aria-hidden="true"
       >
         {readout}

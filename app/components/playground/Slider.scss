@@ -18,9 +18,12 @@ $max-fill: #dcebfa;
   width: 356px;
   max-width: 100%;
   height: 40px;
-  border: 1px solid $border-lightest;
+  // The visible border and background live on .slider-chrome so they can
+  // stretch with an overdrag. The transparent border here keeps the root's
+  // geometry (clientLeft/clientWidth) identical for the pointer math, and
+  // the radius still shapes the focus outline.
+  border: 1px solid transparent;
   border-radius: 12px;
-  background: $background-light;
   cursor: grab;
   touch-action: none;
   user-select: none;
@@ -37,8 +40,21 @@ $max-fill: #dcebfa;
   }
 }
 
+// The track's elastic body. Dragging past either end scales this whole
+// layer (the component drives scaleX/scaleY/origin), so the border, fill,
+// and ticks all stretch as one material. inset -1px puts its own border
+// exactly where the root's transparent one sits.
+.slider-chrome {
+  position: absolute;
+  inset: -1px;
+  border: 1px solid $border-lightest;
+  border-radius: 12px;
+  background: $background-light;
+}
+
 // Clipping layer: the ticks, fill, and handle stay inside the track's
-// rounding here, while the readout (a sibling) is free to hop above it.
+// rounding here, while the readout (outside the chrome) is free to hop
+// above it.
 .slider-surface {
   position: absolute;
   inset: 0;

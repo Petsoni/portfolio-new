@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { MotionConfig, motion, Variants } from "motion/react";
@@ -12,11 +12,18 @@ import {
 import { returnSpring } from "@/app/components/ExperienceModal";
 import "./ComponentShowcase.scss";
 
+/**
+ * The stage's top bar element, handed down to whichever VariantSwitcher the
+ * demo renders. The demo owns the switcher's state, but the design seats the
+ * button row above the canvas — so the switcher teleports there by portal.
+ */
+export const StageBarContext = createContext<HTMLDivElement | null>(null);
+
 interface ComponentShowcaseProps {
   title: string;
   description: string;
   /**
-   * Vertical placement of the demo on the stage. "top" suits demos that
+   * Vertical placement of the demo on the canvas. "top" suits demos that
    * expand downward (e.g. the dropdown); "center" suits fixed-size ones.
    */
   align?: "top" | "center";
@@ -26,7 +33,10 @@ interface ComponentShowcaseProps {
    * title on navigation while the rest of the page staggers in.
    */
   morphId?: string;
-  /** The live demo, rendered centered on the stage. */
+  /**
+   * The live demo, rendered centered on the stage's white canvas. A
+   * VariantSwitcher among the children lifts itself into the stage bar.
+   */
   children: React.ReactNode;
 }
 
@@ -41,8 +51,9 @@ const morphContainerVariants: Variants = {
 
 /**
  * Shared scaffold for a component's dedicated playground page: back link,
- * title, short description, and a bordered stage holding the live demo.
- * Every showcased component gets its own page built from this.
+ * title, short description, and the stage from the Figma design — a soft
+ * gray frame holding an optional variant-switcher bar and the white canvas
+ * with the live demo. Every showcased component gets its own page from this.
  */
 function ComponentShowcase({
   title,
@@ -51,6 +62,9 @@ function ComponentShowcase({
   morphId,
   children,
 }: ComponentShowcaseProps) {
+  // The bar node arrives on mount; until then (and on pages whose demo has
+  // no switcher) the empty bar row collapses away in CSS.
+  const [stageBar, setStageBar] = useState<HTMLDivElement | null>(null);
   // Mark that the next home visit is a return from a showcase (covers the
   // Back link and the browser's back button alike): the homepage skips its
   // one-time entrance and the title can morph back into a visible row.
@@ -93,10 +107,14 @@ function ComponentShowcase({
         <motion.p variants={itemVariants}>{description}</motion.p>
         <motion.div
           className="component-showcase-stage"
-          data-align={align}
           variants={itemVariants}
         >
-          {children}
+          <div className="component-showcase-stage-bar" ref={setStageBar} />
+          <div className="component-showcase-canvas" data-align={align}>
+            <StageBarContext.Provider value={stageBar}>
+              {children}
+            </StageBarContext.Provider>
+          </div>
         </motion.div>
       </motion.section>
     </MotionConfig>

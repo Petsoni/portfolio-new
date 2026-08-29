@@ -1,0 +1,198 @@
+@use "../../palette" as *;
+
+// ---------------------------------------------------------------------------
+// Container morph (playground component) — one payment control from three
+// Figma frames: pill button, 40px ring loader, details card. The morphing is
+// carried entirely by the shell's animated size, radius, and fill; this file
+// only dresses the shell and the layers riding inside it.
+// ---------------------------------------------------------------------------
+
+// Outcome status dots, on the same green/red grades as the multistate button.
+$success-ink: #16a34a;
+$error-ink: #dc2626;
+
+// The button is a stationary, transparent anchor: it shrink-wraps the
+// morphing shell (so focus and hit-target track the control) and hosts the
+// analysing label outside the shell's clipping.
+.container-morph {
+  position: relative;
+  display: block;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: none;
+  // Only shapes the focus outline — the visible pill is the shell's.
+  border-radius: 21px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 21px;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  // Working phases ignore clicks (the handler guards); the cursor agrees.
+  &[aria-disabled="true"] {
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $gray-300;
+    outline-offset: 3px;
+  }
+}
+
+// The morphing container itself. Motion owns the size, radius, fill,
+// shadow, and seat at runtime; these match the resting values. The stack,
+// from the Figma treatment: a 1px border ring, the glossy inset bevel, and
+// the shared tactile drop shadow.
+.container-morph-shell {
+  position: relative;
+  display: block;
+  background: $gray-950;
+  box-shadow:
+    inset 0 0 0 1px $gray-900,
+    inset 0 -5px 3px rgba(0, 0, 0, 1),
+    inset 0 2px 3px rgba(255, 255, 255, 0.25),
+    $tactile-shadow;
+  // The shell swallows whatever mid-morph overhang its layers produce — a
+  // collapsing pill visibly "eats" the last of its blurred label. The
+  // analysing label lives outside the shell precisely to escape this clip.
+  overflow: hidden;
+}
+
+// Every layer centers on the shell and keeps its natural content size, so
+// the shell can shrink-wrap any of them by animating to the layer's measured
+// box. Centering uses the standalone `translate` property — Motion writes
+// `transform` for its own scale/rotate/y work and the two must not collide.
+.container-morph-label,
+.container-morph-ring,
+.container-morph-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  pointer-events: none;
+}
+
+// Pill interior from the Figma frame: 10px/12px padding around one 21px line.
+.container-morph-label {
+  padding: 10px 12px;
+  white-space: nowrap;
+
+  // The analysing label is bare ink text beside the spinner — no pill
+  // interior, so no padding: its measured width seats the group.
+  &[data-tone="ink"] {
+    padding: 0;
+    color: $gray-950;
+  }
+}
+
+// The spinner layer the shell collapses into: a 20px viewBox whose circle
+// plays solid disc and open arc with the same stroke.
+.container-morph-ring {
+  width: 20px;
+  height: 20px;
+
+  svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  circle {
+    stroke: $gray-950;
+  }
+}
+
+// The working shimmer: a light band sweeping the analysing label, over and
+// over, seconding the spinner. The negative delay phase-shifts the loop so
+// a sweep is already entering when the class lands, instead of spending
+// its first half second off the text.
+.container-morph-shimmer {
+  background: linear-gradient(
+      100deg,
+      $gray-950 38%,
+      $gray-300 50%,
+      $gray-950 62%
+    )
+    0 0 / 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: container-morph-shimmer 1.2s linear -0.5s infinite;
+}
+
+@keyframes container-morph-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .container-morph-shimmer {
+    animation: none;
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+}
+
+// Card interior from the Figma frame: 12px padding, 10px below the title.
+.container-morph-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.container-morph-card-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+// The outcome at a glance: a small status dot ahead of the title.
+.container-morph-card-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $success-ink;
+
+  &[data-outcome="declined"] {
+    background: $error-ink;
+  }
+}
+
+// Mock receipt: every row stretches to the widest one, so the labels sit
+// flush left and the values line up flush right, ledger-style.
+.container-morph-card-rows {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 5px;
+}
+
+.container-morph-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.container-morph-card-row-label {
+  color: $gray-400;
+}
+
+.container-morph-card-row-value {
+  color: $gray-200;
+}
+
+// Declined cards close on the retry affordance, quiet against the rows.
+.container-morph-card-hint {
+  color: $gray-500;
+}

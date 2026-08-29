@@ -36,18 +36,44 @@
   }
 }
 
+// The stage from the Figma design: a soft gray frame around an optional
+// variant-switcher bar and the white canvas the demo lives on.
 .component-showcase-stage {
   align-self: stretch;
   display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px;
+  border: 1px solid $border-lightest;
+  border-radius: 16px;
+  background: $gray-25;
+}
+
+// Portal target for the demo's VariantSwitcher (see StageBarContext).
+// Pages whose demo has no switcher leave it empty, and it collapses.
+.component-showcase-stage-bar {
+  display: flex;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.component-showcase-canvas {
+  // Anchor for any demo chrome pinned against the canvas.
+  position: relative;
+  flex: 1;
+  display: flex;
   justify-content: center;
   align-items: flex-start;
-  margin-top: 8px;
   // Tall enough for expanding demos (e.g. the dropdown's open panel) to stay
   // inside the frame.
-  min-height: 356px;
+  min-height: 348px;
   padding: 48px 24px;
-  border: 1px solid $border-light;
+  border: 1px solid $border-lightest;
   border-radius: 12px;
+  background: $background-light;
 
   &[data-align="center"] {
     align-items: center;
