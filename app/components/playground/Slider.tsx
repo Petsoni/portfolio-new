@@ -1,12 +1,6 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   animate,
   motion,
@@ -36,45 +30,25 @@ const VALUE_INSET = 10;
 const TRACK_HEIGHT = 40;
 const LIFT_GAP = 6;
 
-// Max-value celebration cells — the same 5px squares on a 6px pitch as the
-// multistate button's pattern, so the two components speak one language.
-const CELL = 5;
-const PITCH = 6;
-const CORNER = 1.5;
-// A fresh twinkle sparks roughly this often while the slider sits at 100%.
-const TWINKLE_TICK_MS = 160;
+// The 100% weave — two strands of sparks braiding leftward along crossing
+// sine rails, drawn on a canvas that fades in with the max state. Picked
+// from the blue prototype rounds (the ChatGPT model selector's energy
+// field, translated into this site's quiet register).
+const WEAVE_WAVELENGTH = 110; // px per braid cycle — about 3 across the bar
+const WEAVE_INK = "#0371dd"; // keep in sync with $max-ink in Slider.scss
 
-interface Dot {
+interface WeaveSpark {
   x: number;
   y: number;
-  /** 0..1 distance from the right edge — the wave's stagger, washing back
-   * from where the fill lands when it hits 100%. */
-  sweep: number;
-}
-
-/** Lay celebration cells across the measured track interior. */
-function buildDots(width: number, height: number): Dot[] {
-  const gap = PITCH - CELL;
-  const cols = Math.floor((width + gap) / PITCH);
-  const rows = Math.floor((height + gap) / PITCH);
-  if (cols < 1 || rows < 1) return [];
-
-  // Center the grid so partial pitches split evenly between the sides.
-  const x0 = (width - (cols * PITCH - gap)) / 2;
-  const y0 = (height - (rows * PITCH - gap)) / 2;
-
-  const dots: Dot[] = [];
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      const x = x0 + col * PITCH;
-      dots.push({
-        x,
-        y: y0 + row * PITCH,
-        sweep: (width - (x + CELL / 2)) / width,
-      });
-    }
-  }
-  return dots;
+  r: number;
+  /** Which rail — 0 or π, the two crossing phases of the braid. */
+  strand: number;
+  /** Small fixed offset off the rail, so a strand isn't a string of beads. */
+  jitter: number;
+  flow: number;
+  phase: number;
+  twinkle: number;
+  a: number;
 }
 
 // The Core patch's progress tick, one per magnetic detent, and its
@@ -135,8 +109,8 @@ interface SliderProps {
  * anywhere to move it — the readout inside the fill counts along, and hops
  * above the track when the edge crowds it. In snap mode the fill moves
  * between 10% detents with a magnetic spring, a soft tick, and a haptic.
- * Landing on 100% sets off a wave of pattern dots that keep twinkling
- * quietly until the value drops again.
+ * Landing on 100% tints the bar blue and wakes a braided weave of sparks
+ * drifting through the fill until the value drops again.
  */
 function Slider({
   snap = false,
@@ -145,6 +119,7 @@ function Slider({
 }: SliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const readoutRef = useRef<HTMLParagraphElement>(null);
+  const weaveRef = useRef<HTMLCanvasElement>(null);
   const draggingRef = useRef(false);
   // Mirror of `value` for pointer handlers and effects, so they never read a
   // stale render's value mid-drag.
@@ -194,15 +169,16 @@ function Slider({
 
   useMotionValueEvent(fillPct, "change", updateLift);
 
-  // At 100% the celebration dots wake up: `maxed` follows the live edge, so
-  // the wave starts the moment the fill actually lands, not when the target
-  // is set. The threshold is the readout's own rounding boundary — whenever
-  // the number says "100%", it celebrates. No hysteresis needed: no pointer
-  // pixel, keyboard step, or detent can rest exactly on 99.5.
+  // At 100% the max state wakes up — blue tint, the spark weave:
+  // `maxed` follows the live edge, so it lands the moment the fill arrives,
+  // not when the target is set. The threshold is the readout's own rounding
+  // boundary — whenever the number says "100%", the bar celebrates. No
+  // hysteresis needed: no pointer pixel, keyboard step, or detent can rest
+  // exactly on 99.5.
   const maxedRef = useRef(defaultValue >= 99.5);
   const [maxed, setMaxed] = useState(maxedRef.current);
   // The fanfare re-arms only once the fill clearly leaves the max zone, so
-  // pixel wiggles across the boundary replay the (quiet) wave but not the
+  // pixel wiggles across the boundary re-tint the bar but never replay the
   // chord. The visual can afford to be trigger-happy; the sound can't.
   const chimeArmedRef = useRef(true);
   useMotionValueEvent(fillPct, "change", (v) => {
@@ -218,14 +194,6 @@ function Slider({
     }
   });
 
-  // The dot grid fits the measured interior (only track resizes change it).
-  const [gridSize, setGridSize] = useState({ width: 0, height: 0 });
-  const dots = useMemo(
-    () => buildDots(gridSize.width, gridSize.height),
-    [gridSize],
-  );
-  const dotsRef = useRef<HTMLSpanElement>(null);
-
   useEffect(() => {
     const track = trackRef.current;
     const readoutEl = readoutRef.current;
@@ -237,12 +205,6 @@ function Slider({
         readoutHeight: readoutEl.offsetHeight,
       };
       updateLift();
-      const { clientWidth: width, clientHeight: height } = track;
-      setGridSize((prev) =>
-        prev.width === width && prev.height === height
-          ? prev
-          : { width, height },
-      );
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -251,33 +213,109 @@ function Slider({
     return () => observer.disconnect();
   }, [updateLift]);
 
-  // Twinkle engine, borrowed from the multistate button: while maxed, random
-  // cells glimmer on a timer. It works on the DOM directly so hundreds of
-  // cells never re-render; each twinkle removes its own class when its
-  // animation ends (checking the name — the arrival wave ends on the same
-  // elements). Leaving 100% clears any in-flight twinkles.
+  // The weave engine. The simulation runs for the component's whole life —
+  // ticking ~60 dots is negligible, and never pausing means the braid keeps
+  // its phase across every exit and re-entry — while CSS opacity shows it
+  // only at 100%. Under reduced motion it renders a single still frame.
   useEffect(() => {
-    if (!maxed || reducedMotion) return;
-    const rects = Array.from(
-      dotsRef.current?.querySelectorAll<SVGRectElement>("rect") ?? [],
-    );
-    if (rects.length === 0) return;
-    const timer = window.setInterval(() => {
-      const rect = rects[Math.floor(Math.random() * rects.length)];
-      if (!rect || rect.classList.contains("is-twinkling")) return;
-      const onEnd = (event: AnimationEvent) => {
-        if (event.animationName !== "slider-dot-twinkle") return;
-        rect.classList.remove("is-twinkling");
-        rect.removeEventListener("animationend", onEnd);
-      };
-      rect.addEventListener("animationend", onEnd);
-      rect.classList.add("is-twinkling");
-    }, TWINKLE_TICK_MS);
-    return () => {
-      window.clearInterval(timer);
-      for (const rect of rects) rect.classList.remove("is-twinkling");
+    const canvas = weaveRef.current;
+    const track = trackRef.current;
+    const ctx = canvas?.getContext("2d");
+    if (!canvas || !track || !ctx) return;
+
+    const reducedMotionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let w = 0;
+    let h = 0;
+    let sec = 0;
+    let sparks: WeaveSpark[] = [];
+
+    const tick = (dt: number) => {
+      sec += dt;
+      const cy = h / 2;
+      const amp = (h - 14) / 2;
+      const k = (Math.PI * 2) / WEAVE_WAVELENGTH;
+      for (const p of sparks) {
+        p.x -= p.flow * dt;
+        if (p.x < -3) p.x += w + 6;
+        // The rail is a function of x, so the strand shape holds still while
+        // sparks ride through it — a braid, not a wiggling snake.
+        p.y = cy + Math.sin(p.x * k + p.strand + p.jitter) * amp;
+        // Mild shimmer only — heavy twinkling would break the rails apart.
+        const s = 0.5 + 0.5 * Math.sin(sec * p.twinkle + p.phase);
+        p.a = 0.28 + 0.2 * s * s;
+      }
     };
-  }, [maxed, reducedMotion, dots]);
+
+    const render = () => {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = WEAVE_INK;
+      for (const p of sparks) {
+        ctx.globalAlpha = p.a;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    const seed = () => {
+      w = track.clientWidth;
+      h = track.clientHeight;
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      // Rail perception needs dots dense along the curve (~12px apart per
+      // strand); quietness comes from keeping them small and faint.
+      const count = Math.max(36, Math.round(w / 6));
+      sparks = Array.from({ length: count }, (_, i) => ({
+        x: Math.random() * w,
+        y: 0,
+        r: 0.8 + Math.random() * 0.4,
+        strand: i % 2 === 0 ? 0 : Math.PI,
+        jitter: (Math.random() - 0.5) * 0.24,
+        flow: 52 + Math.random() * 18,
+        phase: Math.random() * Math.PI * 2,
+        twinkle: 1 + Math.random() * 1.6,
+        a: 0,
+      }));
+      // Warm the field up so it's already mid-flow when first revealed (and
+      // so a single rendered frame is a valid reduced-motion still).
+      for (let i = 0; i < 90; i++) tick(1 / 50);
+    };
+
+    let raf = 0;
+    let last = 0;
+    const start = () => {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      render();
+      if (reducedMotionQuery.matches) return; // the still frame is the state
+      last = performance.now();
+      const loop = (t: number) => {
+        // dt-clamped so uneven frame pacing never teleports the field.
+        tick(Math.min(0.032, Math.max(0, (t - last) / 1000)));
+        last = t;
+        render();
+        raf = requestAnimationFrame(loop);
+      };
+      raf = requestAnimationFrame(loop);
+    };
+
+    seed();
+    start();
+    const observer = new ResizeObserver(() => {
+      seed();
+      start();
+    });
+    observer.observe(track);
+    reducedMotionQuery.addEventListener("change", start);
+    return () => {
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+      reducedMotionQuery.removeEventListener("change", start);
+    };
+  }, []);
 
   // Lifted, the readout's center moves from the track's middle to just above
   // its top edge.
@@ -419,24 +457,9 @@ function Slider({
             borderBottomRightRadius: fillRadius,
           }}
         />
-        <span className="slider-dots" ref={dotsRef}>
-          {dots.length > 0 && (
-            <svg width={gridSize.width} height={gridSize.height}>
-              {dots.map((dot, index) => (
-                <rect
-                  key={index}
-                  className="slider-dot"
-                  x={dot.x}
-                  y={dot.y}
-                  width={CELL}
-                  height={CELL}
-                  rx={CORNER}
-                  style={{ "--sweep": dot.sweep } as React.CSSProperties}
-                />
-              ))}
-            </svg>
-          )}
-        </span>
+        {/* Max-state weave — the engine effect above draws into this; CSS
+            fades it in with data-maxed. */}
+        <canvas ref={weaveRef} className="slider-weave" />
         <motion.span className="slider-handle" style={{ left: handleLeft }} />
       </div>
       <motion.p

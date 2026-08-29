@@ -6,6 +6,13 @@
 // from the left edge, and the readout riding inside the fill.
 // ---------------------------------------------------------------------------
 
+// Max-state accent — the blue of the ChatGPT model selector the 100% state
+// grew from. Also hard-coded as the weave canvas ink in Slider.tsx.
+$max-ink: #0371dd;
+// The ink at ~14% over white. Kept opaque on purpose: the gray ruler ticks
+// sit underneath the fill and must not shine through the tint.
+$max-fill: #dcebfa;
+
 .slider {
   position: relative;
   width: 356px;
@@ -57,53 +64,34 @@
   bottom: 0;
   left: 0;
   background: $gray-100;
+  transition: background-color 0.35s ease;
   // Width and the easing right-corner radius are driven from the component.
   pointer-events: none;
+
+  // Max-value celebration: the fill crossfades from gray to the max blue.
+  // Leaving 100% breathes everything back out the same way.
+  .slider[data-maxed] & {
+    background: $max-fill;
+  }
 }
 
-// Max-value celebration: at 100% a wave of pattern dots (the multistate
-// button's square-grid language) washes back from the right edge where the
-// fill lands, then random cells keep twinkling quietly. Leaving 100% lets
-// everything breathe back out through the base transition.
-.slider-dots {
+// The max-state weave canvas — the component draws two braided strands of
+// sparks into it (see the weave engine in Slider.tsx); CSS only fades it in
+// and out with the max state. It sits inside the clipping surface, under
+// the readout.
+.slider-weave {
   position: absolute;
   inset: 0;
+  // Canvas is a replaced element: insets alone don't stretch it (it would
+  // render at its intrinsic bitmap size), so size it explicitly.
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease;
   pointer-events: none;
 
-  svg {
-    display: block;
-  }
-}
-
-.slider-dot {
-  fill: $gray-600;
-  fill-opacity: 0;
-  transition: fill-opacity 0.4s ease;
-
-  // Arrival wave — cells crest once, staggered by distance from the impact.
   .slider[data-maxed] & {
-    animation: slider-dot-wave 0.55s ease-out;
-    animation-delay: calc(var(--sweep) * 350ms);
-  }
-
-  // Ongoing glimmer (class driven from JS while maxed). Extra specificity so
-  // it outranks the wave rule above once that has played out.
-  .slider[data-maxed] &.is-twinkling {
-    animation: slider-dot-twinkle 0.7s ease-out;
-    animation-delay: 0s;
-  }
-}
-
-// Both crests rise from the transparent base, so from/to inherit it.
-@keyframes slider-dot-wave {
-  35% {
-    fill-opacity: 0.18;
-  }
-}
-
-@keyframes slider-dot-twinkle {
-  30% {
-    fill-opacity: 0.12;
+    opacity: 1;
   }
 }
 
@@ -144,10 +132,16 @@
   // Size, tracking, and line-height come from the base <p> rules and already
   // match the design (14px / -0.02em / 21px).
   color: $gray-500;
+  transition: color 0.35s ease;
   white-space: nowrap;
   // Optical centering, as in the Figma text style (progressive enhancement).
   text-box: trim-both cap alphabetic;
   pointer-events: none;
+
+  // At 100% the number sits inside the tinted fill and blues with it.
+  .slider[data-maxed] & {
+    color: $max-ink;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -159,13 +153,12 @@
     transition: none;
   }
 
-  // No wave or twinkle without motion — a static texture says "max" instead.
-  .slider-dot {
+  // No drifting without motion — the component renders the weave as a
+  // single still frame, so the tint plus that static texture say "max".
+  // Color and opacity switch instantly.
+  .slider-weave,
+  .slider-fill,
+  .slider-value {
     transition: none;
-    animation: none !important;
-  }
-
-  .slider[data-maxed] .slider-dot {
-    fill-opacity: 0.08;
   }
 }
