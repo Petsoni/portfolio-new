@@ -74,8 +74,10 @@ type UseUiSoundsOptions = {
  * Pages can opt out of hover entirely with `hoverEnabled: false` (currently
  * everything except the homepage) while keeping click sounds and haptics.
  *
- * Button clicks additionally fire a web-haptics tick, so supported devices
- * vibrate. All sounds respect the user's `prefers-reduced-motion` preference.
+ * Button clicks additionally fire a web-haptics buzz — "rigid" by default,
+ * swapped per element with data-haptic="<preset>" ("none" silences it) — so
+ * supported devices vibrate. All sounds respect the user's
+ * `prefers-reduced-motion` preference.
  */
 export function useUiSounds({
   selector = 'button, a, [role="button"]',
@@ -127,8 +129,13 @@ export function useUiSounds({
         if (override && override in clickSounds) clickSounds[override]?.();
         else playClick();
       }
-      // Haptic feedback only for button presses.
-      if (target?.closest(hapticSelector)) playHaptic("rigid");
+      // Haptic feedback only for button presses. Like data-sound, elements
+      // can swap the preset with data-haptic="<preset>" — "none" silences it.
+      const pressed = target?.closest(hapticSelector);
+      if (pressed) {
+        const haptic = pressed.getAttribute("data-haptic");
+        if (haptic !== "none") playHaptic(haptic ?? "rigid");
+      }
     };
 
     let hoverTimer: number | undefined;

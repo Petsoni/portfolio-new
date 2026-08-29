@@ -2,6 +2,7 @@
 
 import React, { useContext, useRef } from "react";
 import { createPortal } from "react-dom";
+import { playHaptic } from "@/app/haptics";
 import { StageBarContext } from "./ComponentShowcase";
 import "./VariantSwitcher.scss";
 
@@ -63,6 +64,9 @@ function VariantSwitcher<T extends string>({
         return;
     }
     event.preventDefault();
+    // Keyboard moves don't fire clicks, so the delegated selection buzz
+    // is played by hand — and only when the selection actually moves.
+    if (next !== index) playHaptic("selection");
     onChange(options[next].value);
     groupRef.current
       ?.querySelectorAll<HTMLButtonElement>('[role="radio"]')
@@ -88,6 +92,7 @@ function VariantSwitcher<T extends string>({
             tabIndex={active ? 0 : -1}
             className="variant-switcher-option"
             data-sound="focus"
+            data-haptic="selection"
             onClick={() => onChange(option.value)}
           >
             <span className="variant-switcher-thumb" />

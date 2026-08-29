@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { Check, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
+import { playHaptic } from "@/app/haptics";
 import "./MultistateButton.scss";
 
 export type Phase = "idle" | "generating" | "success" | "error";
@@ -180,6 +181,14 @@ function MultistateButton({
     return () => window.clearInterval(timer);
   }, [phase, reducedMotion, cells]);
 
+  // Outcome haptics, mirroring the container morph's landings: the green
+  // ripple arrives with the success buzz, the red collapse with the error
+  // one — however the phase was reached, timer or pinned.
+  useEffect(() => {
+    if (phase === "success") playHaptic("success");
+    if (phase === "error") playHaptic("error");
+  }, [phase]);
+
   const labels: Record<Phase, React.ReactNode> = {
     idle: "Generate report",
     generating: "Generating…",
@@ -213,6 +222,10 @@ function MultistateButton({
       type="button"
       className="multistate-button"
       data-phase={phase}
+      // Working states swallow the click — silence the delegated tap and
+      // buzz with it, same as the container morph.
+      data-sound={clickable ? undefined : "none"}
+      data-haptic={clickable ? undefined : "none"}
       aria-busy={phase === "generating"}
       aria-live="polite"
       onClick={() => {

@@ -202,7 +202,11 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
     outcomeRef.current = outcome;
   }, [outcome]);
   useEffect(() => {
-    if (phase === "spin") playUiSound(loadingStart);
+    if (phase === "spin") {
+      playUiSound(loadingStart);
+      // A light tap hands the payment off to the analysis.
+      playHaptic("light");
+    }
     if (phase === "card") {
       if (outcomeRef.current === "success") {
         playUiSound(loadingEnd);
@@ -356,9 +360,11 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
       aria-live="polite"
       aria-busy={!clickable}
       aria-disabled={!clickable}
-      // Both clicks play the delegated default tap — same as the other
-      // playground buttons; working states swallow the sound with the click.
+      // Both clicks play the delegated default tap and buzz — same as the
+      // other playground buttons; working states swallow the sound and the
+      // haptic with the click.
       data-sound={clickable ? undefined : "none"}
+      data-haptic={clickable ? undefined : "none"}
       style={{ visibility: ready ? undefined : "hidden" }}
       whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
       onClick={() => {

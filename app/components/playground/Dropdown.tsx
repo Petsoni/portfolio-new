@@ -8,6 +8,7 @@ import {
   useReducedMotion,
   Variants,
 } from "motion/react";
+import { playHaptic } from "@/app/haptics";
 import "./Dropdown.scss";
 
 // Same pairing the experience morph uses: a springy open, a calmer close so
@@ -91,8 +92,13 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
         [],
     );
     const index = items.indexOf(document.activeElement as HTMLButtonElement);
-    const focusAt = (i: number) =>
-      items[(i + items.length) % items.length]?.focus();
+    // Each keyboard move ticks like an iOS picker; a no-op (Home while
+    // already first) stays silent.
+    const focusAt = (i: number) => {
+      const next = (i + items.length) % items.length;
+      if (next !== index) playHaptic("selection");
+      items[next]?.focus();
+    };
 
     switch (event.key) {
       case "ArrowDown":
@@ -241,6 +247,7 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
                     className="dropdown-option"
                     aria-selected={option === value}
                     data-sound="tick"
+                    data-haptic="selection"
                     variants={optionVariants}
                     onClick={() => select(option)}
                   >

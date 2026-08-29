@@ -412,11 +412,20 @@ function Slider({
   // tight spring as the fill: dragging back onto the track unwinds it
   // continuously, and grabbing the slider mid-rebound blends velocities
   // instead of snapping.
+  const overdragEngagedRef = useRef(false);
   const overdrag = (x: number, width: number) => {
     if (reducedMotion) return;
     const over = x < 0 ? x : x > width ? x - width : 0;
     if (over === 0 && stretch.get() === 0) return;
     if (over !== 0) stretchOriginX.set(over < 0 ? 1 : 0);
+    // Running past an end lands with one soft thunk as the rubber band
+    // engages; returning onto the track re-arms it, so a held stretch
+    // stays silent.
+    if (over !== 0 && !overdragEngagedRef.current) {
+      overdragEngagedRef.current = true;
+      playHaptic("soft");
+    }
+    if (over === 0) overdragEngagedRef.current = false;
     animate(stretch, rubberband(Math.abs(over)), followSpring);
   };
 
@@ -457,6 +466,7 @@ function Slider({
     if (!draggingRef.current) return;
     draggingRef.current = false;
     setDragging(false);
+    overdragEngagedRef.current = false;
     // Let go while stretched and the material recoils home.
     if (stretch.get() !== 0) animate(stretch, 0, reboundSpring);
   };
