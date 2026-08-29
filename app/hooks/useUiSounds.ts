@@ -4,6 +4,10 @@ import { useEffect } from "react";
 import { defineSound, ensureReady, type SoundDefinition } from "@web-kits/audio";
 import { tap, hover, send, swoosh, focus, tick, expand, collapse } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
+import {
+  attachHapticOverlays,
+  supportsHapticOverlay,
+} from "@/app/haptics-overlay";
 
 // All play functions must come from "@web-kits/audio" (not "/react"):
 // each entry point bundles its own private AudioContext, so unlocking the
@@ -91,6 +95,13 @@ export function useUiSounds({
     let disposed = false;
     let audioCtx: AudioContext | null = null;
 
+    // On iOS, press haptics come from native switch overlays laid inside
+    // the buttons (see haptics-overlay.ts): Apple closed the programmatic
+    // path in iOS 26.5, and on older versions it would double the overlay's
+    // tick. The delegated playHaptic below stands down there.
+    const overlayHaptics = supportsHapticOverlay();
+    const detachOverlays = attachHapticOverlays(hapticSelector);
+
     const unlockEvents = ["pointerdown", "keydown", "touchend"] as const;
 
     const stopUnlocking = () => {
@@ -132,7 +143,7 @@ export function useUiSounds({
       // Haptic feedback only for button presses. Like data-sound, elements
       // can swap the preset with data-haptic="<preset>" — "none" silences it.
       const pressed = target?.closest(hapticSelector);
-      if (pressed) {
+      if (pressed && !overlayHaptics) {
         const haptic = pressed.getAttribute("data-haptic");
         if (haptic !== "none") playHaptic(haptic ?? "rigid");
       }
@@ -179,6 +190,7 @@ export function useUiSounds({
     return () => {
       disposed = true;
       stopUnlocking();
+      detachOverlays();
       window.clearTimeout(hoverTimer);
       document.removeEventListener("click", onClick);
       document.removeEventListener("pointerover", onPointerOver);

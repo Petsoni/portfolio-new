@@ -477,3 +477,36 @@ screen and (max-width: 768px) {
     background: $hover-light;
   }
 }
+
+// ---------------------------------------------------------------------------
+// iOS haptic overlays
+// ---------------------------------------------------------------------------
+
+// The invisible native switch that app/haptics-overlay.ts lays inside every
+// haptic-eligible button on iOS: the finger toggles a real switch — the only
+// gesture iOS 26.5+ still plays a haptic tick for — and the click bubbles on
+// to the button. Native appearance is load-bearing: appearance: none or
+// display: none kills the haptic; opacity: 0 keeps it rendered and tappable.
+// The hit-area rounding (clip-path) is set inline per host.
+.haptic-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  opacity: 0;
+  // Above the button's own decorated layers, so the tap lands on the switch.
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+// Busy buttons silence their press haptic the same way they silence their
+// tap sound: with pointer-events off, the tap falls through the overlay to
+// the button and the native tick never fires.
+[data-haptic="none"] > .haptic-overlay {
+  pointer-events: none;
+}
