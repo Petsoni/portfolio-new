@@ -7,7 +7,7 @@ import { playgroundMorphId } from "@/app/motion-variants";
 export const metadata: Metadata = {
   title: "Slider | Petar Marković",
   description:
-    "A percentage slider implemented from a Figma design: the fill chases the pointer, snaps between magnetic detents, and its readout hops above the track when the edge crowds it.",
+    "A percentage slider: the fill tracks the pointer, the readout hops above the track near the edges, and snap mode adds magnetic 10% detents.",
 };
 
 export default function SliderPage() {
@@ -18,12 +18,9 @@ export default function SliderPage() {
         title="Slider"
         align="center"
         morphId={playgroundMorphId("slider")}
-        description="A percentage slider from a Figma design. Press or drag
-          anywhere and the fill follows, its readout counting along — when
-          the edge crowds the number, it hops above the track to stay
-          readable. Switch to snap and the fill turns magnetic, ticking
-          between the ruler marks. And max it out — 100% earns a little
-          celebration."
+        description="A percentage slider. The fill tracks the pointer and the readout
+          counts along, hopping above the track when it nears the edge. Snap
+          mode makes the fill magnetic, ticking between 10% marks."
       >
         <SliderDemo />
       </ComponentShowcase>

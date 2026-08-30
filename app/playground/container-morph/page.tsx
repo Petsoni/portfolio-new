@@ -7,7 +7,7 @@ import { playgroundMorphId } from "@/app/motion-variants";
 export const metadata: Metadata = {
   title: "Container Morph | Petar Marković",
   description:
-    "A payment flow as one continuously morphing container: the pill button collapses into a spinning arc beside a shimmering “Analysing transaction”, seals shut, and blooms into the receipt card — or, switched to decline, lands the failure with a refusal shake.",
+    "A payment flow in a single morphing container: button, spinner, and result card are one element continuously reshaping. Built with Motion.",
 };
 
 export default function ContainerMorphPage() {
@@ -18,13 +18,10 @@ export default function ContainerMorphPage() {
         title="Container Morph"
         align="center"
         morphId={playgroundMorphId("container-morph")}
-        description="One payment control, three lives. Click the pill and it
-          collapses into a spinner running beside “Analysing transaction”,
-          a light band sweeping the words while the payment runs; when the
-          answer lands, the arc seals shut, glides back to centre, and blooms
-          into the card as the details blur in. The switcher above picks the
-          landing — the receipt, or a decline that arrives with a shake.
-          Click the card to run it again."
+        description="A payment flow in a single morphing container: button, spinner,
+          and result card are the same element reshaping. The switcher sets
+          the outcome, receipt or decline; clicking the finished card runs
+          it again."
       >
         <ContainerMorphDemo />
       </ComponentShowcase>

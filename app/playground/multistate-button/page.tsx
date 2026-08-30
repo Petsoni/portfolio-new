@@ -7,7 +7,7 @@ import { playgroundMorphId } from "@/app/motion-variants";
 export const metadata: Metadata = {
   title: "Multistate Button | Petar Marković",
   description:
-    "An action button implemented from a Figma design: a subtle square grid rings its edges, floods the field while it works, and settles with a success ripple — or collapses it in red when the run fails.",
+    "A four-state generate button: a square grid rings it at rest, floods it while it works, and ripples green on success or red on error.",
 };
 
 export default function MultistateButtonPage() {
@@ -18,12 +18,10 @@ export default function MultistateButtonPage() {
         title="Multistate Button"
         align="center"
         morphId={playgroundMorphId("multistate-button")}
-        description="A generate button with four states. A subtle square grid hugs the
-          edges at rest; clicking floods the field with pulsing cells while the
-          work runs, and a soft green ripple rolls out when the report lands —
-          on a failure the same wave collapses inward in red, and a click
-          retries. Use the switcher above to pin any state in place, or click
-          the button and watch the switcher follow the flow."
+        description="A generate button with four states. A square grid rings it at rest
+          and floods it while the work runs; success ripples outward in green,
+          error collapses inward in red. Pin a state with the switcher, or
+          click the button to run the full flow."
       >
         <MultistateButtonDemo />
       </ComponentShowcase>

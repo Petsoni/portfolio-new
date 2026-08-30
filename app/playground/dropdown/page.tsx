@@ -15,7 +15,7 @@ const dropdownOptions = [
 export const metadata: Metadata = {
   title: "Dropdown | Petar Marković",
   description:
-    "An expanding select implemented from a two-state Figma design and animated with Motion.",
+    "An animated, keyboard-accessible select built with Motion from a two-state Figma design.",
 };
 
 export default function DropdownPage() {
@@ -25,9 +25,8 @@ export default function DropdownPage() {
       <ComponentShowcase
         title="Dropdown"
         morphId={playgroundMorphId("dropdown")}
-        description="An expanding select. The closed pill grows a soft panel around itself,
-          the options bloom in with a blur stagger, and the whole thing is fully
-          keyboard-accessible."
+        description="An animated select. The closed pill expands into a soft panel,
+          the options stagger in with a blur, and it's fully keyboard-accessible."
       >
         <Dropdown label="Discipline" options={dropdownOptions} />
       </ComponentShowcase>
