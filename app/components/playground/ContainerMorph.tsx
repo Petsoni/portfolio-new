@@ -97,17 +97,26 @@ const morphSpring: Transition = { type: "spring", stiffness: 200, damping: 25 };
 const expandSpring: Transition = { type: "spring", stiffness: 400, damping: 30, mass: 0.9 };
 const restartSpring: Transition = { type: "spring", stiffness: 440, damping: 34 };
 
-// Mock receipt shown on the success card, and the decline's factual
-// counterpart — ledger-calm: what failed, on which card, and a way out.
+// Mock receipt shown on the success card (its date row is added at render,
+// see `today`), and the decline's factual counterpart — ledger-calm: what
+// failed, on which card, and a way out. The card number is masked the way
+// receipts mask it: four dots, last four digits.
+const MASKED_CARD = "Visa •••• 4242";
 const RECEIPT = [
   { label: "Amount", value: "$149.00" },
-  { label: "Card", value: "Visa •• 4242" },
-  { label: "Date", value: "Aug 29, 2026" },
+  { label: "Card", value: MASKED_CARD },
 ];
 const DECLINE_DETAILS = [
   { label: "Reason", value: "Insufficient funds" },
-  { label: "Card", value: "Visa •• 4242" },
+  { label: "Card", value: MASKED_CARD },
 ];
+
+// "Aug 29, 2026" — the receipt's date format.
+const receiptDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
 
 // The declined card's landing gesture: the macOS login "no" — one sharp
 // horizontal shake, decaying to rest.
@@ -129,6 +138,16 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const reducedMotion = useReducedMotion() ?? false;
   const statusId = useId();
+
+  // A receipt is dated today — in the visitor's time zone, which the server
+  // can't know, so the date is filled in after hydration rather than
+  // rendered (and mismatched) on the server. The card stays hidden until a
+  // payment has run, so the placeholder is never on screen.
+  const [today, setToday] = useState<string | null>(null);
+  useEffect(() => {
+    setToday(receiptDate.format(new Date()));
+  }, []);
+  const receipt = [...RECEIPT, { label: "Date", value: today ?? "—" }];
 
   // Until the first click, every container transition is instant — covering
   // the initial measurement pass and any font-metric settling.
@@ -388,7 +407,9 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
       : phase !== "card"
         ? "Analysing transaction"
         : outcome === "success"
-          ? "Payment successful. $149.00 paid with Visa ending 4242 on Aug 29, 2026."
+          ? `Payment successful. $149.00 paid with Visa ending 4242${
+              today ? ` on ${today}` : ""
+            }.`
           : "Payment declined. Insufficient funds on Visa ending 4242.";
 
   return (
@@ -493,7 +514,7 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
               {outcome === "success" ? "Payment successful" : "Payment declined"}
             </motion.span>
             <span className="container-morph-card-rows">
-              {(outcome === "success" ? RECEIPT : DECLINE_DETAILS).map(
+              {(outcome === "success" ? receipt : DECLINE_DETAILS).map(
                 (row, index) => (
                   <motion.span
                     key={row.label}
