@@ -22,8 +22,10 @@
 }
 
 .showcase-stage-canvas {
-  // Height floor for the canvas.
-  --stage-min-height: 348px;
+  // Height floor for the canvas: enough for the tallest centred demo (the
+  // Container Morph card) with the canvas padding around it, and no more —
+  // the component should read as the subject, not get lost on the stage.
+  --stage-min-height: 240px;
 
   // Anchor for any demo chrome pinned against the canvas.
   position: relative;
