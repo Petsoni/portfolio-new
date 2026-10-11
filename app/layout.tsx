@@ -4,6 +4,7 @@ import "./global.scss";
 import { Analytics } from "@vercel/analytics/next";
 import MotionProvider from "@/app/components/MotionProvider";
 import SoundToggle from "@/app/components/SoundToggle";
+import { siteUrl } from "@/lib/metadata";
 
 // The site's one typeface. next/font downloads it at build time and serves it
 // from this origin with a metrics-matched fallback, so there is no request to
@@ -19,10 +20,11 @@ const sans = Geist({
   display: "swap",
 });
 
+// Site-wide defaults. Each page adds its own title, description, canonical
+// URL and social tags through pageMetadata (lib/metadata.ts).
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Petar Marković | Design Engineer",
-  description:
-    "Design engineer building polished, accessible interfaces and the systems behind them. Experienced with Angular, React, Next.js, Figma-to-code workflows, and interaction/motion design.",
 };
 
 export default function RootLayout({

@@ -5,6 +5,7 @@ import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import Dropdown from "@/app/components/playground/Dropdown";
 import ShowcaseStage from "@/app/components/playground/ShowcaseStage";
 import { playgroundMorphId } from "@/app/motion-variants";
+import { pageMetadata } from "@/lib/metadata";
 
 const dropdownOptions = [
   "Software Development",
@@ -39,11 +40,12 @@ const notes = [
   },
 ];
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Dropdown | Petar Marković",
   description:
     "An animated, keyboard-accessible select built with Motion from a two-state Figma design.",
-};
+  path: "/playground/dropdown",
+});
 
 export default function DropdownPage() {
   return (

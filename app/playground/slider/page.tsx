@@ -4,6 +4,7 @@ import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import SliderDemo from "@/app/components/playground/SliderDemo";
 import { playgroundMorphId } from "@/app/motion-variants";
+import { pageMetadata } from "@/lib/metadata";
 
 // How the demo is built, drafted from the implementation.
 // TODO(petar): review the wording.
@@ -30,11 +31,12 @@ const notes = [
   },
 ];
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Slider | Petar Marković",
   description:
     "A percentage slider: the fill tracks the pointer, the readout hops above the track near the edges, and snap mode adds magnetic 10% detents.",
-};
+  path: "/playground/slider",
+});
 
 export default function SliderPage() {
   return (

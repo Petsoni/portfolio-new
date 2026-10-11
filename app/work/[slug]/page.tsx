@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import BackLink from "@/app/components/BackLink";
 import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
+import { pageMetadata } from "@/lib/metadata";
 import { getWork, visibleWork } from "@/lib/work";
 import "./CaseStudy.scss";
 
@@ -22,10 +23,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const entry = getWork((await params).slug);
   if (!entry) return {};
-  return {
+  return pageMetadata({
     title: `${entry.title} | Petar Marković`,
     description: entry.summary,
-  };
+    path: `/work/${entry.slug}`,
+  });
 }
 
 /**

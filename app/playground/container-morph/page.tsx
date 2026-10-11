@@ -4,6 +4,7 @@ import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import ContainerMorphDemo from "@/app/components/playground/ContainerMorphDemo";
 import { playgroundMorphId } from "@/app/motion-variants";
+import { pageMetadata } from "@/lib/metadata";
 
 // How the demo is built, drafted from the implementation.
 // TODO(petar): review the wording.
@@ -30,11 +31,12 @@ const notes = [
   },
 ];
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Container Morph | Petar Marković",
   description:
     "A payment flow in a single morphing container: button, spinner, and result card are one element continuously reshaping. Built with Motion.",
-};
+  path: "/playground/container-morph",
+});
 
 export default function ContainerMorphPage() {
   return (

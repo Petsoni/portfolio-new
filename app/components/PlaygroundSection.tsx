@@ -4,34 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { playgroundMorphId, returnSpring } from "@/app/motion-variants";
-
-// One entry per component; each links to its dedicated showcase page.
-const playgroundItems = [
-  {
-    id: "container-morph",
-    name: "Container Morph",
-    meta: "Morphing payment flow",
-    href: "/playground/container-morph",
-  },
-  {
-    id: "dropdown",
-    name: "Dropdown",
-    meta: "Animated select",
-    href: "/playground/dropdown",
-  },
-  {
-    id: "multistate-button",
-    name: "Multistate Button",
-    meta: "Stateful action button",
-    href: "/playground/multistate-button",
-  },
-  {
-    id: "slider",
-    name: "Slider",
-    meta: "Magnetic range control",
-    href: "/playground/slider",
-  },
-];
+import { playgroundItems } from "@/lib/playground";
 
 function PlaygroundSection() {
   const reducedMotion = useReducedMotion();

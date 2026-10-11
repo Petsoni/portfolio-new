@@ -4,6 +4,7 @@ import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import MultistateButtonDemo from "@/app/components/playground/MultistateButtonDemo";
 import { playgroundMorphId } from "@/app/motion-variants";
+import { pageMetadata } from "@/lib/metadata";
 
 // How the demo is built, drafted from the implementation.
 // TODO(petar): review the wording.
@@ -30,11 +31,12 @@ const notes = [
   },
 ];
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Multistate Button | Petar Marković",
   description:
     "A four-state generate button: a square grid rings it at rest, floods it while it works, and ripples green on success or red on error.",
-};
+  path: "/playground/multistate-button",
+});
 
 export default function MultistateButtonPage() {
   return (
