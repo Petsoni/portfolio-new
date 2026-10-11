@@ -3,40 +3,31 @@
 import React, { useState } from "react";
 import workHistory from "@/lib/work-history.json";
 import { MotionConfig, motion } from "motion/react";
-import { containerVariants, itemVariants } from "@/app/motion-variants";
 import ExperienceModal, {
   WorkModel,
   returnSpring,
   workLayoutId,
 } from "@/app/components/ExperienceModal";
-import { useHomeEntrance } from "@/app/hooks/useHomeEntrance";
 
 function Experience() {
   const [selected, setSelected] = useState<WorkModel | null>(null);
-  // One-time entrance: plays on hard load/refresh, skipped when returning
-  // from a showcase page via back-navigation.
-  const entrance = useHomeEntrance();
 
   return (
     // reducedMotion="user" collapses the row-to-card morph (and other
     // transforms) to fades for prefers-reduced-motion users. Context reaches
     // the portal'd modal too.
     <MotionConfig reducedMotion="user">
-      <motion.section
-        className="section experience-section"
-        variants={containerVariants}
-        initial={entrance}
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
+      <section
+        className="section experience-section enter"
+        style={{ "--i": 3 } as React.CSSProperties}
       >
-        <motion.h2 variants={itemVariants}>Experience</motion.h2>
-        <motion.div className="experience-list">
+        <h2>Experience</h2>
+        <div className="experience-list">
           {(workHistory as WorkModel[]).map((work) => (
             <motion.button
               type="button"
               className={"experience-row"}
               key={work.id}
-              variants={itemVariants}
               layoutId={workLayoutId(work.id)}
               style={{ borderRadius: 8 }}
               // Calm return spring: the row leads the close morph, while the
@@ -51,9 +42,9 @@ function Experience() {
               <span className={"experience-duration"}>{work.duration}</span>
             </motion.button>
           ))}
-        </motion.div>
+        </div>
         <ExperienceModal work={selected} onClose={() => setSelected(null)} />
-      </motion.section>
+      </section>
     </MotionConfig>
   );
 }

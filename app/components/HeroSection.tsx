@@ -1,10 +1,5 @@
-"use client";
-
 import React from "react";
-import { motion } from "motion/react";
 import { Github, Linkedin, Mail } from "lucide-react";
-import { containerVariants, itemVariants } from "@/app/motion-variants";
-import { useHomeEntrance } from "@/app/hooks/useHomeEntrance";
 
 // Mini PDF page that peeks out from behind the CV link on hover.
 // Colors come from the --peek-* custom properties defined in common.scss.
@@ -64,21 +59,17 @@ const heroLinks = [
 ];
 
 function HeroSection() {
-  // One-time entrance: plays on hard load/refresh, skipped when returning
-  // from a showcase page via back-navigation.
-  const entrance = useHomeEntrance();
-
+  // Rendered visible on the server; the entrance is the CSS .enter stagger,
+  // which runs from first paint without JS.
   return (
-    <motion.section
-      className="section hero-section"
-      variants={containerVariants}
-      initial={entrance}
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-    >
+    <section className="section hero-section">
       <div className="hero-left">
-        <motion.h1 variants={itemVariants}>Hi there, I’m Petar.</motion.h1>
-        <motion.nav className="hero-links" variants={itemVariants} aria-label="Contact links">
+        <h1 className="enter">Hi there, I’m Petar.</h1>
+        <nav
+          className="hero-links enter"
+          style={{ "--i": 1 } as React.CSSProperties}
+          aria-label="Contact links"
+        >
           {heroLinks.map(({ label, href, art }) => (
             <a
               key={label}
@@ -94,17 +85,20 @@ function HeroSection() {
               </span>
             </a>
           ))}
-        </motion.nav>
+        </nav>
       </div>
-      <motion.div className="hero-bio" variants={itemVariants}>
+      <div
+        className="hero-bio enter"
+        style={{ "--i": 2 } as React.CSSProperties}
+      >
         <p>
           Design engineer based in Serbia, turning ideas into interfaces that feel as good as they look.
         </p>
         <p>
           I work across the full stack, but I care most about the last mile. The motion, the micro-interactions, the details that 	make software feel considered. When I'm not designing or coding, I'm	exploring new technologies or producing electronic music.
         </p>
-      </motion.div>
-    </motion.section>
+      </div>
+    </section>
   );
 }
 

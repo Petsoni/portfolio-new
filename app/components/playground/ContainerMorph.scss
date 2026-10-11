@@ -76,6 +76,17 @@ $error-ink: #dc2626;
   pointer-events: none;
 }
 
+// Before the first measurement the idle label holds the shell open from
+// normal flow, so the pill renders from the server HTML alone. [data-ready]
+// lands with the measurement and the label rejoins the centred layers.
+.container-morph:not([data-ready]) .container-morph-shell > .container-morph-label {
+  position: relative;
+  top: auto;
+  left: auto;
+  translate: none;
+  display: block;
+}
+
 // Pill interior from the Figma frame: 10px/12px padding around one 21px line.
 .container-morph-label {
   padding: 10px 12px;

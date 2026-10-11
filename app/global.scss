@@ -57,6 +57,12 @@ body {
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+
+  // Entrance motion (see .enter in common.scss).
+  --duration-enter: 240ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --enter-distance: 8px;
+  --stagger-step: 40ms;
 }
 
 @layer base {

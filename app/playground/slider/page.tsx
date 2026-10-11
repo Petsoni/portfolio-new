@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import SliderDemo from "@/app/components/playground/SliderDemo";
@@ -12,11 +13,10 @@ export const metadata: Metadata = {
 
 export default function SliderPage() {
   return (
-    <div className="page">
+    <PageShell>
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Slider"
-        align="center"
         morphId={playgroundMorphId("slider")}
         description="A percentage slider. The fill tracks the pointer and the readout
           counts along, hopping above the track when it nears the edge. Snap
@@ -24,6 +24,6 @@ export default function SliderPage() {
       >
         <SliderDemo />
       </ComponentShowcase>
-    </div>
+    </PageShell>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useCallback, useState } from "react";
 import MultistateButton, { type Phase } from "./MultistateButton";
+import ShowcaseStage from "./ShowcaseStage";
 import VariantSwitcher from "./VariantSwitcher";
 
 const STATE_OPTIONS: { value: Phase; label: string }[] = [
@@ -35,18 +36,22 @@ function MultistateButtonDemo() {
   }, []);
 
   return (
-    <>
-      <VariantSwitcher
-        label="Button state"
-        options={STATE_OPTIONS}
-        value={phase}
-        onChange={pick}
-      />
+    <ShowcaseStage
+      align="center"
+      bar={
+        <VariantSwitcher
+          label="Button state"
+          options={STATE_OPTIONS}
+          value={phase}
+          onChange={pick}
+        />
+      }
+    >
       <MultistateButton
         pinnedPhase={pinned ? phase : null}
         onPhaseChange={follow}
       />
-    </>
+    </ShowcaseStage>
   );
 }
 

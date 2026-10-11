@@ -72,6 +72,9 @@ const DISC = { r: 5, strokeWidth: 10, pathLength: 1 };
 const ARC = { r: 8.25, strokeWidth: 2.5, pathLength: 0.78 };
 // Gap between the spinner and the analysing label.
 const GAP = 16;
+// The pill's radius in the Figma frame. CSS clamps it to half the pill's
+// height, so it draws the same pill as the measured radius that replaces it.
+const PILL_RADIUS = 70;
 
 // Choreography: collapse, spin, seal, expand.
 const SHRINK_MS = 360;
@@ -160,6 +163,10 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Until the first measurement (the server HTML, and the page without JS)
+  // the idle label sits in normal flow and the shell wraps it from CSS alone
+  // — see [data-ready] in ContainerMorph.scss — so the pill is there from
+  // first paint. Once measured, Motion owns the shell's size.
   const ready = pill.width > 0 && analysing.width > 0 && card.width > 0;
 
   // Timer chain: each working phase hands off to the next. Reduced motion
@@ -270,9 +277,9 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
                 // Figma rounds the pill at 70; at 41px tall that clamps to
                 // the half-height 20.5 used here, keeping the radius morph
                 // tiny.
-                width: pill.width,
-                height: pill.height,
-                borderRadius: pill.height / 2,
+                width: ready ? pill.width : "auto",
+                height: ready ? pill.height : "auto",
+                borderRadius: ready ? pill.height / 2 : PILL_RADIUS,
                 backgroundColor: INK,
                 boxShadow: SHELL_SHADOW,
                 x: 0,
@@ -365,7 +372,7 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
       // haptic with the click.
       data-sound={clickable ? undefined : "none"}
       data-haptic={clickable ? undefined : "none"}
-      style={{ visibility: ready ? undefined : "hidden" }}
+      data-ready={ready || undefined}
       whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
       onClick={() => {
         if (!clickable) return;

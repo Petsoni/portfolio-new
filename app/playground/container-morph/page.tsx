@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import ContainerMorphDemo from "@/app/components/playground/ContainerMorphDemo";
@@ -12,11 +13,10 @@ export const metadata: Metadata = {
 
 export default function ContainerMorphPage() {
   return (
-    <div className="page">
+    <PageShell>
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Container Morph"
-        align="center"
         morphId={playgroundMorphId("container-morph")}
         description="A payment flow in a single morphing container: button, spinner,
           and result card are the same element reshaping. The switcher sets
@@ -25,6 +25,6 @@ export default function ContainerMorphPage() {
       >
         <ContainerMorphDemo />
       </ComponentShowcase>
-    </div>
+    </PageShell>
   );
 }

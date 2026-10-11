@@ -68,6 +68,39 @@ a {
 }
 
 // ---------------------------------------------------------------------------
+// Entrance
+// ---------------------------------------------------------------------------
+
+// First-paint entrance in plain CSS, so it runs before (and without) JS and
+// the server HTML never ships hidden content. Stagger siblings with --i.
+// Fills backwards only: a forwards fill would leave an implicit will-change
+// on every entered element for the life of the page.
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--enter-distance));
+  }
+}
+
+.enter {
+  animation: enter var(--duration-enter) var(--ease-out) backwards;
+  animation-delay: calc(var(--stagger-step) * var(--i, 0));
+}
+
+// Client-side navigation (see PageShell): no stagger and no travel — the
+// page crossfades in as one while the title morph flies over it.
+.page[data-nav="client"] {
+  --stagger-step: 0ms;
+  --enter-distance: 0px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Hero
 // ---------------------------------------------------------------------------
 

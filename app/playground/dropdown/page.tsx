@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import Dropdown from "@/app/components/playground/Dropdown";
+import ShowcaseStage from "@/app/components/playground/ShowcaseStage";
 import { playgroundMorphId } from "@/app/motion-variants";
 
 const dropdownOptions = [
@@ -20,7 +22,7 @@ export const metadata: Metadata = {
 
 export default function DropdownPage() {
   return (
-    <div className="page">
+    <PageShell>
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Dropdown"
@@ -28,8 +30,10 @@ export default function DropdownPage() {
         description="An animated select. The closed pill expands into a soft panel,
           the options stagger in with a blur, and it's fully keyboard-accessible."
       >
-        <Dropdown label="Discipline" options={dropdownOptions} />
+        <ShowcaseStage>
+          <Dropdown label="Discipline" options={dropdownOptions} />
+        </ShowcaseStage>
       </ComponentShowcase>
-    </div>
+    </PageShell>
   );
 }

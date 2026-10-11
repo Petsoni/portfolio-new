@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import MultistateButtonDemo from "@/app/components/playground/MultistateButtonDemo";
@@ -12,11 +13,10 @@ export const metadata: Metadata = {
 
 export default function MultistateButtonPage() {
   return (
-    <div className="page">
+    <PageShell>
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Multistate Button"
-        align="center"
         morphId={playgroundMorphId("multistate-button")}
         description="A generate button with four states. A square grid rings it at rest
           and floods it while the work runs; success ripples outward in green,
@@ -25,6 +25,6 @@ export default function MultistateButtonPage() {
       >
         <MultistateButtonDemo />
       </ComponentShowcase>
-    </div>
+    </PageShell>
   );
 }
