@@ -7,6 +7,7 @@ import { ArrowUpRight, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { playUiSound } from "@/app/hooks/useUiSounds";
 import { crossfade } from "@/app/motion-variants";
+import { formatRange } from "@/lib/format";
 import type { ExperienceEntry } from "@/lib/profile";
 import { modalOpen, modalClose } from "@/.web-kits/core";
 
@@ -170,7 +171,7 @@ function ExperienceModal({ work, onClose, openerRef }: ExperienceModalProps) {
                         ))}
                       </ul>
                       <span className="experience-modal-duration">
-                        {work.duration}.
+                        {formatRange(work.start, work.end)}
                       </span>
                     </motion.div>
                     {work.link && (

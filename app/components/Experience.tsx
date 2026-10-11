@@ -6,6 +6,7 @@ import ExperienceModal, {
   workLayoutId,
 } from "@/app/components/ExperienceModal";
 import { returnSpring } from "@/app/motion-variants";
+import { formatRange } from "@/lib/format";
 import { experience, type ExperienceEntry } from "@/lib/profile";
 
 function Experience() {
@@ -43,7 +44,9 @@ function Experience() {
               <span className="experience-role">{work.role}</span>
             </span>
             <span className="separator"></span>
-            <span className={"experience-duration"}>{work.duration}</span>
+            <span className="experience-duration">
+              {formatRange(work.start, work.end)}
+            </span>
           </motion.button>
         ))}
       </div>

@@ -3,6 +3,8 @@
 // section read from here, and a CV built from this repo should too, so the
 // two cannot drift apart again.
 
+import type { YearMonth } from "@/lib/format";
+
 export const links = {
   cv: "/Petar_Marković_CV.pdf",
   email: "mailto:pmarkovic2308@gmail.com",
@@ -33,7 +35,9 @@ export interface ExperienceEntry {
   otherRoles: string[];
   link: string;
   image: string;
-  duration: string;
+  start: YearMonth;
+  /** null while he still works there. */
+  end: YearMonth | null;
   /** Paragraphs, separated by newlines. */
   description: string;
 }
@@ -46,7 +50,8 @@ export const experience: ExperienceEntry[] = [
     otherRoles: [],
     link: "https://prepia.com",
     image: "/work-logos/prepia.png",
-    duration: "June 2026 — Present",
+    start: "2026-06",
+    end: null,
     description:
       "Currently working as a Frontend Engineer at Prepia, building modern, performant, and accessible web interfaces.\nThe specifics of the product are under NDA, but the focus is on crafting a polished user experience backed by a clean, scalable component architecture and close collaboration with design and backend teams.",
   },
@@ -61,7 +66,8 @@ export const experience: ExperienceEntry[] = [
     image: "/work-logos/ashkin.png",
     // TODO(petar): confirm the start. The site has said August 2022, the CV
     // June 2022.
-    duration: "August 2022 — Apr 2026",
+    start: "2022-08",
+    end: "2026-04",
     description:
       "Founded and ran Ashkin Studio, a software studio delivering high-performance SaaS products and custom web applications for clients across multiple countries. Managed the full project lifecycle for 10+ production-grade projects, maintaining a 100% completion rate.\nLed cross-functional teams of up to four developers, owning requirements gathering, sprint planning, code reviews, and delivery. Standardized reusable component libraries and CI/CD pipelines that reduced time-to-launch and kept quality consistent across the portfolio.\nMy work bridged business goals and technical execution end to end — from UI/UX strategy and design through scalable, production-ready frontend architecture.",
   },
@@ -74,7 +80,8 @@ export const experience: ExperienceEntry[] = [
     otherRoles: [],
     link: "https://dualsoft.net",
     image: "/work-logos/dualsoft.png",
-    duration: "April 2025 — July 2025",
+    start: "2025-04",
+    end: "2025-07",
     description:
       "Worked as a Full-Stack Developer building reactive Angular UI components backed by Spring Boot microservices with PostgreSQL integration.\nEngineered an event-driven architecture using Kafka and RabbitMQ, and integrated real-time WebSocket notifications for live updates under heavy concurrent load. Maintained 80%+ test coverage across my assigned modules and conducted regular peer code reviews to uphold code quality.",
   },
@@ -87,7 +94,8 @@ export const experience: ExperienceEntry[] = [
     otherRoles: ["Frontend Team Lead", "Python Developer"],
     link: "https://imet.metropolitan.ac.rs",
     image: "/work-logos/imet.svg",
-    duration: "August 2021 — April 2025",
+    start: "2021-08",
+    end: "2025-04",
     description:
       "Built Angular frontend modules and Spring Boot RESTful APIs for an enterprise university platform serving 20,000+ students and 200+ staff.\nArchitected a modular monorepo serving multiple faculties, with shared modules that kept the system scalable and maintainable as it grew.\nDeveloped an internal analytics platform in Python/Flask that automated KPI reporting across 50,000+ records, reducing aggregation time from days to minutes.",
   },

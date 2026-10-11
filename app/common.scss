@@ -413,6 +413,8 @@ screen and (max-width: 768px) {
     flex-shrink: 0;
     white-space: nowrap;
     font-weight: 500;
+    // Dates in a column: equal-width digits keep them aligned.
+    font-variant-numeric: tabular-nums;
     color: $faint-light;
   }
 
@@ -496,6 +498,7 @@ screen and (max-width: 768px) {
 
   .experience-modal-duration {
     font-weight: 500;
+    font-variant-numeric: tabular-nums;
     color: $faint-light;
   }
 

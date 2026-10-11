@@ -194,7 +194,9 @@ $error-ink: #dc2626;
   color: $gray-400;
 }
 
+// Amount, card number and date: equal-width digits, ledger-style.
 .container-morph-card-row-value {
+  font-variant-numeric: tabular-nums;
   color: $gray-200;
 }
 
