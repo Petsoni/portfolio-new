@@ -5,6 +5,19 @@
 // The tactile shadow token lives in the shared palette.
 // ---------------------------------------------------------------------------
 
+// Label above the control. It names the trigger and the listbox (see
+// aria-labelledby in Dropdown.tsx).
+.dropdown-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dropdown-label {
+  font-weight: 500;
+  color: $muted-light;
+}
+
 .dropdown {
   // The open panel overlays the page, so the wrapper only reserves the closed
   // trigger's footprint: 21px line-height + 2×10px padding + 2×1px border.
@@ -17,8 +30,8 @@
   --dd-border: #{$border-lightest};
   --dd-trigger-bg: #{$background-light};
   --dd-option-text: #{$gray-500};
-  --dd-selected-bg: #{$gray-25};
-  --dd-selected-text: #{$gray-900}; // was undefined; inherited this from body
+  --dd-active-text: #{$gray-900}; // selected and highlighted options
+  --dd-highlight-bg: #{$gray-100}; // one ramp step darker than the panel
 }
 
 .dropdown-panel {
@@ -130,6 +143,8 @@
 .dropdown-option {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
   width: 100%;
   padding: 10px 12px;
   margin: 0;
@@ -144,16 +159,26 @@
   color: var(--dd-option-text);
   transition: background-color 0.15s ease, color 0.15s ease;
 
-  // The moving highlight doubles as the focus indicator inside the panel.
-  &:hover,
-  &:focus-visible,
+  // Selected — a fact about the value: darker text and the check. It holds
+  // wherever the highlight is.
   &[aria-selected="true"] {
-    background: var(--dd-selected-bg);
-    color: var(--dd-selected-text);
+    color: var(--dd-active-text);
   }
 
-  // Inset: the list clips its overflow, so an outset ring would be cut off.
+  // Highlighted — the option Enter would pick. It is DOM focus (arrows,
+  // typeahead, and hover all move it), so there is only ever one.
+  &:focus {
+    background: var(--dd-highlight-bg);
+    color: var(--dd-active-text);
+  }
+
+  // Keyboard focus adds the ring. Inset: the list clips its overflow, so an
+  // outset ring would be cut off.
   &:focus-visible {
     outline-offset: calc(var(--focus-ring-width) * -1);
   }
+}
+
+.dropdown-check {
+  flex-shrink: 0;
 }

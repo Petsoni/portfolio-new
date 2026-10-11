@@ -22,15 +22,16 @@
 }
 
 .showcase-stage-canvas {
+  // Height floor for the canvas.
+  --stage-min-height: 348px;
+
   // Anchor for any demo chrome pinned against the canvas.
   position: relative;
   flex: 1;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  // Tall enough for expanding demos (e.g. the dropdown's open panel) to stay
-  // inside the frame.
-  min-height: 348px;
+  min-height: var(--stage-min-height);
   padding: 48px 24px;
   border: 1px solid $border-lightest;
   border-radius: 12px;
@@ -38,5 +39,12 @@
 
   &[data-align="center"] {
     align-items: center;
+  }
+
+  // Top-aligned demos expand downward and overlay the canvas (the dropdown's
+  // open panel, under its label); the taller floor keeps them inside the
+  // frame.
+  &[data-align="top"] {
+    --stage-min-height: 380px;
   }
 }
