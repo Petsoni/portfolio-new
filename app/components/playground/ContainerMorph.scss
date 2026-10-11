@@ -36,11 +36,6 @@ $error-ink: #dc2626;
   &[aria-disabled="true"] {
     cursor: default;
   }
-
-  &:focus-visible {
-    outline: 2px solid $gray-300;
-    outline-offset: 3px;
-  }
 }
 
 // The morphing container itself. Motion owns the size, radius, fill,

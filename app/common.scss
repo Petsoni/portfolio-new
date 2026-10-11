@@ -363,7 +363,12 @@ screen and (max-width: 768px) {
   border-radius: 12px;
   background: $background-light;
   border: 1px solid $border-light;
-  outline: none;
+
+  // The card takes focus programmatically on open; it is not a tab stop, and
+  // a ring here would stretch with the morph. Its controls keep theirs.
+  &:focus-visible {
+    outline: none;
+  }
 
   // Left column — stretches to card height so roles pin to the bottom.
   .experience-modal-side {

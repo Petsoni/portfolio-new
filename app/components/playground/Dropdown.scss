@@ -152,7 +152,8 @@
     color: var(--dd-selected-text);
   }
 
+  // Inset: the list clips its overflow, so an outset ring would be cut off.
   &:focus-visible {
-    outline: none;
+    outline-offset: calc(var(--focus-ring-width) * -1);
   }
 }

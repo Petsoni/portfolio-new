@@ -69,6 +69,12 @@ body {
   // UI state changes (hover, press).
   --duration-ui: 200ms;
 
+  // Focus ring: one indicator for every focusable element, in the text
+  // color — 10.9:1 on the page background (WCAG 1.4.11 asks for 3:1).
+  --focus-ring-color: #{$heading-light};
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
   // Entrance motion (see .enter in common.scss).
   --duration-enter: 240ms;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
@@ -76,9 +82,16 @@ body {
   --stagger-step: 40ms;
 }
 
+// The one focus ring. Zero specificity (:where), so a component only ever
+// has to adjust the offset — e.g. inset it where an ancestor clips overflow.
+:where(a, button, [role="slider"], [role="option"], [tabindex]):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   body {

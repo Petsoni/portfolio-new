@@ -33,11 +33,6 @@ $max-fill: #dcebfa;
   &[data-dragging] {
     cursor: grabbing;
   }
-
-  &:focus-visible {
-    outline: 2px solid $gray-300;
-    outline-offset: 2px;
-  }
 }
 
 // The track's elastic body. Dragging past either end scales this whole
