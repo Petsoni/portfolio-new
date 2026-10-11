@@ -58,6 +58,17 @@ body {
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
 
+  // Spacing and control sizes.
+  --space-2: 8px;
+  --space-3: 12px;
+  --icon-button-size: 32px;
+  // Smallest comfortable touch target; smaller controls extend their hit
+  // area out to this.
+  --tap-target: 44px;
+
+  // UI state changes (hover, press).
+  --duration-ui: 200ms;
+
   // Entrance motion (see .enter in common.scss).
   --duration-enter: 240ms;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);

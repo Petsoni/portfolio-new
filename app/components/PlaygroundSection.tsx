@@ -3,8 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { MotionConfig, motion } from "motion/react";
-import { playgroundMorphId } from "@/app/motion-variants";
-import { returnSpring } from "@/app/components/ExperienceModal";
+import { playgroundMorphId, returnSpring } from "@/app/motion-variants";
 
 // One entry per component; each links to its dedicated showcase page.
 const playgroundItems = [

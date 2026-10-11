@@ -430,6 +430,40 @@ screen and (max-width: 768px) {
     }
   }
 
+  // Close control: a quiet icon button in the card's top corner. In flow
+  // beside the body, so it never sits on top of the description.
+  .experience-modal-close {
+    position: relative;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    align-self: flex-start;
+    width: var(--icon-button-size);
+    height: var(--icon-button-size);
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-radius: calc(var(--radius) - 2px);
+    background: transparent;
+    color: $faint-light;
+    cursor: pointer;
+    transition:
+      color var(--duration-ui) var(--ease-out),
+      background-color var(--duration-ui) var(--ease-out);
+
+    // Hit area reaches the touch-target minimum without growing the button.
+    &::after {
+      content: "";
+      position: absolute;
+      inset: calc((var(--icon-button-size) - var(--tap-target)) / 2);
+    }
+
+    &:hover {
+      color: $heading-light;
+      background-color: $hover-light;
+    }
+  }
+
   .experience-modal-visit {
     display: inline-flex;
     align-items: center;
@@ -473,12 +507,22 @@ screen and (max-width: 768px) {
   }
 
   @media screen and (max-width: 600px) {
+    // Anchor for the close button below.
+    position: relative;
     flex-direction: column;
     // Stacked layout has no bottom-pinned roles, so no height floor needed.
     min-height: 0;
 
     .experience-modal-side {
       width: 100%;
+    }
+
+    // Stacked, the button would land under the description; pin it to the
+    // corner beside the title instead.
+    .experience-modal-close {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
     }
   }
 }

@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { MotionConfig, motion } from "motion/react";
-import { returnSpring } from "@/app/components/ExperienceModal";
+import { returnSpring } from "@/app/motion-variants";
 import "./ComponentShowcase.scss";
 
 interface ComponentShowcaseProps {

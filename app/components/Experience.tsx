@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import workHistory from "@/lib/work-history.json";
 import { MotionConfig, motion } from "motion/react";
 import ExperienceModal, {
   WorkModel,
-  returnSpring,
   workLayoutId,
 } from "@/app/components/ExperienceModal";
+import { returnSpring } from "@/app/motion-variants";
 
 function Experience() {
   const [selected, setSelected] = useState<WorkModel | null>(null);
+  // The row that opened the dialog — where focus returns when it closes.
+  const openerRef = useRef<HTMLButtonElement | null>(null);
 
   return (
     // reducedMotion="user" collapses the row-to-card morph (and other
@@ -33,7 +35,10 @@ function Experience() {
               // Calm return spring: the row leads the close morph, while the
               // card's bouncier morphSpring still drives the open.
               transition={{ layout: returnSpring }}
-              onClick={() => setSelected(work)}
+              onClick={(event) => {
+                openerRef.current = event.currentTarget;
+                setSelected(work);
+              }}
               aria-haspopup="dialog"
               data-sound="none"
             >
@@ -43,7 +48,11 @@ function Experience() {
             </motion.button>
           ))}
         </div>
-        <ExperienceModal work={selected} onClose={() => setSelected(null)} />
+        <ExperienceModal
+          work={selected}
+          onClose={() => setSelected(null)}
+          openerRef={openerRef}
+        />
       </section>
     </MotionConfig>
   );
