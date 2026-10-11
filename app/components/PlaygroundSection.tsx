@@ -40,14 +40,7 @@ function PlaygroundSection() {
     <section
       id="playground"
       className="section experience-section enter"
-      style={
-        {
-          // Breathing room when the Back link's /#playground anchor
-          // scrolls this section to the top of the viewport.
-          scrollMarginTop: "clamp(48px, 12vh, 120px)",
-          "--i": 5,
-        } as React.CSSProperties
-      }
+      style={{ "--i": 5 } as React.CSSProperties}
     >
       <h2>Playground</h2>
       <div className="experience-list">

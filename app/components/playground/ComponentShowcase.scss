@@ -15,27 +15,3 @@
     max-width: 520px;
   }
 }
-
-.component-showcase-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  color: $faint-light;
-  transition: color 0.2s ease;
-
-  &:hover {
-    color: $heading-light;
-  }
-
-  // The arrow's nudge is motion; the color change above is not.
-  @media (prefers-reduced-motion: no-preference) {
-    svg {
-      transition: transform 0.2s ease;
-    }
-
-    &:hover svg {
-      transform: translateX(-2px);
-    }
-  }
-}

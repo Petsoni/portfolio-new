@@ -59,9 +59,15 @@ body {
   --ring: oklch(0.708 0 0);
 
   // Spacing and control sizes.
+  --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
   --space-4: 16px;
+  --space-8: 32px;
+  // Line length for running text.
+  --measure: 560px;
+  // Gap left above a section when an anchor link (a Back link) scrolls to it.
+  --section-scroll-margin: clamp(48px, 12vh, 120px);
   --icon-button-size: 32px;
   // Smallest comfortable touch target; smaller controls extend their hit
   // area out to this.

@@ -22,12 +22,18 @@ h2 {
   line-height: 1.5;
 }
 
+// Body size. h3 sits here too: a sub-heading is set apart by weight and
+// color, not size.
+h3,
 p,
 a,
 b,
 i,
 span,
-button {
+button,
+li,
+dt,
+dd {
   font-size: 14px;
   letter-spacing: -0.02em;
   line-height: 21px;
@@ -42,7 +48,9 @@ h6 {
   color: $heading-light;
 }
 
-p {
+p,
+li,
+dd {
   color: $muted-light;
 }
 
@@ -65,6 +73,11 @@ a {
 
 .section {
   width: 100%;
+
+  // Sections a Back link lands on (/#work, /#playground).
+  &[id] {
+    scroll-margin-top: var(--section-scroll-margin);
+  }
 }
 
 // ---------------------------------------------------------------------------

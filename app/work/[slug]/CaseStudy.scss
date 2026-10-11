@@ -1,0 +1,99 @@
+@use "../../palette" as *;
+
+// ---------------------------------------------------------------------------
+// Case study page (/work/[slug]) — one reading column: back link, title,
+// summary, then the sections in their fixed order.
+// ---------------------------------------------------------------------------
+
+.case-study {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-4);
+  // A comfortable measure for running text.
+  max-width: var(--measure);
+}
+
+.case-study-summary {
+  font-size: var(--text-lede);
+  line-height: var(--leading-lede);
+  font-weight: 500;
+  color: $link-light;
+}
+
+.case-study-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  width: 100%;
+  margin-top: var(--space-4);
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    margin: 0;
+    padding-left: var(--space-4);
+    list-style: disc;
+  }
+
+  h3 {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    font-weight: 500;
+    color: $heading-light;
+  }
+}
+
+.case-study-exploration {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+// Marks an option that was tried and dropped.
+.case-study-rejected {
+  font-weight: 500;
+  color: $faint-light;
+}
+
+// Stack / Tokens / Motion, each a short labelled list.
+.case-study-specs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  dt {
+    font-weight: 500;
+    color: $heading-light;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+.case-study-body .case-study-links {
+  padding-left: 0;
+  list-style: none;
+
+  a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+}
