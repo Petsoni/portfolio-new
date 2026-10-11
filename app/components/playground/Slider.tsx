@@ -14,6 +14,7 @@ import {
 import { defineSound } from "@web-kits/audio";
 import { complete, progressTick } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
+import { isSoundEnabled } from "@/app/sound-preference";
 import "./Slider.scss";
 
 // Detents sit every 10% — the interior ones marked by ruler ticks, 0% and
@@ -228,10 +229,11 @@ function Slider({
     if (next === maxedRef.current) return;
     maxedRef.current = next;
     setMaxed(next);
-    if (next && chimeArmedRef.current && !reducedMotion) {
+    if (next && chimeArmedRef.current) {
       chimeArmedRef.current = false;
-      playMaxChime();
-      playHaptic("success");
+      // The chord only with sound switched on; the buzz as before.
+      if (isSoundEnabled()) playMaxChime();
+      if (!reducedMotion) playHaptic("success");
     }
   });
 
@@ -371,9 +373,9 @@ function Slider({
     setValue(target);
     if (reducedMotion) fillPct.jump(target);
     else animate(fillPct, target, opts.detent ? detentSpring : jumpSpring);
-    if (opts.detent && !reducedMotion) {
-      playDetentTick();
-      playHaptic("selection");
+    if (opts.detent) {
+      if (isSoundEnabled()) playDetentTick();
+      if (!reducedMotion) playHaptic("selection");
     }
   };
 

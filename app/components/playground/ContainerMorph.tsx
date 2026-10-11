@@ -211,8 +211,8 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
   // as the analysis begins, then — as the card opens — the end chime with a
   // success haptic, or the softer warning tone with the error buzz on a
   // decline. The outcome reads through a ref so re-picking it while the
-  // card is open can't replay the landing sounds. playUiSound no-ops under
-  // prefers-reduced-motion, like every sound on the site.
+  // card is open can't replay the landing sounds. playUiSound no-ops while
+  // sound is switched off, like every sound on the site.
   const outcomeRef = useRef(outcome);
   useEffect(() => {
     outcomeRef.current = outcome;

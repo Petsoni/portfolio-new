@@ -220,7 +220,7 @@ function ExperienceModal({ work, onClose, openerRef }: ExperienceModalProps) {
                   <Dialog.Close asChild>
                     <motion.button
                       type="button"
-                      className="experience-modal-close"
+                      className="icon-button experience-modal-close"
                       aria-label="Close"
                       data-sound="none"
                       variants={contentItem}

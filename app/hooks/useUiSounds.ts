@@ -8,6 +8,7 @@ import {
   attachHapticOverlays,
   supportsHapticOverlay,
 } from "@/app/haptics-overlay";
+import { isSoundEnabled, subscribeToSound } from "@/app/sound-preference";
 
 // All play functions must come from "@web-kits/audio" (not "/react"):
 // each entry point bundles its own private AudioContext, so unlocking the
@@ -37,16 +38,14 @@ const clickSounds: Record<string, (() => unknown) | null> = {
 const HOVER_DWELL_MS = 80;
 const HOVER_MIN_GAP_MS = 150;
 
-const prefersReducedMotion = () =>
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
 /**
  * Plays a one-off UI sound outside the click/hover delegation, e.g. from a
- * state-change effect. Honors `prefers-reduced-motion` like all hook sounds
- * and routes through the same AudioContext the hook unlocks.
+ * state-change effect. Silent unless the visitor has turned sound on, like
+ * every sound on the site, and routed through the same AudioContext the
+ * hook unlocks.
  */
 export function playUiSound(definition: SoundDefinition) {
-  if (prefersReducedMotion()) return;
+  if (!isSoundEnabled()) return;
   defineSound(definition)();
 }
 
@@ -67,10 +66,13 @@ type UseUiSoundsOptions = {
  * Individual elements can swap the click sound via data-sound="<name>"
  * for any name registered in `clickSounds`.
  *
- * The AudioContext is unlocked as early as the browser allows: immediately on
- * mount when autoplay is permitted (e.g. returning visitors), otherwise on the
- * first qualifying gesture (pointer, key, or touch — hovering alone can never
- * unlock audio, browsers don't count it as user activation).
+ * Sound is opt-in (see sound-preference.ts and SoundToggle): while it is off
+ * nothing plays and no AudioContext is ever created. Once it is on, the
+ * context is unlocked as early as the browser allows: immediately when
+ * autoplay is permitted (e.g. returning visitors), otherwise on the first
+ * qualifying gesture (pointer, key, or touch — hovering alone can never
+ * unlock audio, browsers don't count it as user activation). Sounds follow
+ * clicks and hovers only — moving keyboard focus never plays one.
  *
  * Hover sounds are mouse-only and deliberately reticent: the blip plays only
  * after the pointer rests on an element for HOVER_DWELL_MS, with at least
@@ -80,8 +82,7 @@ type UseUiSoundsOptions = {
  *
  * Button clicks additionally fire a web-haptics buzz — "rigid" by default,
  * swapped per element with data-haptic="<preset>" ("none" silences it) — so
- * supported devices vibrate. All sounds respect the user's
- * `prefers-reduced-motion` preference.
+ * supported devices vibrate. Haptics are independent of the sound switch.
  */
 export function useUiSounds({
   selector = 'button, a, [role="button"]',
@@ -111,6 +112,8 @@ export function useUiSounds({
     };
 
     const tryUnlock = () => {
+      // Off means off: don't even create the AudioContext.
+      if (!isSoundEnabled()) return;
       ensureReady()
         .then((context) => {
           if (disposed) return;
@@ -129,13 +132,16 @@ export function useUiSounds({
     for (const type of unlockEvents) {
       window.addEventListener(type, tryUnlock, { capture: true, passive: true });
     }
+    // Turned on mid-visit: the toggle's own click is the gesture, so unlock
+    // within it.
+    const unsubscribe = subscribeToSound(tryUnlock);
 
     const onClick = (event: MouseEvent) => {
       const target = event.target as Element | null;
       const interactive = target?.closest(selector);
       // No running-state guard here: the click itself unlocks the context,
       // so a voice scheduled during resume plays the instant it completes.
-      if (interactive && !prefersReducedMotion()) {
+      if (interactive && isSoundEnabled()) {
         const override = interactive.getAttribute("data-sound");
         if (override && override in clickSounds) clickSounds[override]?.();
         else playClick();
@@ -168,7 +174,7 @@ export function useUiSounds({
         if (now - lastHoverAt < HOVER_MIN_GAP_MS) return;
         // Skip while audio is locked: voices scheduled against a suspended
         // context queue on its frozen clock and burst together on resume.
-        if (audioCtx?.state !== "running" || prefersReducedMotion()) return;
+        if (audioCtx?.state !== "running" || !isSoundEnabled()) return;
         lastHoverAt = now;
         playHover();
       }, HOVER_DWELL_MS);
@@ -190,6 +196,7 @@ export function useUiSounds({
     return () => {
       disposed = true;
       stopUnlocking();
+      unsubscribe();
       detachOverlays();
       window.clearTimeout(hoverTimer);
       document.removeEventListener("click", onClick);

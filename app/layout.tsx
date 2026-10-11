@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./global.scss";
 import { Analytics } from "@vercel/analytics/next";
 import MotionProvider from "@/app/components/MotionProvider";
+import SoundToggle from "@/app/components/SoundToggle";
 
 export const metadata: Metadata = {
   title: "Petar Marković | Design Engineer",
@@ -18,7 +19,8 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <MotionProvider>
-          <main className={"w-[834px] mx-auto max-[920px]:w-[90%]"}>
+          <main className={"relative w-[834px] mx-auto max-[920px]:w-[90%]"}>
+            <SoundToggle />
             {children}
             <Analytics />
           </main>

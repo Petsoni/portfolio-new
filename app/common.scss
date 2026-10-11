@@ -460,38 +460,11 @@ screen and (max-width: 768px) {
     }
   }
 
-  // Close control: a quiet icon button in the card's top corner. In flow
-  // beside the body, so it never sits on top of the description.
+  // Close control (an .icon-button) in the card's top corner. In flow beside
+  // the body, so it never sits on top of the description.
   .experience-modal-close {
-    position: relative;
-    display: grid;
-    place-items: center;
     flex-shrink: 0;
     align-self: flex-start;
-    width: var(--icon-button-size);
-    height: var(--icon-button-size);
-    padding: 0;
-    margin: 0;
-    border: none;
-    border-radius: calc(var(--radius) - 2px);
-    background: transparent;
-    color: $faint-light;
-    cursor: pointer;
-    transition:
-      color var(--duration-ui) var(--ease-out),
-      background-color var(--duration-ui) var(--ease-out);
-
-    // Hit area reaches the touch-target minimum without growing the button.
-    &::after {
-      content: "";
-      position: absolute;
-      inset: calc((var(--icon-button-size) - var(--tap-target)) / 2);
-    }
-
-    &:hover {
-      color: $heading-light;
-      background-color: $hover-light;
-    }
   }
 
   .experience-modal-visit {
@@ -582,6 +555,38 @@ screen and (max-width: 768px) {
 // ---------------------------------------------------------------------------
 // Buttons
 // ---------------------------------------------------------------------------
+
+// Quiet square button around a single icon (the dialog's close, the sound
+// toggle). Positioning is the owner's business.
+.icon-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  color: $faint-light;
+  cursor: pointer;
+  transition:
+    color var(--duration-ui) var(--ease-out),
+    background-color var(--duration-ui) var(--ease-out);
+
+  // Hit area reaches the touch-target minimum without growing the button.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: calc((var(--icon-button-size) - var(--tap-target)) / 2);
+  }
+
+  &:hover {
+    color: $heading-light;
+    background-color: $hover-light;
+  }
+}
 
 .pill-button {
   display: inline-flex;
