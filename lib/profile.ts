@@ -6,7 +6,10 @@
 import type { YearMonth } from "@/lib/format";
 
 export const links = {
-  cv: "/Petar_Marković_CV.pdf",
+  // ASCII-only filename: the old one's ć became %C4%87 in the URL, which
+  // some applicant-tracking systems and mail clients break. The old path
+  // redirects here (see next.config.ts).
+  cv: "/petar-markovic-cv.pdf",
   email: "mailto:pmarkovic2308@gmail.com",
   // TODO(petar): confirm which LinkedIn URL works and use the same one on
   // the CV. The site has used this one; the CV has
