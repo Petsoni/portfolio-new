@@ -189,7 +189,7 @@ a {
   mask-image: linear-gradient(to top, transparent 0, #000 8px);
 }
 
-// The revealed pose, shared by hover/focus, touch, and reduced motion.
+// The revealed pose, shared by hover/focus and reduced motion.
 @mixin peek-revealed {
   .hero-peek-page {
     transform: translateY(18%) rotate(-8deg);
@@ -260,23 +260,19 @@ a {
   }
 }
 
-// Touch devices and small screens have no hover to reveal the peek art,
-// so keep it permanently in its revealed position there.
-@media (hover: none),
-screen and (max-width: 768px) {
-
-  // Breathing room between the title and the always-visible art.
-  .hero-links {
-    margin-top: 12px;
+// The peek is a hover effect, so devices without hover don't get it at all:
+// parked permanently in its revealed pose it reads as a clipped glitch above
+// the links. Keyed on hover capability alone, never on width — a narrow
+// desktop window still has a mouse.
+@media (hover: none) {
+  .hero-link-peek {
+    display: none;
   }
-
-  @include peek-revealed;
 }
 
-// Reduced motion, where the art is hover-revealed (the complement of the
-// block above): no slide. The art rests in its revealed pose and crossfades
-// in on hover or keyboard focus.
-@media (prefers-reduced-motion: reduce) and (hover: hover) and (min-width: 769px) {
+// Reduced motion: no slide. The art rests in its revealed pose and
+// crossfades in on hover or keyboard focus.
+@media (prefers-reduced-motion: reduce) {
   @include peek-revealed;
 
   .hero-peek-page,
