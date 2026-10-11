@@ -123,6 +123,20 @@ a {
   gap: 28px;
 }
 
+// Name and role, read as one unit.
+.hero-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hero-lede {
+  font-size: var(--text-lede);
+  line-height: var(--leading-lede);
+  font-weight: 500;
+  color: $link-light;
+}
+
 .hero-links {
   display: flex;
   align-items: center;

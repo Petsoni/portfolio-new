@@ -45,7 +45,7 @@ function PlaygroundSection() {
           // Breathing room when the Back link's /#playground anchor
           // scrolls this section to the top of the viewport.
           scrollMarginTop: "clamp(48px, 12vh, 120px)",
-          "--i": 4,
+          "--i": 5,
         } as React.CSSProperties
       }
     >

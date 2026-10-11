@@ -64,10 +64,22 @@ function HeroSection() {
   return (
     <section className="section hero-section">
       <div className="hero-left">
-        <h1 className="enter">Hi there, I’m Petar.</h1>
+        {/* Name first, then what he does: the role is the line a visitor
+            reads second, not a detail in the bio. */}
+        <hgroup className="hero-intro">
+          <h1 className="enter">Petar Marković</h1>
+          <p
+            className="hero-lede enter"
+            style={{ "--i": 1 } as React.CSSProperties}
+          >
+            Design engineer. I care most about the last mile — the motion, the
+            micro-interactions, the details that make software feel
+            considered.
+          </p>
+        </hgroup>
         <nav
           className="hero-links enter"
-          style={{ "--i": 1 } as React.CSSProperties}
+          style={{ "--i": 2 } as React.CSSProperties}
           aria-label="Contact links"
         >
           {heroLinks.map(({ label, href, art }) => (
@@ -87,15 +99,14 @@ function HeroSection() {
           ))}
         </nav>
       </div>
+      {/* One short personal note, off to the side. */}
       <div
         className="hero-bio enter"
-        style={{ "--i": 2 } as React.CSSProperties}
+        style={{ "--i": 3 } as React.CSSProperties}
       >
         <p>
-          Design engineer based in Serbia, turning ideas into interfaces that feel as good as they look.
-        </p>
-        <p>
-          I work across the full stack, but I care most about the last mile. The motion, the micro-interactions, the details that 	make software feel considered. When I'm not designing or coding, I'm	exploring new technologies or producing electronic music.
+          When I’m not designing or coding, I’m exploring new technologies or
+          producing electronic music.
         </p>
       </div>
     </section>

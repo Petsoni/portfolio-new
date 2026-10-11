@@ -17,7 +17,7 @@ function Experience() {
   return (
     <section
       className="section experience-section enter"
-      style={{ "--i": 3 } as React.CSSProperties}
+      style={{ "--i": 4 } as React.CSSProperties}
     >
       <h2>Experience</h2>
       <div className="experience-list">

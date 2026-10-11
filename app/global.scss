@@ -61,10 +61,16 @@ body {
   // Spacing and control sizes.
   --space-2: 8px;
   --space-3: 12px;
+  --space-4: 16px;
   --icon-button-size: 32px;
   // Smallest comfortable touch target; smaller controls extend their hit
   // area out to this.
   --tap-target: 44px;
+
+  // Type. The lede is the hero's second line: larger than body copy (14px),
+  // well under the section headings (22px).
+  --text-lede: 16px;
+  --leading-lede: 24px;
 
   // UI state changes (hover, press).
   --duration-ui: 200ms;
