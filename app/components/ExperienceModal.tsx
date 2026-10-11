@@ -6,6 +6,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ArrowUpRight, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { playUiSound } from "@/app/hooks/useUiSounds";
+import { crossfade } from "@/app/motion-variants";
 import { modalOpen, modalClose } from "@/.web-kits/core";
 
 export interface WorkModel {
@@ -66,22 +67,42 @@ function ExperienceModal({ work, onClose, openerRef }: ExperienceModalProps) {
   }, [work]);
 
 
-  // Content blooms in with the site's blur-stagger signature.
-  const contentItem = {
-    hidden: reducedMotion
-      ? { opacity: 0 }
-      : { opacity: 0, y: 8, filter: "blur(8px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.25, ease: "easeOut" as const },
-    },
-    exit: {
-      opacity: 0,
-      transition: { duration: 0.1, ease: "easeOut" as const },
-    },
-  };
+  // Content blooms in with the site's blur-stagger signature — or, under
+  // reduced motion, simply fades.
+  const contentItem = reducedMotion
+    ? {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1, transition: crossfade },
+        exit: { opacity: 0, transition: crossfade },
+      }
+    : {
+        hidden: { opacity: 0, y: 8, filter: "blur(8px)" },
+        visible: {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          transition: { duration: 0.25, ease: "easeOut" as const },
+        },
+        exit: {
+          opacity: 0,
+          transition: { duration: 0.1, ease: "easeOut" as const },
+        },
+      };
+
+  // The card morphs out of its row through the shared layoutId. Under
+  // reduced motion there is no morph: the card drops the layoutId and
+  // crossfades in place instead of just appearing.
+  const cardMotion = reducedMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: crossfade,
+      }
+    : {
+        layoutId: work ? workLayoutId(work.id) : undefined,
+        transition: { layout: morphSpring },
+      };
 
   const paragraphs = work
     ? work.description.split("\n").map((line) => line.trim()).filter(Boolean)
@@ -132,9 +153,8 @@ function ExperienceModal({ work, onClose, openerRef }: ExperienceModalProps) {
                 <motion.div
                   ref={cardRef}
                   className="experience-modal"
-                  layoutId={workLayoutId(work.id)}
                   style={{ borderRadius: 12 }}
-                  transition={{ layout: morphSpring }}
+                  {...cardMotion}
                 >
                   <motion.div
                     className="experience-modal-side"

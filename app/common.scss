@@ -162,13 +162,22 @@ a {
   mask-image: linear-gradient(to top, transparent 0, #000 8px);
 }
 
+// The revealed pose, shared by hover/focus, touch, and reduced motion.
+@mixin peek-revealed {
+  .hero-peek-page {
+    transform: translateY(18%) rotate(-8deg);
+  }
+
+  .hero-peek-tile {
+    transform: translateY(6%) rotate(-8deg);
+  }
+}
+
 .hero-peek-page,
 .hero-peek-tile {
   position: absolute;
   left: 50%;
   transform-origin: 50% 100%;
-  // Exit: quick tuck back in.
-  transition: transform 0.17s ease;
   will-change: transform;
 }
 
@@ -200,19 +209,27 @@ a {
 
 .hero-link:hover,
 .hero-link:focus-visible {
+  @include peek-revealed;
+}
+
+// The slide itself only exists for users who haven't asked for less motion,
+// so reduced motion has nothing to override.
+@media (prefers-reduced-motion: no-preference) {
 
   .hero-peek-page,
   .hero-peek-tile {
-    // Enter: springy rise with a hint of overshoot.
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    // Exit: quick tuck back in.
+    transition: transform 0.17s ease;
   }
 
-  .hero-peek-page {
-    transform: translateY(18%) rotate(-8deg);
-  }
+  .hero-link:hover,
+  .hero-link:focus-visible {
 
-  .hero-peek-tile {
-    transform: translateY(6%) rotate(-8deg);
+    .hero-peek-page,
+    .hero-peek-tile {
+      // Enter: springy rise with a hint of overshoot.
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
   }
 }
 
@@ -226,20 +243,28 @@ screen and (max-width: 768px) {
     margin-top: 12px;
   }
 
-  .hero-peek-page {
-    transform: translateY(18%) rotate(-8deg);
-  }
-
-  .hero-peek-tile {
-    transform: translateY(6%) rotate(-8deg);
-  }
+  @include peek-revealed;
 }
 
-@media (prefers-reduced-motion: reduce) {
+// Reduced motion, where the art is hover-revealed (the complement of the
+// block above): no slide. The art rests in its revealed pose and crossfades
+// in on hover or keyboard focus.
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (min-width: 769px) {
+  @include peek-revealed;
 
   .hero-peek-page,
   .hero-peek-tile {
-    transition-duration: 0.01ms !important;
+    opacity: 0;
+    transition: opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .hero-link:hover,
+  .hero-link:focus-visible {
+
+    .hero-peek-page,
+    .hero-peek-tile {
+      opacity: 1;
+    }
   }
 }
 
@@ -479,7 +504,7 @@ screen and (max-width: 768px) {
     span {
       position: relative;
 
-      // Underline slides in from the left on hover, out to the right on leave.
+      // Hover underline; how it arrives depends on the motion preference.
       &::after {
         content: "";
         position: absolute;
@@ -488,25 +513,47 @@ screen and (max-width: 768px) {
         bottom: 2px;
         height: 1px;
         background: currentColor;
-        transform: scaleX(0);
-        transform-origin: 100% 50%;
-        transition: transform 0.25s ease;
       }
     }
 
     svg {
       stroke-width: 1.5px;
-      transition: transform 0.2s ease;
     }
 
-    &:hover {
+    // The underline slides in from the left on hover and out to the right
+    // on leave, and the arrow nudges up and out.
+    @media (prefers-reduced-motion: no-preference) {
       span::after {
-        transform: scaleX(1);
-        transform-origin: 0 50%;
+        transform: scaleX(0);
+        transform-origin: 100% 50%;
+        transition: transform 0.25s ease;
       }
 
       svg {
-        transform: translate(1px, -1px);
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        span::after {
+          transform: scaleX(1);
+          transform-origin: 0 50%;
+        }
+
+        svg {
+          transform: translate(1px, -1px);
+        }
+      }
+    }
+
+    // Reduced motion: the underline crossfades and the arrow stays put.
+    @media (prefers-reduced-motion: reduce) {
+      span::after {
+        opacity: 0;
+        transition: opacity var(--duration-ui) var(--ease-out);
+      }
+
+      &:hover span::after {
+        opacity: 1;
       }
     }
   }

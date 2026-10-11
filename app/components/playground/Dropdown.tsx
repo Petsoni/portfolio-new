@@ -9,6 +9,7 @@ import {
   Variants,
 } from "motion/react";
 import { playHaptic } from "@/app/haptics";
+import { crossfade } from "@/app/motion-variants";
 import "./Dropdown.scss";
 
 // Same pairing the experience morph uses: a springy open, a calmer close so
@@ -202,50 +203,72 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
   };
 
   // The clip drives the panel growth; its height spring is what makes the
-  // grey panel look like it stretches open beneath the trigger.
-  const clipVariants: Variants = {
-    hidden: { height: 0, opacity: 0, marginTop: 0 },
-    visible: {
-      height: "auto",
-      opacity: 1,
-      marginTop: 8,
-      transition: reducedMotion
-        ? { duration: 0 }
-        : {
+  // grey panel look like it stretches open beneath the trigger. Under
+  // reduced motion nothing grows: the list takes its full height at once and
+  // crossfades, as one.
+  const clipVariants: Variants = reducedMotion
+    ? {
+        hidden: { height: "auto", marginTop: 8, opacity: 0 },
+        visible: {
+          height: "auto",
+          marginTop: 8,
+          opacity: 1,
+          transition: crossfade,
+        },
+        exit: {
+          height: "auto",
+          marginTop: 8,
+          opacity: 0,
+          transition: crossfade,
+        },
+      }
+    : {
+        hidden: { height: 0, opacity: 0, marginTop: 0 },
+        visible: {
+          height: "auto",
+          opacity: 1,
+          marginTop: 8,
+          transition: {
             height: openSpring,
             marginTop: openSpring,
             opacity: { duration: 0.2 },
             staggerChildren: 0.03,
             delayChildren: 0.05,
           },
-    },
-    exit: {
-      height: 0,
-      opacity: 0,
-      marginTop: 0,
-      transition: reducedMotion
-        ? { duration: 0 }
-        : {
+        },
+        exit: {
+          height: 0,
+          opacity: 0,
+          marginTop: 0,
+          transition: {
             height: closeSpring,
             marginTop: closeSpring,
             opacity: { duration: 0.15 },
           },
-    },
-  };
+        },
+      };
 
-  // Options bloom in with the site's blur-stagger signature.
-  const optionVariants: Variants = {
-    hidden: reducedMotion
-      ? { opacity: 0 }
-      : { opacity: 0, y: 6, filter: "blur(6px)" },
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.25, ease: "easeOut" },
-    },
-    exit: { opacity: 0, transition: { duration: 0.1, ease: "easeOut" } },
-  };
+  // Options bloom in with the site's blur-stagger signature. Not under
+  // reduced motion — there the clip's crossfade carries the whole list.
+  const optionVariants: Variants | undefined = reducedMotion
+    ? undefined
+    : {
+        hidden: { opacity: 0, y: 6, filter: "blur(6px)" },
+        visible: {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          transition: { duration: 0.25, ease: "easeOut" },
+        },
+        exit: { opacity: 0, transition: { duration: 0.1, ease: "easeOut" } },
+      };
+
+  // The frame springs between the trigger's box (inset 5) and the panel's
+  // edge (inset 0). Under reduced motion it never moves: it keeps the panel's
+  // geometry and only its fill and border crossfade (CSS) — closed, it is
+  // transparent, so where it sits doesn't show.
+  const chromeExpanded = open || reducedMotion;
+  const chromeInset = chromeExpanded ? 0 : 5;
 
   return (
     <div className="dropdown-field">
@@ -267,15 +290,13 @@ function Dropdown({ label, options, defaultValue, onChange }: DropdownProps) {
             aria-hidden="true"
             initial={false}
             animate={{
-              top: open ? 0 : 5,
-              right: open ? 0 : 5,
-              bottom: open ? 0 : 5,
-              left: open ? 0 : 5,
-              borderRadius: open ? 16 : 12,
+              top: chromeInset,
+              right: chromeInset,
+              bottom: chromeInset,
+              left: chromeInset,
+              borderRadius: chromeExpanded ? 16 : 12,
             }}
-            transition={
-              reducedMotion ? { duration: 0 } : open ? openSpring : closeSpring
-            }
+            transition={open ? openSpring : closeSpring}
           />
           <button
             type="button"

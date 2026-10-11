@@ -7,10 +7,17 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { motion, useReducedMotion, type Transition } from "motion/react";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  type Transition,
+} from "motion/react";
 import { loadingEnd, loadingStart, warning } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
 import { playUiSound } from "@/app/hooks/useUiSounds";
+import { crossfade } from "@/app/motion-variants";
 import "./ContainerMorph.scss";
 
 /**
@@ -227,6 +234,18 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
     }
   }, [phase]);
 
+  // Reduced motion: the shell can't glide between its shapes, so each new
+  // one (pill, ring, card) fades in instead of popping. A layout effect, so
+  // the fade's first frame lands together with the snap.
+  const shellOpacity = useMotionValue(1);
+  const shape = phase === "idle" ? "pill" : phase === "card" ? "card" : "ring";
+  useLayoutEffect(() => {
+    if (!reducedMotion || !booted.current) return;
+    shellOpacity.set(0);
+    const fade = animate(shellOpacity, 1, crossfade);
+    return () => fade.stop();
+  }, [shape, reducedMotion, shellOpacity]);
+
   const clickable = phase === "idle" || phase === "card";
   const working = phase === "shrink" || phase === "spin";
 
@@ -399,6 +418,7 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
             analysing label lives outside it, as a sibling below. */}
         <motion.span
           className="container-morph-shell"
+          style={{ opacity: shellOpacity }}
           initial={false}
           animate={shellTarget}
           transition={shellTransition}

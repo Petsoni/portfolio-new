@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { MotionConfig, motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { returnSpring } from "@/app/motion-variants";
 import "./ComponentShowcase.scss";
 
@@ -32,37 +32,37 @@ function ComponentShowcase({
   morphId,
   children,
 }: ComponentShowcaseProps) {
+  const reducedMotion = useReducedMotion();
+
   return (
-    // reducedMotion="user" collapses the title morph to a jump for
-    // prefers-reduced-motion users.
-    <MotionConfig reducedMotion="user">
-      <section className="section component-showcase">
-        {/* Anchor to the playground section so the morph target is on
-            screen when the reverse flight plays. */}
-        <Link
-          href="/#playground"
-          className="component-showcase-back enter"
-          data-sound="collapse"
-        >
-          <ArrowLeft size={16} />
-          <span>Back</span>
-        </Link>
-        {/* The morph target: flies in from the playground row's name, so it
-            takes no entrance of its own. On a hard load there is no source
-            element and it simply renders in place. */}
-        <motion.h1
-          layoutId={morphId}
-          transition={returnSpring}
-          style={{ position: "relative", zIndex: 5 }}
-        >
-          {title}
-        </motion.h1>
-        <p className="enter" style={{ "--i": 1 } as React.CSSProperties}>
-          {description}
-        </p>
-        {children}
-      </section>
-    </MotionConfig>
+    <section className="section component-showcase">
+      {/* Anchor to the playground section so the morph target is on
+          screen when the reverse flight plays. */}
+      <Link
+        href="/#playground"
+        className="component-showcase-back enter"
+        data-sound="collapse"
+      >
+        <ArrowLeft size={16} />
+        <span>Back</span>
+      </Link>
+      {/* The morph target: flies in from the playground row's name, so it
+          takes no entrance of its own. On a hard load there is no source
+          element and it simply renders in place. Under reduced motion the
+          pairing is dropped altogether, so the title never shows a frame at
+          the row's position before settling. */}
+      <motion.h1
+        layoutId={reducedMotion ? undefined : morphId}
+        transition={returnSpring}
+        style={{ position: "relative", zIndex: 5 }}
+      >
+        {title}
+      </motion.h1>
+      <p className="enter" style={{ "--i": 1 } as React.CSSProperties}>
+        {description}
+      </p>
+      {children}
+    </section>
   );
 }
 

@@ -76,25 +76,31 @@ $error-text: #b91c1c;
     transition-delay: 0s;
   }
 
-  // Random cells flash on the cleared field while the button works (class
-  // driven from JS); everything else stays transparent.
-  &.is-pulsing {
-    animation: multistate-button-pulse 0.55s ease-out;
-  }
+  // The pulses and ripples only exist for users who haven't asked for less
+  // motion; the reduced-motion block at the end of this file tints the field
+  // instead. Scoping them here means nothing has to be overridden there.
+  @media (prefers-reduced-motion: no-preference) {
+    // Random cells flash on the cleared field while the button works (class
+    // driven from JS); everything else stays transparent.
+    &.is-pulsing {
+      animation: multistate-button-pulse 0.55s ease-out;
+    }
 
-  // Success: a single green ripple rolls outward from the center — the
-  // keyframes rise from the transparent base, so only the green squares
-  // show. It outranks any still-running pulses, reading as one unified wave.
-  .multistate-button[data-phase="success"] & {
-    animation: multistate-button-ripple 0.55s ease-out;
-    animation-delay: calc(var(--mid) * 430ms);
-  }
+    // Success: a single green ripple rolls outward from the center — the
+    // keyframes rise from the transparent base, so only the green squares
+    // show. It outranks any still-running pulses, reading as one unified
+    // wave.
+    .multistate-button[data-phase="success"] & {
+      animation: multistate-button-ripple 0.55s ease-out;
+      animation-delay: calc(var(--mid) * 430ms);
+    }
 
-  // Error: the same wave played backwards — a red ripple collapses from the
-  // edges into the center, success's roll in reverse.
-  .multistate-button[data-phase="error"] & {
-    animation: multistate-button-error-ripple 0.55s ease-out;
-    animation-delay: calc((1 - var(--mid)) * 430ms);
+    // Error: the same wave played backwards — a red ripple collapses from
+    // the edges into the center, success's roll in reverse.
+    .multistate-button[data-phase="error"] & {
+      animation: multistate-button-error-ripple 0.55s ease-out;
+      animation-delay: calc((1 - var(--mid)) * 430ms);
+    }
   }
 }
 
@@ -166,7 +172,6 @@ $error-text: #b91c1c;
 @media (prefers-reduced-motion: reduce) {
   .multistate-button-cell {
     transition: none;
-    animation: none !important;
   }
 
   // No pulses without motion — a static lit field says "working" instead.

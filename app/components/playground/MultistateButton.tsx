@@ -10,6 +10,7 @@ import React, {
 import { Check, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { playHaptic } from "@/app/haptics";
+import { crossfade } from "@/app/motion-variants";
 import "./MultistateButton.scss";
 
 export type Phase = "idle" | "generating" | "success" | "error";
@@ -281,10 +282,10 @@ function MultistateButton({
               aria-hidden={phase !== label}
               initial={false}
               animate={labelAnimation(label)}
+              // Reduced motion drops the march and the blur (see
+              // labelAnimation), leaving a plain crossfade.
               transition={
-                reducedMotion
-                  ? { duration: 0 }
-                  : { duration: 0.25, ease: "easeOut" }
+                reducedMotion ? crossfade : { duration: 0.25, ease: "easeOut" }
               }
             >
               {labels[label]}

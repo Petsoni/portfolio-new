@@ -14,3 +14,10 @@ export const returnSpring = {
   damping: 34,
   mass: 0.9,
 };
+
+// Opacity-only transition: what a morph falls back to under reduced motion.
+// Mirrors the CSS tokens --duration-enter and --ease-out in global.scss.
+export const crossfade = {
+  duration: 0.24,
+  ease: [0.23, 1, 0.32, 1],
+} as const;

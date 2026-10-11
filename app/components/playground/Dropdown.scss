@@ -83,6 +83,17 @@
   }
 }
 
+// Reduced motion: the frame doesn't shrink back into the pill, so its fill
+// fades on the same clock as the list above it (see crossfade in
+// motion-variants.ts) rather than lingering past it.
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-chrome,
+  .dropdown-panel[data-open="true"] .dropdown-chrome {
+    transition-duration: var(--duration-enter);
+    transition-timing-function: var(--ease-out);
+  }
+}
+
 .dropdown-trigger {
   pointer-events: auto;
   z-index: 1; // above the chrome layer
