@@ -15,3 +15,61 @@
     max-width: 520px;
   }
 }
+
+// Notes under the stage: a label column and a text column, like the site's
+// rows. Stacked on narrow screens.
+.showcase-notes {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
+}
+
+.showcase-notes-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+
+  a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+}
+
+.showcase-notes-list {
+  display: grid;
+  // Labels size the first column; the notes take the rest.
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-3) var(--space-8);
+  margin: 0;
+
+  // Each label/note pair is a wrapper for the markup's sake only: its
+  // children join the grid directly.
+  div {
+    display: contents;
+  }
+
+  dt {
+    font-weight: 500;
+    color: $heading-light;
+  }
+
+  dd {
+    margin: 0;
+    max-width: var(--measure);
+  }
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+  }
+}

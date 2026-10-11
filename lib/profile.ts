@@ -13,6 +13,16 @@ export const links = {
   github: "https://github.com/Petsoni",
 };
 
+// TODO(petar): repo URL. Set this to the repository's public address (no
+// trailing slash) and every playground page gains a "View source" link to
+// its component; until then the link is not rendered.
+const sourceRepo: string | undefined = undefined;
+
+/** Link to a file in the public repository, once there is one. */
+export function sourceUrl(path: string): string | undefined {
+  return sourceRepo ? `${sourceRepo}/blob/master/${path}` : undefined;
+}
+
 export interface ExperienceEntry {
   id: number;
   /** The company. */
