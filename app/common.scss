@@ -333,7 +333,10 @@ screen and (max-width: 768px) {
 .experience-row {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  // Top-aligned, with the rule dropped half a line (see .separator below).
+  // For a one-line row that is the same as centring; it is also right for
+  // rows whose title stacks on narrow screens.
+  align-items: flex-start;
   width: 100%;
   gap: 12px;
   padding: 12px;
@@ -352,10 +355,58 @@ screen and (max-width: 768px) {
     color: $heading-light;
   }
 
+  // Company and role, read as one: "Prepia · Frontend Engineer".
+  .experience-title {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .experience-role {
+    font-weight: 500;
+    white-space: nowrap;
+    color: $muted-light;
+
+    // The dot is decoration: the second value gives it empty alt text, so
+    // it is not read out (browsers without that syntax keep the first).
+    &::before {
+      content: "·";
+      content: "·" / "";
+      margin-right: var(--space-2);
+      color: $faint-light;
+    }
+  }
+
   .separator {
     flex: 1;
     min-width: 1rem;
     height: 1px;
+    // Half a line down (line-height is 1.5): centred on the first line.
+    margin-top: 0.75em;
+  }
+
+  // Narrow screens: the role drops under the company and may wrap, the dot
+  // and the rule go, and the dates keep the right edge.
+  @media screen and (max-width: 600px) {
+    .experience-title {
+      flex: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .experience-role {
+      white-space: normal;
+
+      &::before {
+        content: none;
+      }
+    }
+
+    .experience-title + .separator {
+      display: none;
+    }
   }
 
   .experience-duration {
@@ -407,9 +458,6 @@ screen and (max-width: 768px) {
   gap: 12px;
   width: 100%;
   max-width: 763px;
-  // Figma frame height — keeps the bottom-pinned roles from squishing up
-  // against the visit link when the description is short.
-  min-height: min(320px, 82dvh);
   max-height: min(640px, 82dvh);
   padding: 20px;
   border-radius: 12px;
@@ -422,21 +470,14 @@ screen and (max-width: 768px) {
     outline: none;
   }
 
-  // Left column — stretches to card height so roles pin to the bottom.
+  // Left column: who, as what, when, then the way out to their site.
   .experience-modal-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 12px;
-    width: 255px;
-    flex-shrink: 0;
-  }
-
-  .experience-modal-side-top {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    width: 255px;
+    flex-shrink: 0;
   }
 
   .experience-modal-heading {
@@ -458,19 +499,22 @@ screen and (max-width: 768px) {
     color: $faint-light;
   }
 
+  // Directly under the company name; the role from the row comes first.
   .experience-modal-roles {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    color: $heading-light;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 
-    span {
+    li {
       font-weight: 600;
+      color: $heading-light;
     }
   }
 
-  // Only the description scrolls on overflow; the left column keeps the
-  // card's full height with the roles pinned at the bottom.
+  // Only the description scrolls on overflow.
   .experience-modal-body {
     flex: 1;
     min-width: 0;
@@ -562,8 +606,6 @@ screen and (max-width: 768px) {
     // Anchor for the close button below.
     position: relative;
     flex-direction: column;
-    // Stacked layout has no bottom-pinned roles, so no height floor needed.
-    min-height: 0;
 
     .experience-modal-side {
       width: 100%;

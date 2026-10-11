@@ -1,5 +1,6 @@
 import React from "react";
 import { Github, Linkedin, Mail } from "lucide-react";
+import { links } from "@/lib/profile";
 
 // Mini PDF page that peeks out from behind the CV link on hover.
 // Colors come from the --peek-* custom properties defined in common.scss.
@@ -28,10 +29,10 @@ function PdfPeekPage() {
 }
 
 const heroLinks = [
-  { label: "CV", href: "/Petar_Marković_CV.pdf", art: <PdfPeekPage /> },
+  { label: "CV", href: links.cv, art: <PdfPeekPage /> },
   {
     label: "Email",
-    href: "mailto:pmarkovic2308@gmail.com",
+    href: links.email,
     art: (
       <span className="hero-peek-tile">
         <Mail size={14} />
@@ -40,7 +41,7 @@ const heroLinks = [
   },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/petar-markovic-a38596165/",
+    href: links.linkedin,
     art: (
       <span className="hero-peek-tile">
         <Linkedin size={14} />
@@ -49,7 +50,7 @@ const heroLinks = [
   },
   {
     label: "GitHub",
-    href: "https://github.com/Petsoni",
+    href: links.github,
     art: (
       <span className="hero-peek-tile">
         <Github size={14} />

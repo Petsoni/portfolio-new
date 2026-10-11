@@ -7,17 +7,8 @@ import { ArrowUpRight, X } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { playUiSound } from "@/app/hooks/useUiSounds";
 import { crossfade } from "@/app/motion-variants";
+import type { ExperienceEntry } from "@/lib/profile";
 import { modalOpen, modalClose } from "@/.web-kits/core";
-
-export interface WorkModel {
-  id: number;
-  title: string;
-  link: string;
-  image: string;
-  duration: string;
-  roles: string[];
-  description: string;
-}
 
 // Shared between the experience rows and the modal card so the clicked row
 // morphs into the card on open and back into the list on close.
@@ -38,7 +29,7 @@ const contentGroup = {
 };
 
 interface ExperienceModalProps {
-  work: WorkModel | null;
+  work: ExperienceEntry | null;
   onClose: () => void;
   /** The row that opened the dialog; focus goes back to it on close. */
   openerRef: React.RefObject<HTMLElement | null>;
@@ -163,42 +154,38 @@ function ExperienceModal({ work, onClose, openerRef }: ExperienceModalProps) {
                     animate="visible"
                     exit="exit"
                   >
-                    <div className="experience-modal-side-top">
-                      <motion.div
-                        className="experience-modal-heading"
-                        variants={contentItem}
-                      >
-                        <Dialog.Title asChild>
-                          <h3 className="experience-modal-title">
-                            {work.title}
-                          </h3>
-                        </Dialog.Title>
-                        <span className="experience-modal-duration">
-                          {work.duration}.
-                        </span>
-                      </motion.div>
-                      {work.link && (
-                        <motion.div variants={contentItem}>
-                          <Link
-                            href={work.link}
-                            target="_blank"
-                            className="experience-modal-visit"
-                            data-sound="swoosh"
-                          >
-                            <span>Visit website</span>
-                            <ArrowUpRight size={20} />
-                          </Link>
-                        </motion.div>
-                      )}
-                    </div>
+                    {/* Who, as what, when — together, in that order. */}
                     <motion.div
-                      className="experience-modal-roles"
+                      className="experience-modal-heading"
                       variants={contentItem}
                     >
-                      {work.roles.map((role) => (
-                        <span key={role}>{role}</span>
-                      ))}
+                      <Dialog.Title asChild>
+                        <h3 className="experience-modal-title">
+                          {work.title}
+                        </h3>
+                      </Dialog.Title>
+                      <ul className="experience-modal-roles">
+                        {[work.role, ...work.otherRoles].map((role) => (
+                          <li key={role}>{role}</li>
+                        ))}
+                      </ul>
+                      <span className="experience-modal-duration">
+                        {work.duration}.
+                      </span>
                     </motion.div>
+                    {work.link && (
+                      <motion.div variants={contentItem}>
+                        <Link
+                          href={work.link}
+                          target="_blank"
+                          className="experience-modal-visit"
+                          data-sound="swoosh"
+                        >
+                          <span>Visit website</span>
+                          <ArrowUpRight size={20} />
+                        </Link>
+                      </motion.div>
+                    )}
                   </motion.div>
 
                   <motion.div

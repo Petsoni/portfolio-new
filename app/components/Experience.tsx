@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import workHistory from "@/lib/work-history.json";
 import { motion } from "motion/react";
 import ExperienceModal, {
-  WorkModel,
   workLayoutId,
 } from "@/app/components/ExperienceModal";
 import { returnSpring } from "@/app/motion-variants";
+import { experience, type ExperienceEntry } from "@/lib/profile";
 
 function Experience() {
-  const [selected, setSelected] = useState<WorkModel | null>(null);
+  const [selected, setSelected] = useState<ExperienceEntry | null>(null);
   // The row that opened the dialog — where focus returns when it closes.
   const openerRef = useRef<HTMLButtonElement | null>(null);
 
@@ -21,7 +20,7 @@ function Experience() {
     >
       <h2>Experience</h2>
       <div className="experience-list">
-        {(workHistory as WorkModel[]).map((work) => (
+        {experience.map((work) => (
           <motion.button
             type="button"
             className={"experience-row"}
@@ -38,7 +37,11 @@ function Experience() {
             aria-haspopup="dialog"
             data-sound="none"
           >
-            <span className={"experience-name"}>{work.title}</span>
+            {/* Company and role read as one: "Prepia · Frontend Engineer". */}
+            <span className="experience-title">
+              <span className="experience-name">{work.title}</span>
+              <span className="experience-role">{work.role}</span>
+            </span>
             <span className="separator"></span>
             <span className={"experience-duration"}>{work.duration}</span>
           </motion.button>
