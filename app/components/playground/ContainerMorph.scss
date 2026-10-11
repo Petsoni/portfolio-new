@@ -26,7 +26,7 @@ $error-ink: #dc2626;
   font-size: 14px;
   font-weight: 500;
   line-height: 21px;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-body);
   color: #ffffff;
   cursor: pointer;
   user-select: none;

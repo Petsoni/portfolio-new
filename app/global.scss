@@ -1,8 +1,10 @@
 @use "common" as *;
 @use "tailwindcss";
 
-$font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-  "SF Pro", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+// The loaded face (see layout.tsx) first; the system stack only shows while
+// it loads, or if it can't.
+$font-sans: var(--font-sans-face), -apple-system, BlinkMacSystemFont,
+  "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
 
 * {
   font-family: $font-sans;
@@ -12,9 +14,7 @@ $font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", "SF Pro", "Helvetica Neue", "Segoe UI", Roboto, Arial,
-    sans-serif;
+  --font-sans: #{$font-sans};
 
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -77,6 +77,13 @@ body {
   // well under the section headings (22px).
   --text-lede: 16px;
   --leading-lede: 24px;
+  // Tracking per size, tuned for the loaded face (Geist): the larger the
+  // type, the tighter it is set. Geist has no optical sizes, so display
+  // type needs more tightening than the system face did (-0.04em), and
+  // body text much less (-0.02em read as cramped).
+  --tracking-display: -0.05em; // h1, 34–48px
+  --tracking-heading: -0.03em; // 22px headings
+  --tracking-body: -0.01em; // 14–16px text
 
   // UI state changes (hover, press).
   --duration-ui: 200ms;

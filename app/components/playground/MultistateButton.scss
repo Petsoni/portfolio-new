@@ -153,9 +153,9 @@ $error-text: #b91c1c;
 
   .lucide {
     flex-shrink: 0;
-    // Match the icon strokes to the letters' weight: the label's system font
-    // (SF Pro Medium here) draws ~1.5px stems at 14px, and these 16px icons
-    // paint at 16/24 viewBox scale — 2.3 × 16⁄24 ≈ 1.53px rendered.
+    // Match the icon strokes to the letters' weight: the label's medium
+    // weight draws stems of about 1.5px at 14px, and these 16px icons paint
+    // at 16/24 viewBox scale — 2.3 × 16⁄24 ≈ 1.53px rendered.
     stroke-width: 2.3px;
   }
 
