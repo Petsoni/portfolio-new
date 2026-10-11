@@ -2,6 +2,7 @@
 
 import React, {
   useEffect,
+  useId,
   useLayoutEffect,
   useRef,
   useState,
@@ -120,6 +121,7 @@ interface ContainerMorphProps {
 function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const reducedMotion = useReducedMotion() ?? false;
+  const statusId = useId();
 
   // Until the first click, every container transition is instant — covering
   // the initial measurement pass and any font-metric settling.
@@ -350,163 +352,179 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
           transition: { duration: 0.12, ease: "easeOut" as const },
         };
 
-  const ariaLabel =
-    phase === "idle"
+  // Two separate jobs for assistive tech. The button's name is only ever
+  // the action a press performs; what is happening is announced by the
+  // status region beside it — a live region on the button itself, with a
+  // name that changes under the user, is announced unreliably. The button
+  // is described by the status, so the result is read again on re-focus.
+  const actionLabel =
+    phase !== "card"
       ? "Pay with card"
+      : outcome === "success"
+        ? "Start over"
+        : "Try again";
+  const statusText =
+    phase === "idle"
+      ? ""
       : phase !== "card"
         ? "Analysing transaction"
         : outcome === "success"
-          ? "Payment successful. $149.00 paid with Visa ending 4242 on Aug 29, 2026. Press to start over."
-          : "Payment declined. Insufficient funds on Visa ending 4242. Press to try again.";
+          ? "Payment successful. $149.00 paid with Visa ending 4242 on Aug 29, 2026."
+          : "Payment declined. Insufficient funds on Visa ending 4242.";
 
   return (
-    <motion.button
-      type="button"
-      className="container-morph"
-      aria-label={ariaLabel}
-      aria-live="polite"
-      aria-busy={!clickable}
-      aria-disabled={!clickable}
-      // Both clicks play the delegated default tap and buzz — same as the
-      // other playground buttons; working states swallow the sound and the
-      // haptic with the click.
-      data-sound={clickable ? undefined : "none"}
-      data-haptic={clickable ? undefined : "none"}
-      data-ready={ready || undefined}
-      whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
-      onClick={() => {
-        if (!clickable) return;
-        booted.current = true;
-        setPhase(phase === "idle" ? "shrink" : "idle");
-      }}
-    >
-      {/* The morphing shell. It clips its own layers (a collapsing pill
-          "eats" the last of its blurred label) — which is exactly why the
-          analysing label lives outside it, as a sibling below. */}
-      <motion.span
-        className="container-morph-shell"
-        initial={false}
-        animate={shellTarget}
-        transition={shellTransition}
+    <>
+      <motion.button
+        type="button"
+        className="container-morph"
+        aria-label={actionLabel}
+        aria-describedby={statusId}
+        aria-busy={!clickable}
+        aria-disabled={!clickable}
+        // Both clicks play the delegated default tap and buzz — same as the
+        // other playground buttons; working states swallow the sound and the
+        // haptic with the click.
+        data-sound={clickable ? undefined : "none"}
+        data-haptic={clickable ? undefined : "none"}
+        data-ready={ready || undefined}
+        whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
+        onClick={() => {
+          if (!clickable) return;
+          booted.current = true;
+          setPhase(phase === "idle" ? "shrink" : "idle");
+        }}
       >
+        {/* The morphing shell. It clips its own layers (a collapsing pill
+            "eats" the last of its blurred label) — which is exactly why the
+            analysing label lives outside it, as a sibling below. */}
         <motion.span
-          ref={labelRef}
-          className="container-morph-label"
-          aria-hidden="true"
+          className="container-morph-shell"
           initial={false}
-          animate={layerAnimation(labelVisible)}
-          transition={layerTransition(labelVisible)}
+          animate={shellTarget}
+          transition={shellTransition}
         >
-          Pay with card
-        </motion.span>
+          <motion.span
+            ref={labelRef}
+            className="container-morph-label"
+            aria-hidden="true"
+            initial={false}
+            animate={layerAnimation(labelVisible)}
+            transition={layerTransition(labelVisible)}
+          >
+            Pay with card
+          </motion.span>
 
-        {/* The spinner: mounted as a solid disc the instant the shell's
-            fill clears — pixel-identical, so the swap is invisible — then
-            drained into the open arc. Sealing runs the move in reverse. */}
-        {ringMounted && (
-          <span className="container-morph-ring" aria-hidden="true">
-            <svg viewBox={`0 0 ${RING} ${RING}`}>
-              <motion.g
-                style={{
-                  transformOrigin: `${RING / 2}px ${RING / 2}px`,
-                }}
-                initial={{ rotate: 0 }}
-                animate={{ rotate: reducedMotion ? 0 : 360 }}
-                transition={
-                  reducedMotion
-                    ? { duration: 0 }
-                    : { repeat: Infinity, duration: 0.9, ease: "linear" }
-                }
-              >
-                <motion.circle
-                  cx={RING / 2}
-                  cy={RING / 2}
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={DISC}
-                  animate={
-                    phase !== "spin"
-                      ? DISC
-                      : reducedMotion
-                        ? { ...ARC, pathLength: 1 }
-                        : ARC
-                  }
+          {/* The spinner: mounted as a solid disc the instant the shell's
+              fill clears — pixel-identical, so the swap is invisible — then
+              drained into the open arc. Sealing runs the move in reverse. */}
+          {ringMounted && (
+            <span className="container-morph-ring" aria-hidden="true">
+              <svg viewBox={`0 0 ${RING} ${RING}`}>
+                <motion.g
+                  style={{
+                    transformOrigin: `${RING / 2}px ${RING / 2}px`,
+                  }}
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: reducedMotion ? 0 : 360 }}
                   transition={
                     reducedMotion
                       ? { duration: 0 }
-                      : { duration: 0.26, ease: "easeOut" }
+                      : { repeat: Infinity, duration: 0.9, ease: "linear" }
                   }
-                />
-              </motion.g>
-            </svg>
-          </span>
-        )}
-
-        <span
-          ref={cardRef}
-          className="container-morph-card"
-          aria-hidden="true"
-        >
-          <motion.span
-            className="container-morph-card-title"
-            initial={false}
-            animate={cardTextAnimation(0.08)}
-          >
-            <span
-              className="container-morph-card-dot"
-              data-outcome={outcome}
-            />
-            {outcome === "success" ? "Payment successful" : "Payment declined"}
-          </motion.span>
-          <span className="container-morph-card-rows">
-            {(outcome === "success" ? RECEIPT : DECLINE_DETAILS).map(
-              (row, index) => (
-                <motion.span
-                  key={row.label}
-                  className="container-morph-card-row"
-                  initial={false}
-                  animate={cardTextAnimation(0.14 + index * 0.05)}
                 >
-                  <span className="container-morph-card-row-label">
-                    {row.label}
-                  </span>
-                  <span className="container-morph-card-row-value">
-                    {row.value}
-                  </span>
-                </motion.span>
-              ),
+                  <motion.circle
+                    cx={RING / 2}
+                    cy={RING / 2}
+                    fill="none"
+                    strokeLinecap="round"
+                    initial={DISC}
+                    animate={
+                      phase !== "spin"
+                        ? DISC
+                        : reducedMotion
+                          ? { ...ARC, pathLength: 1 }
+                          : ARC
+                    }
+                    transition={
+                      reducedMotion
+                        ? { duration: 0 }
+                        : { duration: 0.26, ease: "easeOut" }
+                    }
+                  />
+                </motion.g>
+              </svg>
+            </span>
+          )}
+
+          <span
+            ref={cardRef}
+            className="container-morph-card"
+            aria-hidden="true"
+          >
+            <motion.span
+              className="container-morph-card-title"
+              initial={false}
+              animate={cardTextAnimation(0.08)}
+            >
+              <span
+                className="container-morph-card-dot"
+                data-outcome={outcome}
+              />
+              {outcome === "success" ? "Payment successful" : "Payment declined"}
+            </motion.span>
+            <span className="container-morph-card-rows">
+              {(outcome === "success" ? RECEIPT : DECLINE_DETAILS).map(
+                (row, index) => (
+                  <motion.span
+                    key={row.label}
+                    className="container-morph-card-row"
+                    initial={false}
+                    animate={cardTextAnimation(0.14 + index * 0.05)}
+                  >
+                    <span className="container-morph-card-row-label">
+                      {row.label}
+                    </span>
+                    <span className="container-morph-card-row-value">
+                      {row.value}
+                    </span>
+                  </motion.span>
+                ),
+              )}
+            </span>
+            {outcome === "declined" && (
+              <motion.span
+                className="container-morph-card-hint"
+                initial={false}
+                animate={cardTextAnimation(0.24)}
+              >
+                Click to try again
+              </motion.span>
             )}
           </span>
-          {outcome === "declined" && (
-            <motion.span
-              className="container-morph-card-hint"
-              initial={false}
-              animate={cardTextAnimation(0.24)}
-            >
-              Click to try again
-            </motion.span>
-          )}
-        </span>
-      </motion.span>
+        </motion.span>
 
-      {/* The analysing label sits outside the clipping shell, seated right
-          of the spinner; the shimmer band only sweeps while the analysis
-          actually runs — entering, the label is plain ink. */}
-      <motion.span
-        ref={analyseRef}
-        className={`container-morph-label${
-          phase === "spin" ? " container-morph-shimmer" : ""
-        }`}
-        data-tone="ink"
-        aria-hidden="true"
-        style={{ x: analyseX }}
-        initial={false}
-        animate={layerAnimation(analyseVisible)}
-        transition={layerTransition(analyseVisible)}
-      >
-        Analysing transaction
-      </motion.span>
-    </motion.button>
+        {/* The analysing label sits outside the clipping shell, seated right
+            of the spinner; the shimmer band only sweeps while the analysis
+            actually runs — entering, the label is plain ink. */}
+        <motion.span
+          ref={analyseRef}
+          className={`container-morph-label${
+            phase === "spin" ? " container-morph-shimmer" : ""
+          }`}
+          data-tone="ink"
+          aria-hidden="true"
+          style={{ x: analyseX }}
+          initial={false}
+          animate={layerAnimation(analyseVisible)}
+          transition={layerTransition(analyseVisible)}
+        >
+          Analysing transaction
+        </motion.span>
+      </motion.button>
+      <p id={statusId} role="status" className="sr-only">
+        {statusText}
+      </p>
+    </>
   );
 }
 
