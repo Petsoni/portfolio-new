@@ -5,18 +5,28 @@
 
 import type { YearMonth } from "@/lib/format";
 
+export const emailAddress = "pmarkovic2308@gmail.com";
+
 export const links = {
   // ASCII-only filename: the old one's ć became %C4%87 in the URL, which
   // some applicant-tracking systems and mail clients break. The old path
   // redirects here (see next.config.ts).
   cv: "/petar-markovic-cv.pdf",
-  email: "mailto:pmarkovic2308@gmail.com",
+  email: `mailto:${emailAddress}`,
   // TODO(petar): confirm which LinkedIn URL works and use the same one on
   // the CV. The site has used this one; the CV has
   // /in/petar-markovic-petsoni.
   linkedin: "https://www.linkedin.com/in/petar-markovic-a38596165/",
   github: "https://github.com/Petsoni",
 };
+
+/** The contact links, in order — the hero and the footer both list these. */
+export const contactLinks = [
+  { label: "CV", href: links.cv },
+  { label: "Email", href: links.email },
+  { label: "LinkedIn", href: links.linkedin },
+  { label: "GitHub", href: links.github },
+] as const;
 
 // TODO(petar): repo URL. Set this to the repository's public address (no
 // trailing slash) and every playground page gains a "View source" link to

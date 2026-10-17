@@ -1,0 +1,62 @@
+// ---------------------------------------------------------------------------
+// SiteFooter — call to action and links on one row, the build line under
+// them; stacked on narrow screens.
+// ---------------------------------------------------------------------------
+
+.site-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: var(--space-4) var(--space-8);
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--line-rule);
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+}
+
+.site-footer-cta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  color: var(--ink-muted);
+}
+
+.site-footer-email {
+  font-size: var(--text-lede);
+  line-height: var(--leading-lede);
+  font-weight: 500;
+  color: var(--ink-heading);
+  text-decoration: underline;
+  text-underline-position: from-font;
+  // A long address may break rather than push the page sideways.
+  overflow-wrap: anywhere;
+}
+
+.site-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-position: from-font;
+  }
+}
+
+.site-footer-meta {
+  grid-column: 1 / -1;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+
+  // The line may wrap; the date never splits.
+  time {
+    white-space: nowrap;
+  }
+}

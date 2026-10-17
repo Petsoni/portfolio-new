@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./global.scss";
 import { Analytics } from "@vercel/analytics/next";
 import MotionProvider from "@/app/components/MotionProvider";
+import SiteFooter from "@/app/components/SiteFooter";
 import SiteHeader from "@/app/components/SiteHeader";
 import { themeInitScript } from "@/app/theme-preference";
 import { siteUrl } from "@/lib/metadata";
@@ -52,11 +53,14 @@ export default function RootLayout({
       </head>
       <body className="antialiased">
         <MotionProvider>
-          <main className={"relative w-[834px] mx-auto max-[920px]:w-[90%]"}>
+          {/* One column: settings, the page, the footer. The footer sits
+              outside <main> so it is the page's contentinfo landmark. */}
+          <div className={"relative w-[834px] mx-auto max-[920px]:w-[90%]"}>
             <SiteHeader />
-            {children}
-            <Analytics />
-          </main>
+            <main>{children}</main>
+            <SiteFooter />
+          </div>
+          <Analytics />
         </MotionProvider>
       </body>
     </html>

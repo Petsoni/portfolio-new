@@ -22,3 +22,15 @@ function formatYearMonth(value: YearMonth): string {
 export function formatRange(start: YearMonth, end: YearMonth | null): string {
   return `${formatYearMonth(start)} – ${end ? formatYearMonth(end) : "Present"}`;
 }
+
+const day = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
+/** A calendar day as "Oct 17, 2026" (UTC, so every render agrees). */
+export function formatDay(date: Date): string {
+  return day.format(date);
+}

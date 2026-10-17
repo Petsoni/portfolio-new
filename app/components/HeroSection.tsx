@@ -1,6 +1,6 @@
 import React from "react";
 import { Github, Linkedin, Mail } from "lucide-react";
-import { links } from "@/lib/profile";
+import { contactLinks } from "@/lib/profile";
 
 // Mini PDF page that peeks out from behind the CV link on hover.
 // Colors come from the --peek-* custom properties defined in common.scss.
@@ -28,36 +28,30 @@ function PdfPeekPage() {
   );
 }
 
-const heroLinks = [
-  { label: "CV", href: links.cv, art: <PdfPeekPage /> },
-  {
-    label: "Email",
-    href: links.email,
-    art: (
-      <span className="hero-peek-tile">
-        <Mail size={14} />
-      </span>
-    ),
-  },
-  {
-    label: "LinkedIn",
-    href: links.linkedin,
-    art: (
-      <span className="hero-peek-tile">
-        <Linkedin size={14} />
-      </span>
-    ),
-  },
-  {
-    label: "GitHub",
-    href: links.github,
-    art: (
-      <span className="hero-peek-tile">
-        <Github size={14} />
-      </span>
-    ),
-  },
-];
+// The peek art for each contact link, by label.
+const peekArt: Record<(typeof contactLinks)[number]["label"], React.ReactNode> = {
+  CV: <PdfPeekPage />,
+  Email: (
+    <span className="hero-peek-tile">
+      <Mail size={14} />
+    </span>
+  ),
+  LinkedIn: (
+    <span className="hero-peek-tile">
+      <Linkedin size={14} />
+    </span>
+  ),
+  GitHub: (
+    <span className="hero-peek-tile">
+      <Github size={14} />
+    </span>
+  ),
+};
+
+const heroLinks = contactLinks.map((link) => ({
+  ...link,
+  art: peekArt[link.label],
+}));
 
 function HeroSection() {
   // Rendered visible on the server; the entrance is the CSS .enter stagger,
