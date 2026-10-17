@@ -59,14 +59,18 @@ export const experience: ExperienceEntry[] = [
   {
     id: 1,
     title: "Prepia",
-    role: "Frontend Engineer",
-    otherRoles: [],
+    // Design Engineer since September 2026; joined as a Frontend Engineer
+    // in June.
+    role: "Design Engineer",
+    otherRoles: ["Frontend Engineer"],
     link: "https://prepia.com",
     image: "/work-logos/prepia.png",
     start: "2026-06",
     end: null,
+    // TODO(petar): add what the Design Engineer role owns. The text only
+    // says the title changed.
     description:
-      "Currently working as a Frontend Engineer at Prepia, building modern, performant, and accessible web interfaces.\nThe specifics of the product are under NDA, but the focus is on crafting a polished user experience backed by a clean, scalable component architecture and close collaboration with design and backend teams.",
+      "Joined Prepia as a Frontend Engineer in June 2026 and moved into a Design Engineer role in September, building modern, performant, and accessible web interfaces.\nThe specifics of the product are under NDA, but the focus is on crafting a polished user experience backed by a clean, scalable component architecture and close collaboration with design and backend teams.",
   },
   {
     id: 2,

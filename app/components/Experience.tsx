@@ -38,7 +38,7 @@ function Experience() {
             aria-haspopup="dialog"
             data-sound="none"
           >
-            {/* Company and role read as one: "Prepia · Frontend Engineer". */}
+            {/* Company and role read as one: "Prepia · Design Engineer". */}
             <span className="experience-title">
               <span className="experience-name">{work.title}</span>
               <span className="experience-role">{work.role}</span>
