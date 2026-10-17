@@ -20,7 +20,7 @@ export const links = {
   github: "https://github.com/Petsoni",
 };
 
-/** The contact links, in order — the hero and the footer both list these. */
+/** The contact links, in order, as the hero lists them. */
 export const contactLinks = [
   { label: "CV", href: links.cv },
   { label: "Email", href: links.email },
