@@ -1,8 +1,11 @@
 @use "common" as *;
+@use "theme";
 @use "tailwindcss";
 
-$font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
-  "SF Pro", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
+// The loaded face (see layout.tsx) first; the system stack only shows while
+// it loads, or if it can't.
+$font-sans: var(--font-sans-face), -apple-system, BlinkMacSystemFont,
+  "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
 
 * {
   font-family: $font-sans;
@@ -12,9 +15,7 @@ $font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
-    "SF Pro Text", "SF Pro", "Helvetica Neue", "Segoe UI", Roboto, Arial,
-    sans-serif;
+  --font-sans: #{$font-sans};
 
   --color-ring: var(--ring);
   --color-input: var(--input);
@@ -33,8 +34,8 @@ $font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
 
 body {
   font-weight: 500;
-  background-color: $background-light;
-  color: $heading-light;
+  background-color: var(--surface-page);
+  color: var(--ink-heading);
 }
 
 .lucide {
@@ -47,21 +48,73 @@ body {
 
 :root {
   --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.556 0 0);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  // Tailwind / shadcn color names, pointed at the theme tokens (_theme.scss)
+  // so any utility that uses them follows light and dark too.
+  --background: var(--surface-page);
+  --foreground: var(--ink-heading);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--ink-heading);
+  --primary: var(--ink-strong);
+  --primary-foreground: var(--surface-page);
+  --muted: var(--ink-muted);
+  --border: var(--line-border);
+  --input: var(--line-border);
+  --ring: var(--ink-faint);
+
+  // Spacing and control sizes.
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-8: 32px;
+  // Line length for running text.
+  --measure: 560px;
+  // Gap left above a section when an anchor link (a Back link) scrolls to it.
+  --section-scroll-margin: clamp(48px, 12vh, 120px);
+  --icon-button-size: 32px;
+  // Smallest comfortable touch target; smaller controls extend their hit
+  // area out to this.
+  --tap-target: 44px;
+
+  // Type. The lede is the hero's second line: larger than body copy (14px),
+  // well under the section headings (22px).
+  --text-lede: 16px;
+  --leading-lede: 24px;
+  // Tracking per size, tuned for the loaded face (Geist): the larger the
+  // type, the tighter it is set. Geist has no optical sizes, so display
+  // type needs more tightening than the system face did (-0.04em), and
+  // body text much less (-0.02em read as cramped).
+  --tracking-display: -0.05em; // h1, 34–48px
+  --tracking-heading: -0.03em; // 22px headings
+  --tracking-body: -0.01em; // 14–16px text
+
+  // UI state changes (hover, press).
+  --duration-ui: 200ms;
+
+  // Focus ring: one indicator for every focusable element, in the heading
+  // color of the current theme — 10.9:1 on the light page, 16.6:1 on the
+  // dark one (WCAG 1.4.11 asks for 3:1).
+  --focus-ring-color: var(--ink-heading);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  // Entrance motion (see .enter in common.scss).
+  --duration-enter: 240ms;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --enter-distance: 8px;
+  --stagger-step: 40ms;
+}
+
+// The one focus ring. Zero specificity (:where), so a component only ever
+// has to adjust the offset — e.g. inset it where an ancestor clips overflow.
+:where(a, button, [role="slider"], [role="option"], [tabindex]):focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
 
   body {

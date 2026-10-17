@@ -14,6 +14,7 @@ import {
 import { defineSound } from "@web-kits/audio";
 import { complete, progressTick } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
+import { isSoundEnabled } from "@/app/sound-preference";
 import "./Slider.scss";
 
 // Detents sit every 10% — the interior ones marked by ruler ticks, 0% and
@@ -35,7 +36,6 @@ const LIFT_GAP = 6;
 // from the blue prototype rounds (the ChatGPT model selector's energy
 // field, translated into this site's quiet register).
 const WEAVE_WAVELENGTH = 110; // px per braid cycle — about 3 across the bar
-const WEAVE_INK = "#0371dd"; // keep in sync with $max-ink in Slider.scss
 
 interface WeaveSpark {
   x: number;
@@ -228,10 +228,11 @@ function Slider({
     if (next === maxedRef.current) return;
     maxedRef.current = next;
     setMaxed(next);
-    if (next && chimeArmedRef.current && !reducedMotion) {
+    if (next && chimeArmedRef.current) {
       chimeArmedRef.current = false;
-      playMaxChime();
-      playHaptic("success");
+      // The chord only with sound switched on; the buzz as before.
+      if (isSoundEnabled()) playMaxChime();
+      if (!reducedMotion) playHaptic("success");
     }
   });
 
@@ -265,6 +266,11 @@ function Slider({
     if (!canvas || !track || !ctx) return;
 
     const reducedMotionQuery = matchMedia("(prefers-reduced-motion: reduce)");
+    // The sparks' color is the theme's accent, read from the canvas's CSS
+    // color (Slider.scss) and re-read whenever the theme changes: the OS
+    // setting, or the toggle's data-theme on <html>.
+    const darkQuery = matchMedia("(prefers-color-scheme: dark)");
+    let ink = getComputedStyle(canvas).color;
     const dpr = Math.min(2, window.devicePixelRatio || 1);
     let w = 0;
     let h = 0;
@@ -291,7 +297,7 @@ function Slider({
     const render = () => {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, w, h);
-      ctx.fillStyle = WEAVE_INK;
+      ctx.fillStyle = ink;
       for (const p of sparks) {
         ctx.globalAlpha = p.a;
         ctx.beginPath();
@@ -351,10 +357,22 @@ function Slider({
     });
     observer.observe(track);
     reducedMotionQuery.addEventListener("change", start);
+    const refreshInk = () => {
+      ink = getComputedStyle(canvas).color;
+      render(); // a still frame (reduced motion) repaints too
+    };
+    darkQuery.addEventListener("change", refreshInk);
+    const themeObserver = new MutationObserver(refreshInk);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
     return () => {
       cancelAnimationFrame(raf);
       observer.disconnect();
       reducedMotionQuery.removeEventListener("change", start);
+      darkQuery.removeEventListener("change", refreshInk);
+      themeObserver.disconnect();
     };
   }, []);
 
@@ -371,9 +389,9 @@ function Slider({
     setValue(target);
     if (reducedMotion) fillPct.jump(target);
     else animate(fillPct, target, opts.detent ? detentSpring : jumpSpring);
-    if (opts.detent && !reducedMotion) {
-      playDetentTick();
-      playHaptic("selection");
+    if (opts.detent) {
+      if (isSoundEnabled()) playDetentTick();
+      if (!reducedMotion) playHaptic("selection");
     }
   };
 

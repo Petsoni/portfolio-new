@@ -1,0 +1,46 @@
+@use "../palette" as *;
+
+// ---------------------------------------------------------------------------
+// WorkSection — case-study cards on the home page.
+// ---------------------------------------------------------------------------
+
+.work-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+// As many equal columns as fit; one on a phone.
+.work-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  height: 100%;
+  padding: var(--space-4);
+  border: 1px solid var(--line-border);
+  border-radius: var(--radius);
+  background: var(--surface-raised);
+  transition: background-color var(--duration-ui) var(--ease-out);
+
+  &:hover {
+    background-color: var(--surface-hover);
+  }
+}
+
+.work-card-title {
+  font-weight: 500;
+  color: var(--ink-heading);
+}
+
+.work-card-summary {
+  color: var(--ink-muted);
+}

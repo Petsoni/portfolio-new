@@ -7,9 +7,12 @@
 // only dresses the shell and the layers riding inside it.
 // ---------------------------------------------------------------------------
 
-// Outcome status dots, on the same green/red grades as the multistate button.
-$success-ink: #16a34a;
-$error-ink: #dc2626;
+// Every color here comes from the --morph-* tokens in _theme.scss, which
+// invert in dark mode: a light pill and card on the dark canvas.
+
+// How long the shell's dressing (ring, bevel, drop shadow) takes to fade in
+// or out. A tween, not a spring: an overshoot would flash it darker.
+$dress-duration: 300ms;
 
 // The button is a stationary, transparent anchor: it shrink-wraps the
 // morphing shell (so focus and hit-target track the control) and hosts the
@@ -26,8 +29,8 @@ $error-ink: #dc2626;
   font-size: 14px;
   font-weight: 500;
   line-height: 21px;
-  letter-spacing: -0.02em;
-  color: #ffffff;
+  letter-spacing: var(--tracking-body);
+  color: var(--morph-on-ink);
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -36,26 +39,40 @@ $error-ink: #dc2626;
   &[aria-disabled="true"] {
     cursor: default;
   }
-
-  &:focus-visible {
-    outline: 2px solid $gray-300;
-    outline-offset: 3px;
-  }
 }
 
-// The morphing container itself. Motion owns the size, radius, fill,
-// shadow, and seat at runtime; these match the resting values. The stack,
-// from the Figma treatment: a 1px border ring, the glossy inset bevel, and
-// the shared tactile drop shadow.
+// The morphing container itself. Motion owns the size, radius and seat at
+// runtime; the fill and the dressing are CSS, switched per phase by
+// data-fill and data-dressed (see ContainerMorph.tsx). The dressing, from the
+// Figma treatment: a 1px border ring, the glossy inset bevel, and the shared
+// tactile drop shadow.
 .container-morph-shell {
   position: relative;
   display: block;
-  background: $gray-950;
+  background-color: var(--morph-ink);
   box-shadow:
-    inset 0 0 0 1px $gray-900,
-    inset 0 -5px 3px rgba(0, 0, 0, 1),
-    inset 0 2px 3px rgba(255, 255, 255, 0.25),
-    $tactile-shadow;
+    inset 0 0 0 1px var(--morph-ring),
+    inset 0 -5px 3px var(--morph-lip),
+    inset 0 2px 3px var(--morph-sheen),
+    var(--shadow-tactile);
+  transition: box-shadow $dress-duration ease-out;
+
+  // While the spinner runs, only the SVG arc shows. The swaps happen under
+  // the solid disc, so the fill never crossfades: no transition on it.
+  &[data-fill="clear"] {
+    background-color: transparent;
+  }
+
+  // Working states carry no dressing. Every layer fades to a transparent
+  // twin of itself, so box-shadow interpolates without jumping.
+  &[data-dressed="false"] {
+    box-shadow:
+      inset 0 0 0 1px transparent,
+      inset 0 -5px 3px transparent,
+      inset 0 2px 3px transparent,
+      var(--shadow-tactile-none);
+  }
+
   // The shell swallows whatever mid-morph overhang its layers produce — a
   // collapsing pill visibly "eats" the last of its blurred label. The
   // analysing label lives outside the shell precisely to escape this clip.
@@ -76,6 +93,17 @@ $error-ink: #dc2626;
   pointer-events: none;
 }
 
+// Before the first measurement the idle label holds the shell open from
+// normal flow, so the pill renders from the server HTML alone. [data-ready]
+// lands with the measurement and the label rejoins the centred layers.
+.container-morph:not([data-ready]) .container-morph-shell > .container-morph-label {
+  position: relative;
+  top: auto;
+  left: auto;
+  translate: none;
+  display: block;
+}
+
 // Pill interior from the Figma frame: 10px/12px padding around one 21px line.
 .container-morph-label {
   padding: 10px 12px;
@@ -85,7 +113,7 @@ $error-ink: #dc2626;
   // interior, so no padding: its measured width seats the group.
   &[data-tone="ink"] {
     padding: 0;
-    color: $gray-950;
+    color: var(--ink-strong);
   }
 }
 
@@ -102,7 +130,7 @@ $error-ink: #dc2626;
   }
 
   circle {
-    stroke: $gray-950;
+    stroke: var(--morph-ink);
   }
 }
 
@@ -113,9 +141,9 @@ $error-ink: #dc2626;
 .container-morph-shimmer {
   background: linear-gradient(
       100deg,
-      $gray-950 38%,
-      $gray-300 50%,
-      $gray-950 62%
+      var(--ink-strong) 38%,
+      var(--line-strong) 50%,
+      var(--ink-strong) 62%
     )
     0 0 / 200% 100%;
   -webkit-background-clip: text;
@@ -154,7 +182,7 @@ $error-ink: #dc2626;
   align-items: center;
   gap: 7px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--morph-on-ink);
 }
 
 // The outcome at a glance: a small status dot ahead of the title.
@@ -162,10 +190,10 @@ $error-ink: #dc2626;
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: $success-ink;
+  background: var(--morph-success);
 
   &[data-outcome="declined"] {
-    background: $error-ink;
+    background: var(--morph-error);
   }
 }
 
@@ -185,14 +213,17 @@ $error-ink: #dc2626;
 }
 
 .container-morph-card-row-label {
-  color: $gray-400;
+  color: var(--morph-on-ink-faint);
 }
 
+// Amount, card number and date: equal-width digits, ledger-style.
 .container-morph-card-row-value {
-  color: $gray-200;
+  font-variant-numeric: tabular-nums;
+  color: var(--morph-on-ink-muted);
 }
 
-// Declined cards close on the retry affordance, quiet against the rows.
+// Declined cards close on the retry affordance, quiet against the rows —
+// as quiet as the row labels, which is as far as AA allows on the shell.
 .container-morph-card-hint {
-  color: $gray-500;
+  color: var(--morph-on-ink-faint);
 }

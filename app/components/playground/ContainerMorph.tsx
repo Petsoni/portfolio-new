@@ -2,14 +2,22 @@
 
 import React, {
   useEffect,
+  useId,
   useLayoutEffect,
   useRef,
   useState,
 } from "react";
-import { motion, useReducedMotion, type Transition } from "motion/react";
+import {
+  animate,
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  type Transition,
+} from "motion/react";
 import { loadingEnd, loadingStart, warning } from "@/.web-kits/core";
 import { playHaptic } from "@/app/haptics";
 import { playUiSound } from "@/app/hooks/useUiSounds";
+import { crossfade } from "@/app/motion-variants";
 import "./ContainerMorph.scss";
 
 /**
@@ -32,38 +40,6 @@ type Phase = "idle" | "shrink" | "spin" | "fill" | "card";
 
 export type Outcome = "success" | "declined";
 
-// $gray-950 from the palette, inlined for Motion.
-const INK = "#171717";
-// Ink at zero alpha: the shell's fill vanishes while the spinner runs, so
-// only the SVG arc remains. Swaps to and from this value happen while the
-// solid disc covers the shell — never as a visible crossfade.
-const INK_CLEAR = "rgba(23, 23, 23, 0)";
-
-// Shell dressing from the Figma "tactile dark" treatment, one box-shadow
-// stack: a 1px $gray-900 ring standing in for the border, the glossy inset
-// bevel (solid black lower lip, faint white top sheen), and the palette's
-// tactile drop shadow underneath.
-const SHELL_SHADOW = [
-  "inset 0 0 0 1px #3d3d3d",
-  "inset 0 -5px 3px rgba(0, 0, 0, 1)",
-  "inset 0 2px 3px rgba(255, 255, 255, 0.25)",
-  "0 1px 1px rgba(48, 48, 48, 0.04)",
-  "0 2px 1px rgba(48, 48, 48, 0.03)",
-  "0 3px 1px rgba(48, 48, 48, 0.01)",
-  "0 5px 1px rgba(48, 48, 48, 0)",
-].join(", ");
-// The working state carries no dressing at all. Every layer fades to a
-// structure-matched zero so the box-shadow interpolation never jumps.
-const SHELL_SHADOW_NONE = [
-  "inset 0 0 0 1px rgba(61, 61, 61, 0)",
-  "inset 0 -5px 3px rgba(0, 0, 0, 0)",
-  "inset 0 2px 3px rgba(255, 255, 255, 0)",
-  "0 1px 1px rgba(48, 48, 48, 0)",
-  "0 2px 1px rgba(48, 48, 48, 0)",
-  "0 3px 1px rgba(48, 48, 48, 0)",
-  "0 5px 1px rgba(48, 48, 48, 0)",
-].join(", ");
-
 // Spinner geometry, all in the 20x20 viewBox the shell collapses to. The
 // disc state strokes so thick it fills the circle solid — pixel-identical
 // to the ink shell it replaces — and the ring state is the open arc.
@@ -72,6 +48,9 @@ const DISC = { r: 5, strokeWidth: 10, pathLength: 1 };
 const ARC = { r: 8.25, strokeWidth: 2.5, pathLength: 0.78 };
 // Gap between the spinner and the analysing label.
 const GAP = 16;
+// The pill's radius in the Figma frame. CSS clamps it to half the pill's
+// height, so it draws the same pill as the measured radius that replaces it.
+const PILL_RADIUS = 70;
 
 // Choreography: collapse, spin, seal, expand.
 const SHRINK_MS = 360;
@@ -86,17 +65,26 @@ const morphSpring: Transition = { type: "spring", stiffness: 200, damping: 25 };
 const expandSpring: Transition = { type: "spring", stiffness: 400, damping: 30, mass: 0.9 };
 const restartSpring: Transition = { type: "spring", stiffness: 440, damping: 34 };
 
-// Mock receipt shown on the success card, and the decline's factual
-// counterpart — ledger-calm: what failed, on which card, and a way out.
+// Mock receipt shown on the success card (its date row is added at render,
+// see `today`), and the decline's factual counterpart — ledger-calm: what
+// failed, on which card, and a way out. The card number is masked the way
+// receipts mask it: four dots, last four digits.
+const MASKED_CARD = "Visa •••• 4242";
 const RECEIPT = [
   { label: "Amount", value: "$149.00" },
-  { label: "Card", value: "Visa •• 4242" },
-  { label: "Date", value: "Aug 29, 2026" },
+  { label: "Card", value: MASKED_CARD },
 ];
 const DECLINE_DETAILS = [
   { label: "Reason", value: "Insufficient funds" },
-  { label: "Card", value: "Visa •• 4242" },
+  { label: "Card", value: MASKED_CARD },
 ];
+
+// "Aug 29, 2026" — the receipt's date format.
+const receiptDate = new Intl.DateTimeFormat("en-US", {
+  month: "short",
+  day: "numeric",
+  year: "numeric",
+});
 
 // The declined card's landing gesture: the macOS login "no" — one sharp
 // horizontal shake, decaying to rest.
@@ -112,11 +100,23 @@ interface ContainerMorphProps {
  * morphing container: the dark pill collapses into a spinning arc that
  * runs beside a shimmering "Analysing transaction", then the arc seals
  * shut and blooms into the details card. The shell animates its measured
- * size, radius, fill, shadow, and seat between states.
+ * size, radius and seat between states; its fill and dressing switch in CSS,
+ * from theme tokens.
  */
 function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
   const [phase, setPhase] = useState<Phase>("idle");
   const reducedMotion = useReducedMotion() ?? false;
+  const statusId = useId();
+
+  // A receipt is dated today — in the visitor's time zone, which the server
+  // can't know, so the date is filled in after hydration rather than
+  // rendered (and mismatched) on the server. The card stays hidden until a
+  // payment has run, so the placeholder is never on screen.
+  const [today, setToday] = useState<string | null>(null);
+  useEffect(() => {
+    setToday(receiptDate.format(new Date()));
+  }, []);
+  const receipt = [...RECEIPT, { label: "Date", value: today ?? "—" }];
 
   // Until the first click, every container transition is instant — covering
   // the initial measurement pass and any font-metric settling.
@@ -160,6 +160,10 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Until the first measurement (the server HTML, and the page without JS)
+  // the idle label sits in normal flow and the shell wraps it from CSS alone
+  // — see [data-ready] in ContainerMorph.scss — so the pill is there from
+  // first paint. Once measured, Motion owns the shell's size.
   const ready = pill.width > 0 && analysing.width > 0 && card.width > 0;
 
   // Timer chain: each working phase hands off to the next. Reduced motion
@@ -195,8 +199,8 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
   // as the analysis begins, then — as the card opens — the end chime with a
   // success haptic, or the softer warning tone with the error buzz on a
   // decline. The outcome reads through a ref so re-picking it while the
-  // card is open can't replay the landing sounds. playUiSound no-ops under
-  // prefers-reduced-motion, like every sound on the site.
+  // card is open can't replay the landing sounds. playUiSound no-ops while
+  // sound is switched off, like every sound on the site.
   const outcomeRef = useRef(outcome);
   useEffect(() => {
     outcomeRef.current = outcome;
@@ -218,6 +222,18 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
     }
   }, [phase]);
 
+  // Reduced motion: the shell can't glide between its shapes, so each new
+  // one (pill, ring, card) fades in instead of popping. A layout effect, so
+  // the fade's first frame lands together with the snap.
+  const shellOpacity = useMotionValue(1);
+  const shape = phase === "idle" ? "pill" : phase === "card" ? "card" : "ring";
+  useLayoutEffect(() => {
+    if (!reducedMotion || !booted.current) return;
+    shellOpacity.set(0);
+    const fade = animate(shellOpacity, 1, crossfade);
+    return () => fade.stop();
+  }, [shape, reducedMotion, shellOpacity]);
+
   const clickable = phase === "idle" || phase === "card";
   const working = phase === "shrink" || phase === "spin";
 
@@ -234,8 +250,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
           width: card.width,
           height: card.height,
           borderRadius: 20,
-          backgroundColor: INK,
-          boxShadow: SHELL_SHADOW,
           // Declines land physically: expand first, then the refusal shake.
           x: reducedMotion || outcome === "success" ? 0 : SHAKE_X,
         }
@@ -244,8 +258,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
             width: RING,
             height: RING,
             borderRadius: RING / 2,
-            backgroundColor: INK_CLEAR,
-            boxShadow: SHELL_SHADOW_NONE,
             x: 0,
           }
         : phase === "spin"
@@ -253,8 +265,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
               width: RING,
               height: RING,
               borderRadius: RING / 2,
-              backgroundColor: INK_CLEAR,
-              boxShadow: SHELL_SHADOW_NONE,
               x: seatX,
             }
           : phase === "shrink"
@@ -262,21 +272,23 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
                 width: RING,
                 height: RING,
                 borderRadius: RING / 2,
-                backgroundColor: INK,
-                boxShadow: SHELL_SHADOW_NONE,
                 x: seatX,
               }
             : {
                 // Figma rounds the pill at 70; at 41px tall that clamps to
                 // the half-height 20.5 used here, keeping the radius morph
                 // tiny.
-                width: pill.width,
-                height: pill.height,
-                borderRadius: pill.height / 2,
-                backgroundColor: INK,
-                boxShadow: SHELL_SHADOW,
+                width: ready ? pill.width : "auto",
+                height: ready ? pill.height : "auto",
+                borderRadius: ready ? pill.height / 2 : PILL_RADIUS,
                 x: 0,
               };
+
+  // The shell's fill and dressing are CSS (ContainerMorph.scss), so they
+  // follow the theme: the fill clears while the spinner runs, and the
+  // dressing (ring, bevel, drop shadow) is off while working.
+  const shellFill = phase === "spin" || phase === "fill" ? "clear" : "ink";
+  const shellDressed = phase === "idle" || phase === "card";
 
   const shellTransition: Transition =
     !booted.current || reducedMotion
@@ -287,12 +299,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
             : phase === "idle"
               ? restartSpring
               : morphSpring),
-          // The fill never crossfades — both swaps (ink to clear at spin,
-          // clear to ink at card) happen under the solid disc.
-          backgroundColor: { duration: 0 },
-          // The shadow tweens instead of springing — an overshooting spring
-          // would flash it darker than its resting value.
-          boxShadow: { duration: 0.3, ease: "easeOut" },
           // The slide into the seat and the glide back to centre ride the
           // phase spring like the size does. Only the declined landing
           // overrides x: the shake waits out the expansion, then decays.
@@ -343,163 +349,184 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
           transition: { duration: 0.12, ease: "easeOut" as const },
         };
 
-  const ariaLabel =
-    phase === "idle"
+  // Two separate jobs for assistive tech. The button's name is only ever
+  // the action a press performs; what is happening is announced by the
+  // status region beside it — a live region on the button itself, with a
+  // name that changes under the user, is announced unreliably. The button
+  // is described by the status, so the result is read again on re-focus.
+  const actionLabel =
+    phase !== "card"
       ? "Pay with card"
+      : outcome === "success"
+        ? "Start over"
+        : "Try again";
+  const statusText =
+    phase === "idle"
+      ? ""
       : phase !== "card"
         ? "Analysing transaction"
         : outcome === "success"
-          ? "Payment successful. $149.00 paid with Visa ending 4242 on Aug 29, 2026. Press to start over."
-          : "Payment declined. Insufficient funds on Visa ending 4242. Press to try again.";
+          ? `Payment successful. $149.00 paid with Visa ending 4242${
+              today ? ` on ${today}` : ""
+            }.`
+          : "Payment declined. Insufficient funds on Visa ending 4242.";
 
   return (
-    <motion.button
-      type="button"
-      className="container-morph"
-      aria-label={ariaLabel}
-      aria-live="polite"
-      aria-busy={!clickable}
-      aria-disabled={!clickable}
-      // Both clicks play the delegated default tap and buzz — same as the
-      // other playground buttons; working states swallow the sound and the
-      // haptic with the click.
-      data-sound={clickable ? undefined : "none"}
-      data-haptic={clickable ? undefined : "none"}
-      style={{ visibility: ready ? undefined : "hidden" }}
-      whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
-      onClick={() => {
-        if (!clickable) return;
-        booted.current = true;
-        setPhase(phase === "idle" ? "shrink" : "idle");
-      }}
-    >
-      {/* The morphing shell. It clips its own layers (a collapsing pill
-          "eats" the last of its blurred label) — which is exactly why the
-          analysing label lives outside it, as a sibling below. */}
-      <motion.span
-        className="container-morph-shell"
-        initial={false}
-        animate={shellTarget}
-        transition={shellTransition}
+    <>
+      <motion.button
+        type="button"
+        className="container-morph"
+        aria-label={actionLabel}
+        aria-describedby={statusId}
+        aria-busy={!clickable}
+        aria-disabled={!clickable}
+        // Both clicks play the delegated default tap and buzz — same as the
+        // other playground buttons; working states swallow the sound and the
+        // haptic with the click.
+        data-sound={clickable ? undefined : "none"}
+        data-haptic={clickable ? undefined : "none"}
+        data-ready={ready || undefined}
+        whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
+        onClick={() => {
+          if (!clickable) return;
+          booted.current = true;
+          setPhase(phase === "idle" ? "shrink" : "idle");
+        }}
       >
+        {/* The morphing shell. It clips its own layers (a collapsing pill
+            "eats" the last of its blurred label) — which is exactly why the
+            analysing label lives outside it, as a sibling below. */}
         <motion.span
-          ref={labelRef}
-          className="container-morph-label"
-          aria-hidden="true"
+          className="container-morph-shell"
+          data-fill={shellFill}
+          data-dressed={shellDressed}
+          style={{ opacity: shellOpacity }}
           initial={false}
-          animate={layerAnimation(labelVisible)}
-          transition={layerTransition(labelVisible)}
+          animate={shellTarget}
+          transition={shellTransition}
         >
-          Pay with card
-        </motion.span>
+          <motion.span
+            ref={labelRef}
+            className="container-morph-label"
+            aria-hidden="true"
+            initial={false}
+            animate={layerAnimation(labelVisible)}
+            transition={layerTransition(labelVisible)}
+          >
+            Pay with card
+          </motion.span>
 
-        {/* The spinner: mounted as a solid disc the instant the shell's
-            fill clears — pixel-identical, so the swap is invisible — then
-            drained into the open arc. Sealing runs the move in reverse. */}
-        {ringMounted && (
-          <span className="container-morph-ring" aria-hidden="true">
-            <svg viewBox={`0 0 ${RING} ${RING}`}>
-              <motion.g
-                style={{
-                  transformOrigin: `${RING / 2}px ${RING / 2}px`,
-                }}
-                initial={{ rotate: 0 }}
-                animate={{ rotate: reducedMotion ? 0 : 360 }}
-                transition={
-                  reducedMotion
-                    ? { duration: 0 }
-                    : { repeat: Infinity, duration: 0.9, ease: "linear" }
-                }
-              >
-                <motion.circle
-                  cx={RING / 2}
-                  cy={RING / 2}
-                  fill="none"
-                  strokeLinecap="round"
-                  initial={DISC}
-                  animate={
-                    phase !== "spin"
-                      ? DISC
-                      : reducedMotion
-                        ? { ...ARC, pathLength: 1 }
-                        : ARC
-                  }
+          {/* The spinner: mounted as a solid disc the instant the shell's
+              fill clears — pixel-identical, so the swap is invisible — then
+              drained into the open arc. Sealing runs the move in reverse. */}
+          {ringMounted && (
+            <span className="container-morph-ring" aria-hidden="true">
+              <svg viewBox={`0 0 ${RING} ${RING}`}>
+                <motion.g
+                  style={{
+                    transformOrigin: `${RING / 2}px ${RING / 2}px`,
+                  }}
+                  initial={{ rotate: 0 }}
+                  animate={{ rotate: reducedMotion ? 0 : 360 }}
                   transition={
                     reducedMotion
                       ? { duration: 0 }
-                      : { duration: 0.26, ease: "easeOut" }
+                      : { repeat: Infinity, duration: 0.9, ease: "linear" }
                   }
-                />
-              </motion.g>
-            </svg>
-          </span>
-        )}
-
-        <span
-          ref={cardRef}
-          className="container-morph-card"
-          aria-hidden="true"
-        >
-          <motion.span
-            className="container-morph-card-title"
-            initial={false}
-            animate={cardTextAnimation(0.08)}
-          >
-            <span
-              className="container-morph-card-dot"
-              data-outcome={outcome}
-            />
-            {outcome === "success" ? "Payment successful" : "Payment declined"}
-          </motion.span>
-          <span className="container-morph-card-rows">
-            {(outcome === "success" ? RECEIPT : DECLINE_DETAILS).map(
-              (row, index) => (
-                <motion.span
-                  key={row.label}
-                  className="container-morph-card-row"
-                  initial={false}
-                  animate={cardTextAnimation(0.14 + index * 0.05)}
                 >
-                  <span className="container-morph-card-row-label">
-                    {row.label}
-                  </span>
-                  <span className="container-morph-card-row-value">
-                    {row.value}
-                  </span>
-                </motion.span>
-              ),
+                  <motion.circle
+                    cx={RING / 2}
+                    cy={RING / 2}
+                    fill="none"
+                    strokeLinecap="round"
+                    initial={DISC}
+                    animate={
+                      phase !== "spin"
+                        ? DISC
+                        : reducedMotion
+                          ? { ...ARC, pathLength: 1 }
+                          : ARC
+                    }
+                    transition={
+                      reducedMotion
+                        ? { duration: 0 }
+                        : { duration: 0.26, ease: "easeOut" }
+                    }
+                  />
+                </motion.g>
+              </svg>
+            </span>
+          )}
+
+          <span
+            ref={cardRef}
+            className="container-morph-card"
+            aria-hidden="true"
+          >
+            <motion.span
+              className="container-morph-card-title"
+              initial={false}
+              animate={cardTextAnimation(0.08)}
+            >
+              <span
+                className="container-morph-card-dot"
+                data-outcome={outcome}
+              />
+              {outcome === "success" ? "Payment successful" : "Payment declined"}
+            </motion.span>
+            <span className="container-morph-card-rows">
+              {(outcome === "success" ? receipt : DECLINE_DETAILS).map(
+                (row, index) => (
+                  <motion.span
+                    key={row.label}
+                    className="container-morph-card-row"
+                    initial={false}
+                    animate={cardTextAnimation(0.14 + index * 0.05)}
+                  >
+                    <span className="container-morph-card-row-label">
+                      {row.label}
+                    </span>
+                    <span className="container-morph-card-row-value">
+                      {row.value}
+                    </span>
+                  </motion.span>
+                ),
+              )}
+            </span>
+            {outcome === "declined" && (
+              <motion.span
+                className="container-morph-card-hint"
+                initial={false}
+                animate={cardTextAnimation(0.24)}
+              >
+                Click to try again
+              </motion.span>
             )}
           </span>
-          {outcome === "declined" && (
-            <motion.span
-              className="container-morph-card-hint"
-              initial={false}
-              animate={cardTextAnimation(0.24)}
-            >
-              Click to try again
-            </motion.span>
-          )}
-        </span>
-      </motion.span>
+        </motion.span>
 
-      {/* The analysing label sits outside the clipping shell, seated right
-          of the spinner; the shimmer band only sweeps while the analysis
-          actually runs — entering, the label is plain ink. */}
-      <motion.span
-        ref={analyseRef}
-        className={`container-morph-label${
-          phase === "spin" ? " container-morph-shimmer" : ""
-        }`}
-        data-tone="ink"
-        aria-hidden="true"
-        style={{ x: analyseX }}
-        initial={false}
-        animate={layerAnimation(analyseVisible)}
-        transition={layerTransition(analyseVisible)}
-      >
-        Analysing transaction
-      </motion.span>
-    </motion.button>
+        {/* The analysing label sits outside the clipping shell, seated right
+            of the spinner; the shimmer band only sweeps while the analysis
+            actually runs — entering, the label is plain ink. */}
+        <motion.span
+          ref={analyseRef}
+          className={`container-morph-label${
+            phase === "spin" ? " container-morph-shimmer" : ""
+          }`}
+          data-tone="ink"
+          aria-hidden="true"
+          style={{ x: analyseX }}
+          initial={false}
+          animate={layerAnimation(analyseVisible)}
+          transition={layerTransition(analyseVisible)}
+        >
+          Analysing transaction
+        </motion.span>
+      </motion.button>
+      <p id={statusId} role="status" className="sr-only">
+        {statusText}
+      </p>
+    </>
   );
 }
 

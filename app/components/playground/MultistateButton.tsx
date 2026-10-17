@@ -10,9 +10,19 @@ import React, {
 import { Check, X } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 import { playHaptic } from "@/app/haptics";
+import { crossfade } from "@/app/motion-variants";
 import "./MultistateButton.scss";
 
 export type Phase = "idle" | "generating" | "success" | "error";
+
+// Label copy per phase — shown on the button, and announced from the status
+// region beside it as the phase changes.
+const LABEL_TEXT: Record<Phase, string> = {
+  idle: "Generate report",
+  generating: "Generating…",
+  success: "Report ready",
+  error: "Report failed",
+};
 
 // Stack order for the label column. Clicks land in idle (start a run) and
 // error (retry one); generating and success advance on timers. The simulated
@@ -190,18 +200,18 @@ function MultistateButton({
   }, [phase]);
 
   const labels: Record<Phase, React.ReactNode> = {
-    idle: "Generate report",
-    generating: "Generating…",
+    idle: LABEL_TEXT.idle,
+    generating: LABEL_TEXT.generating,
     success: (
       <>
         <Check size={16} aria-hidden="true" />
-        Report ready
+        {LABEL_TEXT.success}
       </>
     ),
     error: (
       <>
         <X size={16} aria-hidden="true" />
-        Report failed
+        {LABEL_TEXT.error}
       </>
     ),
   };
@@ -218,71 +228,78 @@ function MultistateButton({
   };
 
   return (
-    <motion.button
-      type="button"
-      className="multistate-button"
-      data-phase={phase}
-      // Working states swallow the click — silence the delegated tap and
-      // buzz with it, same as the container morph.
-      data-sound={clickable ? undefined : "none"}
-      data-haptic={clickable ? undefined : "none"}
-      aria-busy={phase === "generating"}
-      aria-live="polite"
-      onClick={() => {
-        if (!clickable) return;
-        setOwnPhase("generating");
-        onPhaseChange?.("generating");
-      }}
-      whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
-    >
-      <span
-        className="multistate-button-pattern"
-        ref={patternRef}
-        aria-hidden="true"
+    <>
+      <motion.button
+        type="button"
+        className="multistate-button"
+        data-phase={phase}
+        // Working states swallow the click — silence the delegated tap and
+        // buzz with it, same as the container morph.
+        data-sound={clickable ? undefined : "none"}
+        data-haptic={clickable ? undefined : "none"}
+        aria-busy={phase === "generating"}
+        onClick={() => {
+          if (!clickable) return;
+          setOwnPhase("generating");
+          onPhaseChange?.("generating");
+        }}
+        whileTap={clickable && !reducedMotion ? { scale: 0.97 } : undefined}
       >
-        {cells.length > 0 && (
-          <svg width={size.width} height={size.height}>
-            {cells.map((cell, index) => (
-              <rect
-                key={index}
-                className="multistate-button-cell"
-                x={cell.x}
-                y={cell.y}
-                width={CELL}
-                height={CELL}
-                rx={CORNER}
-                style={
-                  {
-                    "--glow": cell.glow,
-                    "--spread": cell.spread,
-                    "--mid": cell.mid,
-                  } as React.CSSProperties
-                }
-              />
-            ))}
-          </svg>
-        )}
-      </span>
-      <span className="multistate-button-labels">
-        {PHASES.map((label) => (
-          <motion.span
-            key={label}
-            className="multistate-button-label"
-            data-label={label}
-            aria-hidden={phase !== label}
-            initial={false}
-            animate={labelAnimation(label)}
-            transition={
-              reducedMotion
-                ? { duration: 0 }
-                : { duration: 0.25, ease: "easeOut" }
-            }
-          >
-            {labels[label]}
-          </motion.span>
-        ))}
-      </span>
-    </motion.button>
+        <span
+          className="multistate-button-pattern"
+          ref={patternRef}
+          aria-hidden="true"
+        >
+          {cells.length > 0 && (
+            <svg width={size.width} height={size.height}>
+              {cells.map((cell, index) => (
+                <rect
+                  key={index}
+                  className="multistate-button-cell"
+                  x={cell.x}
+                  y={cell.y}
+                  width={CELL}
+                  height={CELL}
+                  rx={CORNER}
+                  style={
+                    {
+                      "--glow": cell.glow,
+                      "--spread": cell.spread,
+                      "--mid": cell.mid,
+                    } as React.CSSProperties
+                  }
+                />
+              ))}
+            </svg>
+          )}
+        </span>
+        <span className="multistate-button-labels">
+          {PHASES.map((label) => (
+            <motion.span
+              key={label}
+              className="multistate-button-label"
+              data-label={label}
+              aria-hidden={phase !== label}
+              initial={false}
+              animate={labelAnimation(label)}
+              // Reduced motion drops the march and the blur (see
+              // labelAnimation), leaving a plain crossfade.
+              transition={
+                reducedMotion ? crossfade : { duration: 0.25, ease: "easeOut" }
+              }
+            >
+              {labels[label]}
+            </motion.span>
+          ))}
+        </span>
+      </motion.button>
+      {/* Announces each phase. A sibling, not the button: a live region on
+          the labelled control itself is announced unreliably. Idle is the
+          resting state and says nothing. */}
+      <p role="status" className="sr-only">
+        {phase === "idle" ? "" : LABEL_TEXT[phase]}
+      </p>
+    </>
   );
 }
 

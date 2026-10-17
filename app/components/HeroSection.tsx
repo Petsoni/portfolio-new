@@ -1,10 +1,6 @@
-"use client";
-
 import React from "react";
-import { motion } from "motion/react";
 import { Github, Linkedin, Mail } from "lucide-react";
-import { containerVariants, itemVariants } from "@/app/motion-variants";
-import { useHomeEntrance } from "@/app/hooks/useHomeEntrance";
+import { contactLinks } from "@/lib/profile";
 
 // Mini PDF page that peeks out from behind the CV link on hover.
 // Colors come from the --peek-* custom properties defined in common.scss.
@@ -32,53 +28,55 @@ function PdfPeekPage() {
   );
 }
 
-const heroLinks = [
-  { label: "CV", href: "/Petar_Marković_CV.pdf", art: <PdfPeekPage /> },
-  {
-    label: "Email",
-    href: "mailto:pmarkovic2308@gmail.com",
-    art: (
-      <span className="hero-peek-tile">
-        <Mail size={14} />
-      </span>
-    ),
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/in/petar-markovic-a38596165/",
-    art: (
-      <span className="hero-peek-tile">
-        <Linkedin size={14} />
-      </span>
-    ),
-  },
-  {
-    label: "GitHub",
-    href: "https://github.com/Petsoni",
-    art: (
-      <span className="hero-peek-tile">
-        <Github size={14} />
-      </span>
-    ),
-  },
-];
+// The peek art for each contact link, by label.
+const peekArt: Record<(typeof contactLinks)[number]["label"], React.ReactNode> = {
+  CV: <PdfPeekPage />,
+  Email: (
+    <span className="hero-peek-tile">
+      <Mail size={14} />
+    </span>
+  ),
+  LinkedIn: (
+    <span className="hero-peek-tile">
+      <Linkedin size={14} />
+    </span>
+  ),
+  GitHub: (
+    <span className="hero-peek-tile">
+      <Github size={14} />
+    </span>
+  ),
+};
+
+const heroLinks = contactLinks.map((link) => ({
+  ...link,
+  art: peekArt[link.label],
+}));
 
 function HeroSection() {
-  // One-time entrance: plays on hard load/refresh, skipped when returning
-  // from a showcase page via back-navigation.
-  const entrance = useHomeEntrance();
-
+  // Rendered visible on the server; the entrance is the CSS .enter stagger,
+  // which runs from first paint without JS.
   return (
-    <motion.section
-      className="section hero-section"
-      variants={containerVariants}
-      initial={entrance}
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }}
-    >
+    <section className="section hero-section">
       <div className="hero-left">
-        <motion.h1 variants={itemVariants}>Hi there, I’m Petar.</motion.h1>
-        <motion.nav className="hero-links" variants={itemVariants} aria-label="Contact links">
+        {/* Name first, then what he does: the role is the line a visitor
+            reads second, not a detail in the bio. */}
+        <hgroup className="hero-intro">
+          <h1 className="enter">Petar Marković</h1>
+          <p
+            className="hero-lede enter"
+            style={{ "--i": 1 } as React.CSSProperties}
+          >
+            Design engineer. I care most about the last mile — the motion, the
+            micro-interactions, the details that make software feel
+            considered.
+          </p>
+        </hgroup>
+        <nav
+          className="hero-links enter"
+          style={{ "--i": 2 } as React.CSSProperties}
+          aria-label="Contact links"
+        >
           {heroLinks.map(({ label, href, art }) => (
             <a
               key={label}
@@ -94,17 +92,19 @@ function HeroSection() {
               </span>
             </a>
           ))}
-        </motion.nav>
+        </nav>
       </div>
-      <motion.div className="hero-bio" variants={itemVariants}>
+      {/* One short personal note, off to the side. */}
+      <div
+        className="hero-bio enter"
+        style={{ "--i": 3 } as React.CSSProperties}
+      >
         <p>
-          Design engineer based in Serbia, turning ideas into interfaces that feel as good as they look.
+          When I’m not designing or coding, I’m exploring new technologies or
+          producing electronic music.
         </p>
-        <p>
-          I work across the full stack, but I care most about the last mile. The motion, the micro-interactions, the details that 	make software feel considered. When I'm not designing or coding, I'm	exploring new technologies or producing electronic music.
-        </p>
-      </motion.div>
-    </motion.section>
+      </div>
+    </section>
   );
 }
 

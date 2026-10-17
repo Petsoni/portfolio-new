@@ -1,0 +1,14 @@
+// ---------------------------------------------------------------------------
+// SiteHeader — the settings row pinned to the top-right corner of the
+// content column, above every page.
+// ---------------------------------------------------------------------------
+
+.site-header {
+  position: absolute;
+  top: var(--space-3);
+  right: 0;
+  // Above the page content it shares the column with.
+  z-index: 1;
+  display: flex;
+  gap: var(--space-1);
+}

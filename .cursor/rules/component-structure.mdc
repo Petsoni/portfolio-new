@@ -20,8 +20,9 @@ app/playground/dropdown/
 Every showcased playground component also gets its own page:
 
 - `app/playground/<component>/page.tsx` exports `metadata` and renders
-  `ComponentShowcase` (back link, title, description, stage) with the live
-  demo as children — see `app/playground/dropdown/page.tsx`.
+  `PageShell` > `ComponentShowcase` (back link, title, description) with a
+  `ShowcaseStage` holding the live demo as children — see
+  `app/playground/dropdown/page.tsx`.
 - Add a row for it in `PlaygroundSection` (home page) linking to that route.
 - There is deliberately no `/playground` index page; the home section is the
   index.

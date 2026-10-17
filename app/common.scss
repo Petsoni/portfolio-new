@@ -10,7 +10,7 @@
 h1 {
   font-size: clamp(34px, 6vw, 48px);
   font-weight: 550;
-  letter-spacing: -0.04em;
+  letter-spacing: var(--tracking-display);
   line-height: 1.2;
   text-box: trim-both cap alphabetic;
 }
@@ -18,18 +18,24 @@ h1 {
 h2 {
   font-size: 22px;
   font-weight: 550;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--tracking-heading);
   line-height: 1.5;
 }
 
+// Body size. h3 sits here too: a sub-heading is set apart by weight and
+// color, not size.
+h3,
 p,
 a,
 b,
 i,
 span,
-button {
+button,
+li,
+dt,
+dd {
   font-size: 14px;
-  letter-spacing: -0.02em;
+  letter-spacing: var(--tracking-body);
   line-height: 21px;
 }
 
@@ -39,15 +45,17 @@ h3,
 h4,
 h5,
 h6 {
-  color: $heading-light;
+  color: var(--ink-heading);
 }
 
-p {
-  color: $muted-light;
+p,
+li,
+dd {
+  color: var(--ink-muted);
 }
 
 a {
-  color: $link-light;
+  color: var(--ink-body);
 }
 
 // ---------------------------------------------------------------------------
@@ -65,6 +73,44 @@ a {
 
 .section {
   width: 100%;
+
+  // Sections a Back link lands on (/#work, /#playground).
+  &[id] {
+    scroll-margin-top: var(--section-scroll-margin);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Entrance
+// ---------------------------------------------------------------------------
+
+// First-paint entrance in plain CSS, so it runs before (and without) JS and
+// the server HTML never ships hidden content. Stagger siblings with --i.
+// Fills backwards only: a forwards fill would leave an implicit will-change
+// on every entered element for the life of the page.
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--enter-distance));
+  }
+}
+
+.enter {
+  animation: enter var(--duration-enter) var(--ease-out) backwards;
+  animation-delay: calc(var(--stagger-step) * var(--i, 0));
+}
+
+// Client-side navigation (see PageShell): no stagger and no travel — the
+// page crossfades in as one while the title morph flies over it.
+.page[data-nav="client"] {
+  --stagger-step: 0ms;
+  --enter-distance: 0px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -90,6 +136,20 @@ a {
   gap: 28px;
 }
 
+// Name and role, read as one unit.
+.hero-intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.hero-lede {
+  font-size: var(--text-lede);
+  line-height: var(--leading-lede);
+  font-weight: 500;
+  color: var(--ink-body);
+}
+
 .hero-links {
   display: flex;
   align-items: center;
@@ -102,14 +162,14 @@ a {
   text-decoration: underline;
   text-underline-position: from-font;
   transition: color 0.2s ease;
-  --peek-paper: #{$background-light};
-  --peek-border: #{$rule-light};
-  --peek-fold: #{$hover-light};
-  --peek-line: #{$border-light};
-  --peek-ink: #{$heading-light};
+  --peek-paper: var(--surface-raised);
+  --peek-border: var(--line-rule);
+  --peek-fold: var(--surface-hover);
+  --peek-line: var(--line-border);
+  --peek-ink: var(--ink-heading);
 
   &:hover {
-    color: $heading-light;
+    color: var(--ink-heading);
   }
 }
 
@@ -129,13 +189,22 @@ a {
   mask-image: linear-gradient(to top, transparent 0, #000 8px);
 }
 
+// The revealed pose, shared by hover/focus and reduced motion.
+@mixin peek-revealed {
+  .hero-peek-page {
+    transform: translateY(18%) rotate(-8deg);
+  }
+
+  .hero-peek-tile {
+    transform: translateY(6%) rotate(-8deg);
+  }
+}
+
 .hero-peek-page,
 .hero-peek-tile {
   position: absolute;
   left: 50%;
   transform-origin: 50% 100%;
-  // Exit: quick tuck back in.
-  transition: transform 0.17s ease;
   will-change: transform;
 }
 
@@ -167,46 +236,58 @@ a {
 
 .hero-link:hover,
 .hero-link:focus-visible {
+  @include peek-revealed;
+}
+
+// The slide itself only exists for users who haven't asked for less motion,
+// so reduced motion has nothing to override.
+@media (prefers-reduced-motion: no-preference) {
 
   .hero-peek-page,
   .hero-peek-tile {
-    // Enter: springy rise with a hint of overshoot.
-    transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    // Exit: quick tuck back in.
+    transition: transform 0.17s ease;
   }
 
-  .hero-peek-page {
-    transform: translateY(18%) rotate(-8deg);
-  }
+  .hero-link:hover,
+  .hero-link:focus-visible {
 
-  .hero-peek-tile {
-    transform: translateY(6%) rotate(-8deg);
-  }
-}
-
-// Touch devices and small screens have no hover to reveal the peek art,
-// so keep it permanently in its revealed position there.
-@media (hover: none),
-screen and (max-width: 768px) {
-
-  // Breathing room between the title and the always-visible art.
-  .hero-links {
-    margin-top: 12px;
-  }
-
-  .hero-peek-page {
-    transform: translateY(18%) rotate(-8deg);
-  }
-
-  .hero-peek-tile {
-    transform: translateY(6%) rotate(-8deg);
+    .hero-peek-page,
+    .hero-peek-tile {
+      // Enter: springy rise with a hint of overshoot.
+      transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
   }
 }
 
+// The peek is a hover effect, so devices without hover don't get it at all:
+// parked permanently in its revealed pose it reads as a clipped glitch above
+// the links. Keyed on hover capability alone, never on width — a narrow
+// desktop window still has a mouse.
+@media (hover: none) {
+  .hero-link-peek {
+    display: none;
+  }
+}
+
+// Reduced motion: no slide. The art rests in its revealed pose and
+// crossfades in on hover or keyboard focus.
 @media (prefers-reduced-motion: reduce) {
+  @include peek-revealed;
 
   .hero-peek-page,
   .hero-peek-tile {
-    transition-duration: 0.01ms !important;
+    opacity: 0;
+    transition: opacity var(--duration-ui) var(--ease-out);
+  }
+
+  .hero-link:hover,
+  .hero-link:focus-visible {
+
+    .hero-peek-page,
+    .hero-peek-tile {
+      opacity: 1;
+    }
   }
 }
 
@@ -248,7 +329,10 @@ screen and (max-width: 768px) {
 .experience-row {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  // Top-aligned, with the rule dropped half a line (see .separator below).
+  // For a one-line row that is the same as centring; it is also right for
+  // rows whose title stacks on narrow screens.
+  align-items: flex-start;
   width: 100%;
   gap: 12px;
   padding: 12px;
@@ -264,30 +348,80 @@ screen and (max-width: 768px) {
   .experience-name {
     font-weight: 500;
     white-space: nowrap;
-    color: $heading-light;
+    color: var(--ink-heading);
+  }
+
+  // Company and role, read as one: "Prepia · Frontend Engineer".
+  .experience-title {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+
+  .experience-role {
+    font-weight: 500;
+    white-space: nowrap;
+    color: var(--ink-muted);
+
+    // The dot is decoration: the second value gives it empty alt text, so
+    // it is not read out (browsers without that syntax keep the first).
+    &::before {
+      content: "·";
+      content: "·" / "";
+      margin-right: var(--space-2);
+      color: var(--ink-faint);
+    }
   }
 
   .separator {
     flex: 1;
     min-width: 1rem;
     height: 1px;
+    // Half a line down (line-height is 1.5): centred on the first line.
+    margin-top: 0.75em;
+  }
+
+  // Narrow screens: the role drops under the company and may wrap, the dot
+  // and the rule go, and the dates keep the right edge.
+  @media screen and (max-width: 600px) {
+    .experience-title {
+      flex: 1;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+
+    .experience-role {
+      white-space: normal;
+
+      &::before {
+        content: none;
+      }
+    }
+
+    .experience-title + .separator {
+      display: none;
+    }
   }
 
   .experience-duration {
     flex-shrink: 0;
     white-space: nowrap;
     font-weight: 500;
-    color: $faint-light;
+    // Dates in a column: equal-width digits keep them aligned.
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
   }
 
   &:hover {
-    background-color: $hover-light;
+    background-color: var(--surface-hover);
   }
 }
 
 .separator {
   height: 1px;
-  background-color: $rule-light;
+  background-color: var(--line-rule);
 }
 
 // ---------------------------------------------------------------------------
@@ -300,7 +434,7 @@ screen and (max-width: 768px) {
   position: fixed;
   inset: 0;
   z-index: 1500;
-  background-color: rgba(255, 255, 255, 0.45);
+  background-color: var(--surface-overlay);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -322,31 +456,26 @@ screen and (max-width: 768px) {
   gap: 12px;
   width: 100%;
   max-width: 763px;
-  // Figma frame height — keeps the bottom-pinned roles from squishing up
-  // against the visit link when the description is short.
-  min-height: min(320px, 82dvh);
   max-height: min(640px, 82dvh);
   padding: 20px;
   border-radius: 12px;
-  background: $background-light;
-  border: 1px solid $border-light;
-  outline: none;
+  background: var(--surface-raised);
+  border: 1px solid var(--line-border);
 
-  // Left column — stretches to card height so roles pin to the bottom.
-  .experience-modal-side {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 12px;
-    width: 255px;
-    flex-shrink: 0;
+  // The card takes focus programmatically on open; it is not a tab stop, and
+  // a ring here would stretch with the morph. Its controls keep theirs.
+  &:focus-visible {
+    outline: none;
   }
 
-  .experience-modal-side-top {
+  // Left column: who, as what, when, then the way out to their site.
+  .experience-modal-side {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
+    width: 255px;
+    flex-shrink: 0;
   }
 
   .experience-modal-heading {
@@ -358,29 +487,33 @@ screen and (max-width: 768px) {
   .experience-modal-title {
     font-size: 22px;
     font-weight: 550;
-    letter-spacing: -0.03em;
+    letter-spacing: var(--tracking-heading);
     line-height: 1.5;
-    color: $link-light;
+    color: var(--ink-body);
   }
 
   .experience-modal-duration {
     font-weight: 500;
-    color: $faint-light;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-faint);
   }
 
+  // Directly under the company name; the role from the row comes first.
   .experience-modal-roles {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    color: $heading-light;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 
-    span {
+    li {
       font-weight: 600;
+      color: var(--ink-heading);
     }
   }
 
-  // Only the description scrolls on overflow; the left column keeps the
-  // card's full height with the roles pinned at the bottom.
+  // Only the description scrolls on overflow.
   .experience-modal-body {
     flex: 1;
     min-width: 0;
@@ -393,8 +526,15 @@ screen and (max-width: 768px) {
     p {
       width: 100%;
       font-weight: 500;
-      color: $muted-light;
+      color: var(--ink-muted);
     }
+  }
+
+  // Close control (an .icon-button) in the card's top corner. In flow beside
+  // the body, so it never sits on top of the description.
+  .experience-modal-close {
+    flex-shrink: 0;
+    align-self: flex-start;
   }
 
   .experience-modal-visit {
@@ -402,12 +542,12 @@ screen and (max-width: 768px) {
     align-items: center;
     gap: 4px;
     font-weight: 600;
-    color: $heading-light;
+    color: var(--ink-heading);
 
     span {
       position: relative;
 
-      // Underline slides in from the left on hover, out to the right on leave.
+      // Hover underline; how it arrives depends on the motion preference.
       &::after {
         content: "";
         position: absolute;
@@ -416,36 +556,66 @@ screen and (max-width: 768px) {
         bottom: 2px;
         height: 1px;
         background: currentColor;
-        transform: scaleX(0);
-        transform-origin: 100% 50%;
-        transition: transform 0.25s ease;
       }
     }
 
     svg {
       stroke-width: 1.5px;
-      transition: transform 0.2s ease;
     }
 
-    &:hover {
+    // The underline slides in from the left on hover and out to the right
+    // on leave, and the arrow nudges up and out.
+    @media (prefers-reduced-motion: no-preference) {
       span::after {
-        transform: scaleX(1);
-        transform-origin: 0 50%;
+        transform: scaleX(0);
+        transform-origin: 100% 50%;
+        transition: transform 0.25s ease;
       }
 
       svg {
-        transform: translate(1px, -1px);
+        transition: transform 0.2s ease;
+      }
+
+      &:hover {
+        span::after {
+          transform: scaleX(1);
+          transform-origin: 0 50%;
+        }
+
+        svg {
+          transform: translate(1px, -1px);
+        }
+      }
+    }
+
+    // Reduced motion: the underline crossfades and the arrow stays put.
+    @media (prefers-reduced-motion: reduce) {
+      span::after {
+        opacity: 0;
+        transition: opacity var(--duration-ui) var(--ease-out);
+      }
+
+      &:hover span::after {
+        opacity: 1;
       }
     }
   }
 
   @media screen and (max-width: 600px) {
+    // Anchor for the close button below.
+    position: relative;
     flex-direction: column;
-    // Stacked layout has no bottom-pinned roles, so no height floor needed.
-    min-height: 0;
 
     .experience-modal-side {
       width: 100%;
+    }
+
+    // Stacked, the button would land under the description; pin it to the
+    // corner beside the title instead.
+    .experience-modal-close {
+      position: absolute;
+      top: var(--space-3);
+      right: var(--space-3);
     }
   }
 }
@@ -453,6 +623,38 @@ screen and (max-width: 768px) {
 // ---------------------------------------------------------------------------
 // Buttons
 // ---------------------------------------------------------------------------
+
+// Quiet square button around a single icon (the dialog's close, the sound
+// toggle). Positioning is the owner's business.
+.icon-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--icon-button-size);
+  height: var(--icon-button-size);
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  background: transparent;
+  color: var(--ink-faint);
+  cursor: pointer;
+  transition:
+    color var(--duration-ui) var(--ease-out),
+    background-color var(--duration-ui) var(--ease-out);
+
+  // Hit area reaches the touch-target minimum without growing the button.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: calc((var(--icon-button-size) - var(--tap-target)) / 2);
+  }
+
+  &:hover {
+    color: var(--ink-heading);
+    background-color: var(--surface-hover);
+  }
+}
 
 .pill-button {
   display: inline-flex;
@@ -464,9 +666,9 @@ screen and (max-width: 768px) {
   border-radius: 10px;
   white-space: nowrap;
   cursor: pointer;
-  background: $background-light;
-  border: 1px solid $border-light;
-  color: $heading-light;
+  background: var(--surface-raised);
+  border: 1px solid var(--line-border);
+  color: var(--ink-heading);
   transition: all 0.2s ease;
 
   svg {
@@ -474,7 +676,7 @@ screen and (max-width: 768px) {
   }
 
   &:hover {
-    background: $hover-light;
+    background: var(--surface-hover);
   }
 }
 

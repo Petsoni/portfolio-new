@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import ShowcaseStage from "./ShowcaseStage";
 import Slider from "./Slider";
 import VariantSwitcher from "./VariantSwitcher";
 import "./SliderDemo.scss";
@@ -22,17 +23,21 @@ function SliderDemo() {
   const [mode, setMode] = useState<Mode>("free");
 
   return (
-    <>
-      <VariantSwitcher
-        label="Slider mode"
-        options={MODE_OPTIONS}
-        value={mode}
-        onChange={setMode}
-      />
+    <ShowcaseStage
+      align="center"
+      bar={
+        <VariantSwitcher
+          label="Slider mode"
+          options={MODE_OPTIONS}
+          value={mode}
+          onChange={setMode}
+        />
+      }
+    >
       <div className="slider-demo">
         <Slider snap={mode === "snap"} label="Percentage" />
       </div>
-    </>
+    </ShowcaseStage>
   );
 }
 

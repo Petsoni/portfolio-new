@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import ContainerMorph, { type Outcome } from "./ContainerMorph";
+import ShowcaseStage from "./ShowcaseStage";
 import VariantSwitcher from "./VariantSwitcher";
 
 const OUTCOME_OPTIONS: { value: Outcome; label: string }[] = [
@@ -19,15 +20,19 @@ function ContainerMorphDemo() {
   const [outcome, setOutcome] = useState<Outcome>("success");
 
   return (
-    <>
-      <VariantSwitcher
-        label="Payment outcome"
-        options={OUTCOME_OPTIONS}
-        value={outcome}
-        onChange={setOutcome}
-      />
+    <ShowcaseStage
+      align="center"
+      bar={
+        <VariantSwitcher
+          label="Payment outcome"
+          options={OUTCOME_OPTIONS}
+          value={outcome}
+          onChange={setOutcome}
+        />
+      }
+    >
       <ContainerMorph outcome={outcome} />
-    </>
+    </ShowcaseStage>
   );
 }
 

@@ -6,17 +6,16 @@
 // ---------------------------------------------------------------------------
 
 // The Figma pattern paints its ink at 5% — quiet enough to sit under text.
-$cell-ink: $gray-950;
+$cell-ink: var(--ink-strong);
 $cell-alpha: 0.05;
 // "Primary" stays on the gray ramp: pulses flash cells up to this.
-$pulse-ink: $gray-600;
-// Success green for the "Report ready" wave.
-$success-ink: #16a34a;
-// Darker text-grade green — the wave's hue at AA contrast for 14px text.
-$success-text: #15803d;
-// Error red for the "Report failed" wave, same two-grade logic as the green.
-$error-ink: #dc2626;
-$error-text: #b91c1c;
+$pulse-ink: var(--ink-muted);
+// Outcome colors from the theme: the wave's hue, and a text grade of it
+// that holds AA contrast for 14px labels.
+$success-ink: var(--status-success);
+$success-text: var(--ink-success);
+$error-ink: var(--status-error);
+$error-text: var(--ink-error);
 
 .multistate-button {
   position: relative;
@@ -25,14 +24,14 @@ $error-text: #b91c1c;
   justify-content: center;
   padding: 10px 12px;
   margin: 0;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 12px;
-  background: $background-light;
-  box-shadow: $tactile-shadow;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-tactile);
   // Size, tracking, and line-height come from the base button rules and
   // already match the design (14px / -0.02em / 21px).
   font-weight: 500;
-  color: $gray-900;
+  color: var(--ink-heading);
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -76,25 +75,31 @@ $error-text: #b91c1c;
     transition-delay: 0s;
   }
 
-  // Random cells flash on the cleared field while the button works (class
-  // driven from JS); everything else stays transparent.
-  &.is-pulsing {
-    animation: multistate-button-pulse 0.55s ease-out;
-  }
+  // The pulses and ripples only exist for users who haven't asked for less
+  // motion; the reduced-motion block at the end of this file tints the field
+  // instead. Scoping them here means nothing has to be overridden there.
+  @media (prefers-reduced-motion: no-preference) {
+    // Random cells flash on the cleared field while the button works (class
+    // driven from JS); everything else stays transparent.
+    &.is-pulsing {
+      animation: multistate-button-pulse 0.55s ease-out;
+    }
 
-  // Success: a single green ripple rolls outward from the center — the
-  // keyframes rise from the transparent base, so only the green squares
-  // show. It outranks any still-running pulses, reading as one unified wave.
-  .multistate-button[data-phase="success"] & {
-    animation: multistate-button-ripple 0.55s ease-out;
-    animation-delay: calc(var(--mid) * 430ms);
-  }
+    // Success: a single green ripple rolls outward from the center — the
+    // keyframes rise from the transparent base, so only the green squares
+    // show. It outranks any still-running pulses, reading as one unified
+    // wave.
+    .multistate-button[data-phase="success"] & {
+      animation: multistate-button-ripple 0.55s ease-out;
+      animation-delay: calc(var(--mid) * 430ms);
+    }
 
-  // Error: the same wave played backwards — a red ripple collapses from the
-  // edges into the center, success's roll in reverse.
-  .multistate-button[data-phase="error"] & {
-    animation: multistate-button-error-ripple 0.55s ease-out;
-    animation-delay: calc((1 - var(--mid)) * 430ms);
+    // Error: the same wave played backwards — a red ripple collapses from
+    // the edges into the center, success's roll in reverse.
+    .multistate-button[data-phase="error"] & {
+      animation: multistate-button-error-ripple 0.55s ease-out;
+      animation-delay: calc((1 - var(--mid)) * 430ms);
+    }
   }
 }
 
@@ -147,9 +152,9 @@ $error-text: #b91c1c;
 
   .lucide {
     flex-shrink: 0;
-    // Match the icon strokes to the letters' weight: the label's system font
-    // (SF Pro Medium here) draws ~1.5px stems at 14px, and these 16px icons
-    // paint at 16/24 viewBox scale — 2.3 × 16⁄24 ≈ 1.53px rendered.
+    // Match the icon strokes to the letters' weight: the label's medium
+    // weight draws stems of about 1.5px at 14px, and these 16px icons paint
+    // at 16/24 viewBox scale — 2.3 × 16⁄24 ≈ 1.53px rendered.
     stroke-width: 2.3px;
   }
 
@@ -166,7 +171,6 @@ $error-text: #b91c1c;
 @media (prefers-reduced-motion: reduce) {
   .multistate-button-cell {
     transition: none;
-    animation: none !important;
   }
 
   // No pulses without motion — a static lit field says "working" instead.

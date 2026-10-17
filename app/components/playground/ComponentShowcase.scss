@@ -2,6 +2,7 @@
 
 // ---------------------------------------------------------------------------
 // ComponentShowcase — scaffold for a component's dedicated playground page.
+// The stage itself is styled in ShowcaseStage.scss.
 // ---------------------------------------------------------------------------
 
 .component-showcase {
@@ -15,67 +16,60 @@
   }
 }
 
-.component-showcase-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 500;
-  color: $faint-light;
-  transition: color 0.2s ease;
-
-  svg {
-    transition: transform 0.2s ease;
-  }
-
-  &:hover {
-    color: $heading-light;
-
-    svg {
-      transform: translateX(-2px);
-    }
-  }
-}
-
-// The stage from the Figma design: a soft gray frame around an optional
-// variant-switcher bar and the white canvas the demo lives on.
-.component-showcase-stage {
+// Notes under the stage: a label column and a text column, like the site's
+// rows. Stacked on narrow screens.
+.showcase-notes {
   align-self: stretch;
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 8px;
-  padding: 4px;
-  border: 1px solid $border-lightest;
-  border-radius: 16px;
-  background: $gray-25;
+  gap: var(--space-3);
+  margin-top: var(--space-8);
 }
 
-// Portal target for the demo's VariantSwitcher (see StageBarContext).
-// Pages whose demo has no switcher leave it empty, and it collapses.
-.component-showcase-stage-bar {
+.showcase-notes-header {
   display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
 
-  &:empty {
-    display: none;
+  a {
+    font-weight: 500;
+    text-decoration: underline;
+    text-underline-position: from-font;
   }
 }
 
-.component-showcase-canvas {
-  // Anchor for any demo chrome pinned against the canvas.
-  position: relative;
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  // Tall enough for expanding demos (e.g. the dropdown's open panel) to stay
-  // inside the frame.
-  min-height: 348px;
-  padding: 48px 24px;
-  border: 1px solid $border-lightest;
-  border-radius: 12px;
-  background: $background-light;
+.showcase-notes-list {
+  display: grid;
+  // Labels size the first column; the notes take the rest.
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-3) var(--space-8);
+  margin: 0;
 
-  &[data-align="center"] {
-    align-items: center;
+  // Each label/note pair is a wrapper for the markup's sake only: its
+  // children join the grid directly.
+  div {
+    display: contents;
+  }
+
+  dt {
+    font-weight: 500;
+    color: var(--ink-heading);
+  }
+
+  dd {
+    margin: 0;
+    max-width: var(--measure);
+  }
+
+  @media screen and (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+
+    div {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
   }
 }

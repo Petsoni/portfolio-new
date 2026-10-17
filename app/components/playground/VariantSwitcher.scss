@@ -24,18 +24,18 @@
   justify-content: center;
   padding: 8px 12px;
   margin: 0;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 12px;
-  background: $gray-50;
+  background: var(--surface-fill);
   font-weight: 500;
-  color: $gray-500;
+  color: var(--ink-muted);
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   transition: color 0.15s ease;
 
   &[aria-checked="true"] {
-    color: $gray-900;
+    color: var(--ink-heading);
 
     .variant-switcher-thumb {
       opacity: 1;
@@ -50,10 +50,10 @@
 .variant-switcher-thumb {
   position: absolute;
   inset: -1px;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 12px;
-  background: $background-light;
-  box-shadow: $tactile-shadow;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-tactile);
   opacity: 0;
   transition: opacity 0.15s ease;
 }

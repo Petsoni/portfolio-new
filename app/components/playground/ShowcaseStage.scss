@@ -1,0 +1,52 @@
+@use "../../palette" as *;
+
+// ---------------------------------------------------------------------------
+// ShowcaseStage — the stage from the Figma design: a soft gray frame around
+// an optional variant-switcher bar and the white canvas the demo lives on.
+// ---------------------------------------------------------------------------
+
+.showcase-stage {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 4px;
+  border: 1px solid var(--line-subtle);
+  border-radius: 16px;
+  background: var(--surface-sunken);
+}
+
+.showcase-stage-bar {
+  display: flex;
+}
+
+.showcase-stage-canvas {
+  // Height floor for the canvas: enough for the tallest centred demo (the
+  // Container Morph card) with the canvas padding around it, and no more —
+  // the component should read as the subject, not get lost on the stage.
+  --stage-min-height: 240px;
+
+  // Anchor for any demo chrome pinned against the canvas.
+  position: relative;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: var(--stage-min-height);
+  padding: 48px 24px;
+  border: 1px solid var(--line-subtle);
+  border-radius: 12px;
+  background: var(--surface-raised);
+
+  &[data-align="center"] {
+    align-items: center;
+  }
+
+  // Top-aligned demos expand downward and overlay the canvas (the dropdown's
+  // open panel, under its label); the taller floor keeps them inside the
+  // frame.
+  &[data-align="top"] {
+    --stage-min-height: 380px;
+  }
+}

@@ -1,0 +1,8 @@
+// ---------------------------------------------------------------------------
+// SoundToggle — an .icon-button (common.scss), placed by SiteHeader.
+// ---------------------------------------------------------------------------
+
+// On: the speaker darkens along with its icon change.
+.sound-toggle[aria-pressed="true"] {
+  color: var(--ink-heading);
+}

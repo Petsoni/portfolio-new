@@ -1,0 +1,29 @@
+@use "../palette" as *;
+
+// ---------------------------------------------------------------------------
+// BackLink — the quiet "Back" link at the top of a detail page.
+// ---------------------------------------------------------------------------
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--ink-faint);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--ink-heading);
+  }
+
+  // The arrow's nudge is motion; the color change above is not.
+  @media (prefers-reduced-motion: no-preference) {
+    svg {
+      transition: transform 0.2s ease;
+    }
+
+    &:hover svg {
+      transform: translateX(-2px);
+    }
+  }
+}

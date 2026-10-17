@@ -5,6 +5,19 @@
 // The tactile shadow token lives in the shared palette.
 // ---------------------------------------------------------------------------
 
+// Label above the control. It names the trigger and the listbox (see
+// aria-labelledby in Dropdown.tsx).
+.dropdown-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.dropdown-label {
+  font-weight: 500;
+  color: var(--ink-muted);
+}
+
 .dropdown {
   // The open panel overlays the page, so the wrapper only reserves the closed
   // trigger's footprint: 21px line-height + 2×10px padding + 2×1px border.
@@ -12,13 +25,13 @@
   height: 43px;
   width: 226px; // closed-state frame width from the Figma design
 
-  --dd-panel-bg: #{$gray-50};
-  --dd-panel-border: #{$border-lightest};
-  --dd-border: #{$border-lightest};
-  --dd-trigger-bg: #{$background-light};
-  --dd-option-text: #{$gray-500};
-  --dd-selected-bg: #{$gray-25};
-  --dd-selected-text: #{$gray-900}; // was undefined; inherited this from body
+  --dd-panel-bg: var(--surface-fill);
+  --dd-panel-border: var(--line-subtle);
+  --dd-border: var(--line-subtle);
+  --dd-trigger-bg: var(--surface-raised);
+  --dd-option-text: var(--ink-muted);
+  --dd-active-text: var(--ink-heading); // selected and highlighted options
+  --dd-highlight-bg: var(--surface-fill-strong); // a step stronger than the panel
 }
 
 .dropdown-panel {
@@ -64,9 +77,20 @@
   .dropdown-panel[data-open="true"] & {
     background: var(--dd-panel-bg);
     border-color: var(--dd-panel-border);
-    box-shadow: $tactile-shadow;
+    box-shadow: var(--shadow-tactile);
     // Quicker fade-in so the expansion reads from the very first frames.
     transition-duration: 0.2s;
+  }
+}
+
+// Reduced motion: the frame doesn't shrink back into the pill, so its fill
+// fades on the same clock as the list above it (see crossfade in
+// motion-variants.ts) rather than lingering past it.
+@media (prefers-reduced-motion: reduce) {
+  .dropdown-chrome,
+  .dropdown-panel[data-open="true"] .dropdown-chrome {
+    transition-duration: var(--duration-enter);
+    transition-timing-function: var(--ease-out);
   }
 }
 
@@ -88,7 +112,7 @@
   border: 1px solid var(--dd-border);
   border-radius: 12px;
   background: var(--dd-trigger-bg);
-  box-shadow: $tactile-shadow;
+  box-shadow: var(--shadow-tactile);
   transition: background-color 0.3s ease, border-color 0.3s ease,
     box-shadow 0.3s ease, color 0.3s ease;
 
@@ -130,6 +154,8 @@
 .dropdown-option {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
   width: 100%;
   padding: 10px 12px;
   margin: 0;
@@ -144,15 +170,26 @@
   color: var(--dd-option-text);
   transition: background-color 0.15s ease, color 0.15s ease;
 
-  // The moving highlight doubles as the focus indicator inside the panel.
-  &:hover,
-  &:focus-visible,
+  // Selected — a fact about the value: darker text and the check. It holds
+  // wherever the highlight is.
   &[aria-selected="true"] {
-    background: var(--dd-selected-bg);
-    color: var(--dd-selected-text);
+    color: var(--dd-active-text);
   }
 
-  &:focus-visible {
-    outline: none;
+  // Highlighted — the option Enter would pick. It is DOM focus (arrows,
+  // typeahead, and hover all move it), so there is only ever one.
+  &:focus {
+    background: var(--dd-highlight-bg);
+    color: var(--dd-active-text);
   }
+
+  // Keyboard focus adds the ring. Inset: the list clips its overflow, so an
+  // outset ring would be cut off.
+  &:focus-visible {
+    outline-offset: calc(var(--focus-ring-width) * -1);
+  }
+}
+
+.dropdown-check {
+  flex-shrink: 0;
 }

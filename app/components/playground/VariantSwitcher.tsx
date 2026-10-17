@@ -1,9 +1,7 @@
 "use client";
 
-import React, { useContext, useRef } from "react";
-import { createPortal } from "react-dom";
+import React, { useRef } from "react";
 import { playHaptic } from "@/app/haptics";
-import { StageBarContext } from "./ComponentShowcase";
 import "./VariantSwitcher.scss";
 
 interface VariantSwitcherOption<T extends string> {
@@ -27,9 +25,8 @@ interface VariantSwitcherProps<T extends string> {
  * opacity transition, no movement). Semantics follow the radio-group
  * pattern: one tab stop, arrows move the selection.
  *
- * Rendered inside a ComponentShowcase, the row teleports itself into the
- * stage bar above the canvas (StageBarContext), so the demo that owns the
- * selection state can render it like any other child.
+ * The demo that owns the selection state hands this to its ShowcaseStage as
+ * the `bar`, which seats it above the canvas.
  */
 function VariantSwitcher<T extends string>({
   label,
@@ -37,7 +34,6 @@ function VariantSwitcher<T extends string>({
   value,
   onChange,
 }: VariantSwitcherProps<T>) {
-  const stageBar = useContext(StageBarContext);
   const groupRef = useRef<HTMLDivElement>(null);
 
   // Radio-group keyboard model: arrows select the previous/next option and
@@ -73,7 +69,7 @@ function VariantSwitcher<T extends string>({
       [next]?.focus();
   };
 
-  const switcher = (
+  return (
     <div
       className="variant-switcher"
       role="radiogroup"
@@ -104,8 +100,6 @@ function VariantSwitcher<T extends string>({
       })}
     </div>
   );
-
-  return stageBar ? createPortal(switcher, stageBar) : switcher;
 }
 
 export default VariantSwitcher;
