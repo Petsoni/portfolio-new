@@ -45,17 +45,17 @@ h3,
 h4,
 h5,
 h6 {
-  color: $heading-light;
+  color: var(--ink-heading);
 }
 
 p,
 li,
 dd {
-  color: $muted-light;
+  color: var(--ink-muted);
 }
 
 a {
-  color: $link-light;
+  color: var(--ink-body);
 }
 
 // ---------------------------------------------------------------------------
@@ -147,7 +147,7 @@ a {
   font-size: var(--text-lede);
   line-height: var(--leading-lede);
   font-weight: 500;
-  color: $link-light;
+  color: var(--ink-body);
 }
 
 .hero-links {
@@ -162,14 +162,14 @@ a {
   text-decoration: underline;
   text-underline-position: from-font;
   transition: color 0.2s ease;
-  --peek-paper: #{$background-light};
-  --peek-border: #{$rule-light};
-  --peek-fold: #{$hover-light};
-  --peek-line: #{$border-light};
-  --peek-ink: #{$heading-light};
+  --peek-paper: var(--surface-raised);
+  --peek-border: var(--line-rule);
+  --peek-fold: var(--surface-hover);
+  --peek-line: var(--line-border);
+  --peek-ink: var(--ink-heading);
 
   &:hover {
-    color: $heading-light;
+    color: var(--ink-heading);
   }
 }
 
@@ -348,7 +348,7 @@ a {
   .experience-name {
     font-weight: 500;
     white-space: nowrap;
-    color: $heading-light;
+    color: var(--ink-heading);
   }
 
   // Company and role, read as one: "Prepia · Frontend Engineer".
@@ -362,7 +362,7 @@ a {
   .experience-role {
     font-weight: 500;
     white-space: nowrap;
-    color: $muted-light;
+    color: var(--ink-muted);
 
     // The dot is decoration: the second value gives it empty alt text, so
     // it is not read out (browsers without that syntax keep the first).
@@ -370,7 +370,7 @@ a {
       content: "·";
       content: "·" / "";
       margin-right: var(--space-2);
-      color: $faint-light;
+      color: var(--ink-faint);
     }
   }
 
@@ -411,17 +411,17 @@ a {
     font-weight: 500;
     // Dates in a column: equal-width digits keep them aligned.
     font-variant-numeric: tabular-nums;
-    color: $faint-light;
+    color: var(--ink-faint);
   }
 
   &:hover {
-    background-color: $hover-light;
+    background-color: var(--surface-hover);
   }
 }
 
 .separator {
   height: 1px;
-  background-color: $rule-light;
+  background-color: var(--line-rule);
 }
 
 // ---------------------------------------------------------------------------
@@ -434,7 +434,7 @@ a {
   position: fixed;
   inset: 0;
   z-index: 1500;
-  background-color: rgba(255, 255, 255, 0.45);
+  background-color: var(--surface-overlay);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
 }
@@ -459,8 +459,8 @@ a {
   max-height: min(640px, 82dvh);
   padding: 20px;
   border-radius: 12px;
-  background: $background-light;
-  border: 1px solid $border-light;
+  background: var(--surface-raised);
+  border: 1px solid var(--line-border);
 
   // The card takes focus programmatically on open; it is not a tab stop, and
   // a ring here would stretch with the morph. Its controls keep theirs.
@@ -489,13 +489,13 @@ a {
     font-weight: 550;
     letter-spacing: var(--tracking-heading);
     line-height: 1.5;
-    color: $link-light;
+    color: var(--ink-body);
   }
 
   .experience-modal-duration {
     font-weight: 500;
     font-variant-numeric: tabular-nums;
-    color: $faint-light;
+    color: var(--ink-faint);
   }
 
   // Directly under the company name; the role from the row comes first.
@@ -509,7 +509,7 @@ a {
 
     li {
       font-weight: 600;
-      color: $heading-light;
+      color: var(--ink-heading);
     }
   }
 
@@ -526,7 +526,7 @@ a {
     p {
       width: 100%;
       font-weight: 500;
-      color: $muted-light;
+      color: var(--ink-muted);
     }
   }
 
@@ -542,7 +542,7 @@ a {
     align-items: center;
     gap: 4px;
     font-weight: 600;
-    color: $heading-light;
+    color: var(--ink-heading);
 
     span {
       position: relative;
@@ -637,7 +637,7 @@ a {
   border: none;
   border-radius: calc(var(--radius) - 2px);
   background: transparent;
-  color: $faint-light;
+  color: var(--ink-faint);
   cursor: pointer;
   transition:
     color var(--duration-ui) var(--ease-out),
@@ -651,8 +651,8 @@ a {
   }
 
   &:hover {
-    color: $heading-light;
-    background-color: $hover-light;
+    color: var(--ink-heading);
+    background-color: var(--surface-hover);
   }
 }
 
@@ -666,9 +666,9 @@ a {
   border-radius: 10px;
   white-space: nowrap;
   cursor: pointer;
-  background: $background-light;
-  border: 1px solid $border-light;
-  color: $heading-light;
+  background: var(--surface-raised);
+  border: 1px solid var(--line-border);
+  color: var(--ink-heading);
   transition: all 0.2s ease;
 
   svg {
@@ -676,7 +676,7 @@ a {
   }
 
   &:hover {
-    background: $hover-light;
+    background: var(--surface-hover);
   }
 }
 

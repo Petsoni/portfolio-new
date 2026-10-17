@@ -40,38 +40,6 @@ type Phase = "idle" | "shrink" | "spin" | "fill" | "card";
 
 export type Outcome = "success" | "declined";
 
-// $gray-950 from the palette, inlined for Motion.
-const INK = "#171717";
-// Ink at zero alpha: the shell's fill vanishes while the spinner runs, so
-// only the SVG arc remains. Swaps to and from this value happen while the
-// solid disc covers the shell — never as a visible crossfade.
-const INK_CLEAR = "rgba(23, 23, 23, 0)";
-
-// Shell dressing from the Figma "tactile dark" treatment, one box-shadow
-// stack: a 1px $gray-900 ring standing in for the border, the glossy inset
-// bevel (solid black lower lip, faint white top sheen), and the palette's
-// tactile drop shadow underneath.
-const SHELL_SHADOW = [
-  "inset 0 0 0 1px #3d3d3d",
-  "inset 0 -5px 3px rgba(0, 0, 0, 1)",
-  "inset 0 2px 3px rgba(255, 255, 255, 0.25)",
-  "0 1px 1px rgba(48, 48, 48, 0.04)",
-  "0 2px 1px rgba(48, 48, 48, 0.03)",
-  "0 3px 1px rgba(48, 48, 48, 0.01)",
-  "0 5px 1px rgba(48, 48, 48, 0)",
-].join(", ");
-// The working state carries no dressing at all. Every layer fades to a
-// structure-matched zero so the box-shadow interpolation never jumps.
-const SHELL_SHADOW_NONE = [
-  "inset 0 0 0 1px rgba(61, 61, 61, 0)",
-  "inset 0 -5px 3px rgba(0, 0, 0, 0)",
-  "inset 0 2px 3px rgba(255, 255, 255, 0)",
-  "0 1px 1px rgba(48, 48, 48, 0)",
-  "0 2px 1px rgba(48, 48, 48, 0)",
-  "0 3px 1px rgba(48, 48, 48, 0)",
-  "0 5px 1px rgba(48, 48, 48, 0)",
-].join(", ");
-
 // Spinner geometry, all in the 20x20 viewBox the shell collapses to. The
 // disc state strokes so thick it fills the circle solid — pixel-identical
 // to the ink shell it replaces — and the ring state is the open arc.
@@ -132,7 +100,8 @@ interface ContainerMorphProps {
  * morphing container: the dark pill collapses into a spinning arc that
  * runs beside a shimmering "Analysing transaction", then the arc seals
  * shut and blooms into the details card. The shell animates its measured
- * size, radius, fill, shadow, and seat between states.
+ * size, radius and seat between states; its fill and dressing switch in CSS,
+ * from theme tokens.
  */
 function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
   const [phase, setPhase] = useState<Phase>("idle");
@@ -281,8 +250,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
           width: card.width,
           height: card.height,
           borderRadius: 20,
-          backgroundColor: INK,
-          boxShadow: SHELL_SHADOW,
           // Declines land physically: expand first, then the refusal shake.
           x: reducedMotion || outcome === "success" ? 0 : SHAKE_X,
         }
@@ -291,8 +258,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
             width: RING,
             height: RING,
             borderRadius: RING / 2,
-            backgroundColor: INK_CLEAR,
-            boxShadow: SHELL_SHADOW_NONE,
             x: 0,
           }
         : phase === "spin"
@@ -300,8 +265,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
               width: RING,
               height: RING,
               borderRadius: RING / 2,
-              backgroundColor: INK_CLEAR,
-              boxShadow: SHELL_SHADOW_NONE,
               x: seatX,
             }
           : phase === "shrink"
@@ -309,8 +272,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
                 width: RING,
                 height: RING,
                 borderRadius: RING / 2,
-                backgroundColor: INK,
-                boxShadow: SHELL_SHADOW_NONE,
                 x: seatX,
               }
             : {
@@ -320,10 +281,14 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
                 width: ready ? pill.width : "auto",
                 height: ready ? pill.height : "auto",
                 borderRadius: ready ? pill.height / 2 : PILL_RADIUS,
-                backgroundColor: INK,
-                boxShadow: SHELL_SHADOW,
                 x: 0,
               };
+
+  // The shell's fill and dressing are CSS (ContainerMorph.scss), so they
+  // follow the theme: the fill clears while the spinner runs, and the
+  // dressing (ring, bevel, drop shadow) is off while working.
+  const shellFill = phase === "spin" || phase === "fill" ? "clear" : "ink";
+  const shellDressed = phase === "idle" || phase === "card";
 
   const shellTransition: Transition =
     !booted.current || reducedMotion
@@ -334,12 +299,6 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
             : phase === "idle"
               ? restartSpring
               : morphSpring),
-          // The fill never crossfades — both swaps (ink to clear at spin,
-          // clear to ink at card) happen under the solid disc.
-          backgroundColor: { duration: 0 },
-          // The shadow tweens instead of springing — an overshooting spring
-          // would flash it darker than its resting value.
-          boxShadow: { duration: 0.3, ease: "easeOut" },
           // The slide into the seat and the glide back to centre ride the
           // phase spring like the size does. Only the declined landing
           // overrides x: the shake waits out the expansion, then decays.
@@ -439,6 +398,8 @@ function ContainerMorph({ outcome = "success" }: ContainerMorphProps) {
             analysing label lives outside it, as a sibling below. */}
         <motion.span
           className="container-morph-shell"
+          data-fill={shellFill}
+          data-dressed={shellDressed}
           style={{ opacity: shellOpacity }}
           initial={false}
           animate={shellTarget}

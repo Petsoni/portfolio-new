@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import "./global.scss";
 import { Analytics } from "@vercel/analytics/next";
 import MotionProvider from "@/app/components/MotionProvider";
-import SoundToggle from "@/app/components/SoundToggle";
+import SiteHeader from "@/app/components/SiteHeader";
+import { themeInitScript } from "@/app/theme-preference";
 import { siteUrl } from "@/lib/metadata";
 
 // The site's one typeface. next/font downloads it at build time and serves it
@@ -27,17 +28,32 @@ export const metadata: Metadata = {
   title: "Petar Marković | Design Engineer",
 };
 
+// Browser chrome on mobile matches the page in each scheme. These follow the
+// system setting only; a meta tag can't see the theme toggle. Values are
+// --surface-page from _theme.scss — a meta tag can't read CSS variables.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#171717" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={sans.variable}>
+    // The head script may set data-theme on <html> before React hydrates;
+    // suppressHydrationWarning keeps that expected difference quiet.
+    <html lang="en" className={sans.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="antialiased">
         <MotionProvider>
           <main className={"relative w-[834px] mx-auto max-[920px]:w-[90%]"}>
-            <SoundToggle />
+            <SiteHeader />
             {children}
             <Analytics />
           </main>

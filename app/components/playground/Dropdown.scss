@@ -15,7 +15,7 @@
 
 .dropdown-label {
   font-weight: 500;
-  color: $muted-light;
+  color: var(--ink-muted);
 }
 
 .dropdown {
@@ -25,13 +25,13 @@
   height: 43px;
   width: 226px; // closed-state frame width from the Figma design
 
-  --dd-panel-bg: #{$gray-50};
-  --dd-panel-border: #{$border-lightest};
-  --dd-border: #{$border-lightest};
-  --dd-trigger-bg: #{$background-light};
-  --dd-option-text: #{$gray-500};
-  --dd-active-text: #{$gray-900}; // selected and highlighted options
-  --dd-highlight-bg: #{$gray-100}; // one ramp step darker than the panel
+  --dd-panel-bg: var(--surface-fill);
+  --dd-panel-border: var(--line-subtle);
+  --dd-border: var(--line-subtle);
+  --dd-trigger-bg: var(--surface-raised);
+  --dd-option-text: var(--ink-muted);
+  --dd-active-text: var(--ink-heading); // selected and highlighted options
+  --dd-highlight-bg: var(--surface-fill-strong); // a step stronger than the panel
 }
 
 .dropdown-panel {
@@ -77,7 +77,7 @@
   .dropdown-panel[data-open="true"] & {
     background: var(--dd-panel-bg);
     border-color: var(--dd-panel-border);
-    box-shadow: $tactile-shadow;
+    box-shadow: var(--shadow-tactile);
     // Quicker fade-in so the expansion reads from the very first frames.
     transition-duration: 0.2s;
   }
@@ -112,7 +112,7 @@
   border: 1px solid var(--dd-border);
   border-radius: 12px;
   background: var(--dd-trigger-bg);
-  box-shadow: $tactile-shadow;
+  box-shadow: var(--shadow-tactile);
   transition: background-color 0.3s ease, border-color 0.3s ease,
     box-shadow 0.3s ease, color 0.3s ease;
 

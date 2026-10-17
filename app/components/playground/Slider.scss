@@ -6,12 +6,10 @@
 // from the left edge, and the readout riding inside the fill.
 // ---------------------------------------------------------------------------
 
-// Max-state accent — the blue of the ChatGPT model selector the 100% state
-// grew from. Also hard-coded as the weave canvas ink in Slider.tsx.
-$max-ink: #0371dd;
-// The ink at ~14% over white. Kept opaque on purpose: the gray ruler ticks
-// sit underneath the fill and must not shine through the tint.
-$max-fill: #dcebfa;
+// The max state uses the theme's accent (see _theme.scss): --accent for the
+// weave's sparks (the canvas reads it from its CSS color), --accent-ink for
+// the readout, --accent-fill for the tint. The fill is opaque on purpose:
+// the ruler ticks sit underneath it and must not shine through.
 
 .slider {
   position: relative;
@@ -42,9 +40,9 @@ $max-fill: #dcebfa;
 .slider-chrome {
   position: absolute;
   inset: -1px;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 12px;
-  background: $background-light;
+  background: var(--surface-raised);
 }
 
 // Clipping layer: the ticks, fill, and handle stay inside the track's
@@ -62,7 +60,7 @@ $max-fill: #dcebfa;
   top: 50%;
   width: 2px;
   height: 20px;
-  background: $gray-50;
+  background: var(--surface-fill);
   border-radius: 2px;
   // Centered on its 10% station; the component drives only the opacity.
   transform: translate(-50%, -50%);
@@ -74,7 +72,7 @@ $max-fill: #dcebfa;
   top: 0;
   bottom: 0;
   left: 0;
-  background: $gray-100;
+  background: var(--surface-fill-strong);
   transition: background-color 0.35s ease;
   // Width and the easing right-corner radius are driven from the component.
   pointer-events: none;
@@ -82,7 +80,7 @@ $max-fill: #dcebfa;
   // Max-value celebration: the fill crossfades from gray to the max blue.
   // Leaving 100% breathes everything back out the same way.
   .slider[data-maxed] & {
-    background: $max-fill;
+    background: var(--accent-fill);
   }
 }
 
@@ -100,6 +98,8 @@ $max-fill: #dcebfa;
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
+  // Not painted by CSS: the weave engine reads this as its spark color.
+  color: var(--accent);
 
   .slider[data-maxed] & {
     opacity: 1;
@@ -115,7 +115,7 @@ $max-fill: #dcebfa;
   width: 4px;
   height: 16px;
   border-radius: 2px;
-  background: $gray-300;
+  background: var(--line-strong);
   transform: translate(-50%, -50%) scale(0.4);
   opacity: 0;
   transition:
@@ -141,8 +141,9 @@ $max-fill: #dcebfa;
   translate: 0 -50%;
   font-weight: 500;
   // Size, tracking, and line-height come from the base <p> rules and already
-  // match the design (14px / -0.02em / 21px).
-  color: $gray-500;
+  // match the design (14px / -0.02em / 21px). Muted, not faint: the
+  // readout sits on the fill, where faint would fall under 4.5:1.
+  color: var(--ink-muted);
   transition: color 0.35s ease;
   white-space: nowrap;
   // Optical centering, as in the Figma text style (progressive enhancement).
@@ -151,7 +152,7 @@ $max-fill: #dcebfa;
 
   // At 100% the number sits inside the tinted fill and blues with it.
   .slider[data-maxed] & {
-    color: $max-ink;
+    color: var(--accent-ink);
   }
 }
 

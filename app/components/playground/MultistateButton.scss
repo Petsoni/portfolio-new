@@ -6,17 +6,16 @@
 // ---------------------------------------------------------------------------
 
 // The Figma pattern paints its ink at 5% — quiet enough to sit under text.
-$cell-ink: $gray-950;
+$cell-ink: var(--ink-strong);
 $cell-alpha: 0.05;
 // "Primary" stays on the gray ramp: pulses flash cells up to this.
-$pulse-ink: $gray-600;
-// Success green for the "Report ready" wave.
-$success-ink: #16a34a;
-// Darker text-grade green — the wave's hue at AA contrast for 14px text.
-$success-text: #15803d;
-// Error red for the "Report failed" wave, same two-grade logic as the green.
-$error-ink: #dc2626;
-$error-text: #b91c1c;
+$pulse-ink: var(--ink-muted);
+// Outcome colors from the theme: the wave's hue, and a text grade of it
+// that holds AA contrast for 14px labels.
+$success-ink: var(--status-success);
+$success-text: var(--ink-success);
+$error-ink: var(--status-error);
+$error-text: var(--ink-error);
 
 .multistate-button {
   position: relative;
@@ -25,14 +24,14 @@ $error-text: #b91c1c;
   justify-content: center;
   padding: 10px 12px;
   margin: 0;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 12px;
-  background: $background-light;
-  box-shadow: $tactile-shadow;
+  background: var(--surface-raised);
+  box-shadow: var(--shadow-tactile);
   // Size, tracking, and line-height come from the base button rules and
   // already match the design (14px / -0.02em / 21px).
   font-weight: 500;
-  color: $gray-900;
+  color: var(--ink-heading);
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;

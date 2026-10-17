@@ -18,7 +18,7 @@
   font-size: var(--text-lede);
   line-height: var(--leading-lede);
   font-weight: 500;
-  color: $link-light;
+  color: var(--ink-body);
 }
 
 .case-study-body {
@@ -48,7 +48,7 @@
     align-items: baseline;
     gap: var(--space-2);
     font-weight: 500;
-    color: $heading-light;
+    color: var(--ink-heading);
   }
 }
 
@@ -61,7 +61,7 @@
 // Marks an option that was tried and dropped.
 .case-study-rejected {
   font-weight: 500;
-  color: $faint-light;
+  color: var(--ink-faint);
 }
 
 // Stack / Tokens / Motion, each a short labelled list.
@@ -79,7 +79,7 @@
 
   dt {
     font-weight: 500;
-    color: $heading-light;
+    color: var(--ink-heading);
   }
 
   dd {

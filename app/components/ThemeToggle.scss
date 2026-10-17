@@ -1,0 +1,15 @@
+// ---------------------------------------------------------------------------
+// ThemeToggle — an .icon-button (common.scss) showing the current choice.
+// ---------------------------------------------------------------------------
+
+// One icon per choice, all rendered; <html data-theme> picks the visible
+// one. No attribute means the theme follows the system.
+.theme-toggle-icon {
+  display: none;
+}
+
+:root:not([data-theme]) .theme-toggle-icon[data-for="system"],
+:root[data-theme="light"] .theme-toggle-icon[data-for="light"],
+:root[data-theme="dark"] .theme-toggle-icon[data-for="dark"] {
+  display: block;
+}

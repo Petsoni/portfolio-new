@@ -9,11 +9,11 @@
   align-items: center;
   gap: 6px;
   font-weight: 500;
-  color: $faint-light;
+  color: var(--ink-faint);
   transition: color 0.2s ease;
 
   &:hover {
-    color: $heading-light;
+    color: var(--ink-heading);
   }
 
   // The arrow's nudge is motion; the color change above is not.

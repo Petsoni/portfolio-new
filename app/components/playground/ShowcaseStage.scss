@@ -12,9 +12,9 @@
   gap: 4px;
   margin-top: 8px;
   padding: 4px;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 16px;
-  background: $gray-25;
+  background: var(--surface-sunken);
 }
 
 .showcase-stage-bar {
@@ -35,9 +35,9 @@
   align-items: flex-start;
   min-height: var(--stage-min-height);
   padding: 48px 24px;
-  border: 1px solid $border-lightest;
+  border: 1px solid var(--line-subtle);
   border-radius: 12px;
-  background: $background-light;
+  background: var(--surface-raised);
 
   &[data-align="center"] {
     align-items: center;

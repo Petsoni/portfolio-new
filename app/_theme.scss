@@ -1,0 +1,137 @@
+@use "palette" as *;
+
+// ---------------------------------------------------------------------------
+// Theme — every color the site uses, as runtime custom properties, in a
+// light and a dark set. Components read these and nothing else.
+//
+// Light is the default. Dark applies when the visitor's system asks for it
+// (prefers-color-scheme), unless they picked Light with the theme toggle;
+// and always when they picked Dark. The toggle writes data-theme on <html>
+// (see app/theme-preference.ts); no attribute means "follow the system".
+//
+// Names stay out of Tailwind's --color-* and --text-* namespaces, which the
+// @theme block in global.scss owns.
+// ---------------------------------------------------------------------------
+
+// The tactile shadow's four layers at zero alpha: the state a dressed
+// surface fades to, structure-matched so the transition interpolates
+// layer by layer.
+$tactile-none: 0 1px 1px transparent, 0 2px 1px transparent,
+  0 3px 1px transparent, 0 5px 1px transparent;
+
+:root {
+  color-scheme: light;
+
+  // Surfaces, back to front.
+  --surface-page: #{$white};
+  --surface-raised: #{$white}; // dialog, cards, controls, demo canvas
+  --surface-sunken: #{$gray-25}; // the demo stage's frame
+  --surface-fill: #{$gray-50}; // panels, inactive switcher options
+  --surface-hover: #{$gray-50};
+  --surface-fill-strong: #{$gray-100}; // highlighted option, slider fill
+  --surface-overlay: #{rgba($white, 0.45)}; // behind the dialog
+
+  // Text and icons, strongest to quietest. Muted and faint sit one ramp
+  // step darker than the Figma originals (#6d6d6d, #888): at those values
+  // faint text was 3.5:1 on white, under the 4.5:1 that AA asks for.
+  --ink-strong: #{$gray-950};
+  --ink-heading: #{$gray-900};
+  --ink-body: #{$gray-800};
+  --ink-muted: #{$gray-600};
+  --ink-faint: #{$gray-500};
+
+  // Lines.
+  --line-rule: #{$gray-200}; // hairline rules
+  --line-border: #{$border-light};
+  --line-subtle: #{$border-lightest};
+  --line-strong: #{$gray-300}; // the slider's drag handle, the shimmer band
+
+  // Outcomes: --status-* for fills and waves, --ink-* for text (AA).
+  --status-success: #{$green-600};
+  --status-error: #{$red-600};
+  --ink-success: #{$green-700};
+  --ink-error: #{$red-700};
+
+  // Accent (the slider at 100%): dots, text on its fill, the fill.
+  --accent: #{$blue-500};
+  --accent-ink: #{$blue-600};
+  --accent-fill: #{$blue-100};
+
+  --shadow-tactile: 0 1px 1px #{rgba($shadow-ink, 0.04)},
+    0 2px 1px #{rgba($shadow-ink, 0.03)}, 0 3px 1px #{rgba($shadow-ink, 0.01)},
+    0 5px 1px #{rgba($shadow-ink, 0)};
+  --shadow-tactile-none: #{$tactile-none};
+
+  // Container Morph: a dark, glossy pill and card in light mode, inverted
+  // to a light one in dark mode — the primary action stays the strongest
+  // thing on the canvas either way.
+  --morph-ink: #{$gray-950};
+  --morph-on-ink: #{$white};
+  --morph-on-ink-muted: #{$gray-200};
+  --morph-on-ink-faint: #{$gray-400};
+  --morph-ring: #{$gray-900};
+  --morph-lip: #{rgba($black, 1)};
+  --morph-sheen: #{rgba($white, 0.25)};
+  // Status dots on the shell: these grades clear 3:1 on both inks.
+  --morph-success: #{$green-600};
+  --morph-error: #{$red-600};
+}
+
+@mixin dark {
+  color-scheme: dark;
+
+  // In the dark, elevation reads as lightness: raised surfaces (canvas,
+  // dialog, the active switcher option, the dropdown trigger) are lighter
+  // than the fills they sit on or beside — the same order as in light,
+  // where the raised white sits on gray fills.
+  --surface-page: #{$gray-950};
+  --surface-raised: #{$gray-930};
+  --surface-sunken: #{$gray-945};
+  --surface-fill: #{$gray-940};
+  --surface-hover: #{$gray-940};
+  --surface-fill-strong: #{$gray-920};
+  --surface-overlay: #{rgba($gray-950, 0.55)};
+
+  --ink-strong: #{$gray-25};
+  --ink-heading: #{$gray-50};
+  --ink-body: #{$gray-100};
+  --ink-muted: #{$gray-300};
+  --ink-faint: #{$gray-375};
+
+  --line-rule: #{$gray-910};
+  --line-border: #{$gray-920};
+  --line-subtle: #{$gray-925};
+  --line-strong: #{$gray-600};
+
+  --status-success: #{$green-500};
+  --status-error: #{$red-500};
+  --ink-success: #{$green-400};
+  --ink-error: #{$red-400};
+
+  --accent: #{$blue-400};
+  --accent-ink: #{$blue-300};
+  --accent-fill: #{$blue-900};
+
+  // Shadows barely read on dark surfaces; the same four layers, darker.
+  --shadow-tactile: 0 1px 1px #{rgba($black, 0.24)},
+    0 2px 1px #{rgba($black, 0.16)}, 0 3px 1px #{rgba($black, 0.06)},
+    0 5px 1px #{rgba($black, 0)};
+
+  --morph-ink: #{$gray-50};
+  --morph-on-ink: #{$gray-950};
+  --morph-on-ink-muted: #{$gray-900};
+  --morph-on-ink-faint: #{$gray-500};
+  --morph-ring: #{$gray-200};
+  --morph-lip: #{rgba($black, 0.12)};
+  --morph-sheen: #{rgba($white, 0.9)};
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    @include dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  @include dark;
+}

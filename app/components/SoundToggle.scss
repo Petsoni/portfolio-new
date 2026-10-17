@@ -1,21 +1,8 @@
-@use "../palette" as *;
-
 // ---------------------------------------------------------------------------
-// SoundToggle — the icon button (see .icon-button in common.scss) pinned to
-// the top-right corner of the content column, above every page.
+// SoundToggle — an .icon-button (common.scss), placed by SiteHeader.
 // ---------------------------------------------------------------------------
 
-// Doubled class: its position has to win over .icon-button's whatever order
-// the two stylesheets load in.
-.icon-button.sound-toggle {
-  position: absolute;
-  top: var(--space-3);
-  right: 0;
-  // Above the page content it shares the column with.
-  z-index: 1;
-
-  // On: the speaker darkens along with its icon change.
-  &[aria-pressed="true"] {
-    color: $heading-light;
-  }
+// On: the speaker darkens along with its icon change.
+.sound-toggle[aria-pressed="true"] {
+  color: var(--ink-heading);
 }
