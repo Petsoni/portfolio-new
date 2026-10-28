@@ -3,7 +3,6 @@ import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import MultistateButtonDemo from "@/app/components/playground/MultistateButtonDemo";
-import { playgroundMorphId } from "@/app/motion-variants";
 import { pageMetadata } from "@/lib/metadata";
 
 // How the demo is built, drafted from the implementation.
@@ -44,7 +43,6 @@ export default function MultistateButtonPage() {
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Multistate Button"
-        morphId={playgroundMorphId("multistate-button")}
         notes={notes}
         sourcePath="app/components/playground/MultistateButton.tsx"
         description="A generate button with four states. A square grid rings it at rest

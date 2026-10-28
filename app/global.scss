@@ -103,6 +103,13 @@ body {
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --enter-distance: 8px;
   --stagger-step: 40ms;
+
+  // Page transitions on client-side navigation (see .page in common.scss):
+  // each item blurs out, or back in, over --duration-page-transition, the
+  // next one --stagger-page-transition later.
+  --duration-page-transition: 200ms;
+  --stagger-page-transition: 30ms;
+  --page-transition-blur: 8px;
 }
 
 // The one focus ring. Zero specificity (:where), so a component only ever

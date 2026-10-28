@@ -4,7 +4,6 @@ import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import Dropdown from "@/app/components/playground/Dropdown";
 import ShowcaseStage from "@/app/components/playground/ShowcaseStage";
-import { playgroundMorphId } from "@/app/motion-variants";
 import { pageMetadata } from "@/lib/metadata";
 
 const dropdownOptions = [
@@ -53,7 +52,6 @@ export default function DropdownPage() {
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Dropdown"
-        morphId={playgroundMorphId("dropdown")}
         notes={notes}
         sourcePath="app/components/playground/Dropdown.tsx"
         description="An animated select. The closed pill expands into a soft panel,

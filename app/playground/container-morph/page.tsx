@@ -3,7 +3,6 @@ import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import ContainerMorphDemo from "@/app/components/playground/ContainerMorphDemo";
-import { playgroundMorphId } from "@/app/motion-variants";
 import { pageMetadata } from "@/lib/metadata";
 
 // How the demo is built, drafted from the implementation.
@@ -44,7 +43,6 @@ export default function ContainerMorphPage() {
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Container Morph"
-        morphId={playgroundMorphId("container-morph")}
         notes={notes}
         sourcePath="app/components/playground/ContainerMorph.tsx"
         description="A payment flow in a single morphing container: button, spinner,
