@@ -119,21 +119,8 @@ a {
 
 .hero-section {
   display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  gap: 48px;
-
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-    gap: 28px;
-  }
-}
-
-.hero-left {
-  display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 28px;
+  gap: var(--space-8);
 }
 
 // Name and role, read as one unit.
@@ -143,9 +130,9 @@ a {
   gap: var(--space-4);
 }
 
+// Body size; the darker ink is what sets it apart from running text.
 .hero-lede {
-  font-size: var(--text-lede);
-  line-height: var(--leading-lede);
+  max-width: var(--measure);
   font-weight: 500;
   color: var(--ink-body);
 }
@@ -288,22 +275,6 @@ a {
     .hero-peek-tile {
       opacity: 1;
     }
-  }
-}
-
-.hero-bio {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 323px;
-  flex-shrink: 0;
-
-  p {
-    font-weight: 500;
-  }
-
-  @media screen and (max-width: 768px) {
-    width: 100%;
   }
 }
 

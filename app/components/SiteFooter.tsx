@@ -10,7 +10,8 @@ const builtAt = new Date();
 
 /**
  * The site footer, on every page: the email address as the call to action
- * on the left, and when the site was last updated on the right.
+ * on the left; a short personal note and when the site was last updated on
+ * the right.
  */
 function SiteFooter() {
   return (
@@ -22,12 +23,18 @@ function SiteFooter() {
           <Send size={16} aria-hidden="true" />
         </a>
       </p>
-      <p className="site-footer-updated">
-        Last updated{" "}
-        <time dateTime={builtAt.toISOString().slice(0, 10)}>
-          {formatDay(builtAt)}
-        </time>
-      </p>
+      <div className="site-footer-aside">
+        <p>
+          When I’m not designing or coding, I’m exploring new technologies or
+          producing electronic music.
+        </p>
+        <p className="site-footer-updated">
+          Last updated{" "}
+          <time dateTime={builtAt.toISOString().slice(0, 10)}>
+            {formatDay(builtAt)}
+          </time>
+        </p>
+      </div>
     </footer>
   );
 }

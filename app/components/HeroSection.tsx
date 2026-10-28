@@ -58,52 +58,39 @@ function HeroSection() {
   // which runs from first paint without JS.
   return (
     <section className="section hero-section">
-      <div className="hero-left">
-        {/* Name first, then what he does: the role is the line a visitor
-            reads second, not a detail in the bio. */}
-        <hgroup className="hero-intro">
-          <h1 className="enter">Petar Marković</h1>
-          <p
-            className="hero-lede enter"
-            style={{ "--i": 1 } as React.CSSProperties}
-          >
-            Design engineer. I care most about the last mile — the motion, the
-            micro-interactions, the details that make software feel
-            considered.
-          </p>
-        </hgroup>
-        <nav
-          className="hero-links enter"
-          style={{ "--i": 2 } as React.CSSProperties}
-          aria-label="Contact links"
+      {/* Name first, then what he does: the role is the line a visitor
+          reads second, set at body size so it doesn't compete with the name. */}
+      <hgroup className="hero-intro">
+        <h1 className="enter">Petar Marković</h1>
+        <p
+          className="hero-lede enter"
+          style={{ "--i": 1 } as React.CSSProperties}
         >
-          {heroLinks.map(({ label, href, art }) => (
-            <a
-              key={label}
-              className="hero-link"
-              href={href}
-              target="_blank"
-              rel="noreferrer"
-              data-sound="send"
-            >
-              {label}
-              <span className="hero-link-peek" aria-hidden="true">
-                {art}
-              </span>
-            </a>
-          ))}
-        </nav>
-      </div>
-      {/* One short personal note, off to the side. */}
-      <div
-        className="hero-bio enter"
-        style={{ "--i": 3 } as React.CSSProperties}
-      >
-        <p>
-          When I’m not designing or coding, I’m exploring new technologies or
-          producing electronic music.
+          Design engineer. I care most about the last mile — the motion, the
+          micro-interactions, the details that make software feel considered.
         </p>
-      </div>
+      </hgroup>
+      <nav
+        className="hero-links enter"
+        style={{ "--i": 2 } as React.CSSProperties}
+        aria-label="Contact links"
+      >
+        {heroLinks.map(({ label, href, art }) => (
+          <a
+            key={label}
+            className="hero-link"
+            href={href}
+            target="_blank"
+            rel="noreferrer"
+            data-sound="send"
+          >
+            {label}
+            <span className="hero-link-peek" aria-hidden="true">
+              {art}
+            </span>
+          </a>
+        ))}
+      </nav>
     </section>
   );
 }

@@ -1,6 +1,7 @@
 // ---------------------------------------------------------------------------
-// SiteFooter — the call to action on the left, "Last updated" on the right;
-// the date drops under it when the row runs out of room.
+// SiteFooter — the call to action on the left; the personal note over
+// "Last updated" on the right. The right column drops under the call to
+// action when the row runs out of room.
 // ---------------------------------------------------------------------------
 
 .site-footer {
@@ -51,6 +52,15 @@
       transform: translate(1px, -1px);
     }
   }
+}
+
+// The note keeps a short measure so the column stays beside the call to
+// action on wide screens.
+.site-footer-aside {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: var(--measure-aside);
 }
 
 .site-footer-updated {
