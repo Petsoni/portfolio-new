@@ -23,7 +23,7 @@ function ShowcaseStage({ bar, align = "top", children }: ShowcaseStageProps) {
   return (
     <div
       className="showcase-stage enter"
-      style={{ "--i": 2 } as React.CSSProperties}
+      style={{ "--i": 3 } as React.CSSProperties}
     >
       {bar && <div className="showcase-stage-bar">{bar}</div>}
       <div className="showcase-stage-canvas" data-align={align}>

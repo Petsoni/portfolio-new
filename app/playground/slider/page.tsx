@@ -3,7 +3,6 @@ import PageShell from "@/app/components/PageShell";
 import UiSounds from "@/app/components/UiSounds";
 import ComponentShowcase from "@/app/components/playground/ComponentShowcase";
 import SliderDemo from "@/app/components/playground/SliderDemo";
-import { playgroundMorphId } from "@/app/motion-variants";
 import { pageMetadata } from "@/lib/metadata";
 
 // How the demo is built, drafted from the implementation.
@@ -44,7 +43,6 @@ export default function SliderPage() {
       <UiSounds hover={false} />
       <ComponentShowcase
         title="Slider"
-        morphId={playgroundMorphId("slider")}
         notes={notes}
         sourcePath="app/components/playground/Slider.tsx"
         description="A percentage slider. The fill tracks the pointer and the readout

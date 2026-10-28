@@ -100,11 +100,47 @@ a {
   animation-delay: calc(var(--stagger-step) * var(--i, 0));
 }
 
-// Client-side navigation (see PageShell): no stagger and no travel — the
-// page crossfades in as one while the title morph flies over it.
-.page[data-nav="client"] {
-  --stagger-step: 0ms;
-  --enter-distance: 0px;
+// Page transitions, on client-side navigation (see PageShell): the same
+// .enter items blur away one after another, top to bottom, and the next
+// page's items blur in the same way — the entrance is the exit played
+// backwards, easing included. --nav-i is an item's place among those on
+// screen, so the stagger starts with what the visitor can see.
+@mixin page-transition-hidden {
+  opacity: 0;
+  filter: blur(var(--page-transition-blur));
+}
+
+@keyframes page-in {
+  from {
+    @include page-transition-hidden;
+  }
+}
+
+// The same keyframes under a second name: changing the name starts a fresh
+// animation, even over an entrance that already ran. PageShell waits for
+// this name before it navigates.
+@keyframes page-out {
+  from {
+    @include page-transition-hidden;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .page[data-nav="client"] .enter,
+  .page[data-transition="exit"] .enter {
+    animation: page-in var(--duration-page-transition) var(--ease-out)
+      backwards;
+    animation-delay: calc(
+      var(--stagger-page-transition) * var(--nav-i, var(--i, 0))
+    );
+  }
+
+  // Leaving: held hidden until the next page replaces this one.
+  .page[data-transition="exit"] .enter {
+    animation-name: page-out;
+    animation-direction: reverse;
+    animation-fill-mode: forwards;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -51,17 +51,19 @@ export default async function CaseStudyPage({ params }: { params: Params }) {
       <UiSounds hover={false} />
       <article className="section case-study">
         <BackLink href="/#work" />
-        <h1>{entry.title}</h1>
+        <h1 className="enter" style={{ "--i": 1 } as React.CSSProperties}>
+          {entry.title}
+        </h1>
         <p
           className="case-study-summary enter"
-          style={{ "--i": 1 } as React.CSSProperties}
+          style={{ "--i": 2 } as React.CSSProperties}
         >
           {entry.summary}
         </p>
 
         <div
           className="case-study-body enter"
-          style={{ "--i": 2 } as React.CSSProperties}
+          style={{ "--i": 3 } as React.CSSProperties}
         >
           {entry.problem.length > 0 && (
             <section>

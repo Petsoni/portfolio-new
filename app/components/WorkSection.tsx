@@ -1,5 +1,5 @@
 import React from "react";
-import Link from "next/link";
+import TransitionLink from "@/app/components/TransitionLink";
 import { visibleWork } from "@/lib/work";
 import "./WorkSection.scss";
 
@@ -21,14 +21,14 @@ function WorkSection() {
       <ul className="work-list">
         {visibleWork.map((entry) => (
           <li key={entry.slug}>
-            <Link
+            <TransitionLink
               href={`/work/${entry.slug}`}
               className="work-card"
               data-sound="expand"
             >
               <h3 className="work-card-title">{entry.title}</h3>
               <p className="work-card-summary">{entry.summary}</p>
-            </Link>
+            </TransitionLink>
           </li>
         ))}
       </ul>
