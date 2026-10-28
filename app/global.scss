@@ -69,6 +69,8 @@ body {
   --space-8: 32px;
   // Line length for running text.
   --measure: 560px;
+  // Line length for a short aside beside other content (the footer's note).
+  --measure-aside: 320px;
   // Gap left above a section when an anchor link (a Back link) scrolls to it.
   --section-scroll-margin: clamp(48px, 12vh, 120px);
   --icon-button-size: 32px;
@@ -76,8 +78,9 @@ body {
   // area out to this.
   --tap-target: 44px;
 
-  // Type. The lede is the hero's second line: larger than body copy (14px),
-  // well under the section headings (22px).
+  // Type. The lede is for a line that leads (a case study's summary, the
+  // footer's email): larger than body copy (14px), well under the section
+  // headings (22px).
   --text-lede: 16px;
   --leading-lede: 24px;
   // Tracking per size, tuned for the loaded face (Geist): the larger the
