@@ -94,6 +94,41 @@ body {
   // UI state changes (hover, press).
   --duration-ui: 200ms;
 
+  // Corner radius of the playground's controls (the button set).
+  --radius-control: 12px;
+  // A control that can't be used right now.
+  --opacity-disabled: 0.5;
+
+  // Press feedback (the playground's button set): a pressed control
+  // shrinks to --press-scale and sinks --press-sink over --duration-press,
+  // and springs back over --duration-release on --ease-spring.
+  --duration-press: 150ms;
+  --duration-release: 300ms;
+  --press-scale: 0.97;
+  --press-sink: 1px;
+  // A critically damped spring, x = 1 − (1 + kt)·e^(−kt) with k = 8.4,
+  // sampled at sixteenths: it settles without overshoot, which reads as
+  // the control coming to rest rather than bouncing.
+  --ease-spring: linear(
+    0,
+    0.098 6.3%,
+    0.283 12.5%,
+    0.467 18.8%,
+    0.62 25%,
+    0.737 31.3%,
+    0.822 37.5%,
+    0.881 43.8%,
+    0.922 50%,
+    0.949 56.3%,
+    0.967 62.5%,
+    0.979 68.8%,
+    0.987 75%,
+    0.991 81.3%,
+    0.995 87.5%,
+    0.997 93.8%,
+    1
+  );
+
   // Focus ring: one indicator for every focusable element, in the heading
   // color of the current theme — 10.9:1 on the light page, 16.6:1 on the
   // dark one (WCAG 1.4.11 asks for 3:1).

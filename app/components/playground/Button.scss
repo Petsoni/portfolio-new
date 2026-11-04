@@ -1,0 +1,409 @@
+// ---------------------------------------------------------------------------
+// Button set (playground component): buttons built around the press.
+//
+// Nothing but transform and opacity animates. Each button carries its looks
+// as layers that are already painted and cross-fades between them:
+//
+//   ::before  the rest dressing: the satin's sheen, or the ghost's hover tint
+//   ::after   the pressed dressing: a shade under the top edge, or a tint
+//
+// Both sit at z-index -1 inside the button's own stacking context
+// (isolation), so they paint over its face and under its label. Pressing
+// puts the pressed look on at once and shrinks the button over
+// --duration-press; letting go fades it back while the button springs out
+// over --duration-release. A transition always starts from the value on
+// screen, so a second press during the release catches it mid-spring.
+// ---------------------------------------------------------------------------
+
+// Every button keeps a border, shown or not, so all of them stand alike.
+$border: 1px;
+// Where a satin's lighter top has given way to its main shade.
+$satin-turn: 22%;
+// The label's medium weight draws stems of about 1.5px at 14px; a 16px icon
+// paints at 16/24 of its viewBox, so 2.3 × 16⁄24 ≈ 1.53px matches them.
+$icon-stroke: 2.3px;
+// One turn of the spinner, and its stand-in pulse under reduced motion.
+$spin-period: 0.8s;
+$pulse-period: 1.2s;
+// One breath of the spotlight's glow, and how dim it gets between breaths.
+$glow-period: 3.6s;
+$glow-dim: 0.65;
+// The sparks start this far above the foot, and slow as they rise.
+$spark-floor: 6px;
+$spark-ease: cubic-bezier(0.3, 0.6, 0.5, 1);
+
+@mixin satin($top, $mid, $bottom) {
+  background: linear-gradient(180deg, $top 0%, $mid $satin-turn, $bottom 100%);
+}
+
+// Hover only where a pointer can hover, so a tap never leaves it lit.
+@mixin hover {
+  @media (hover: hover) and (pointer: fine) {
+    &:hover:not(:disabled, [aria-disabled="true"]) {
+      @content;
+    }
+  }
+}
+
+// What every button in the set shares: the layers, the press, the states.
+@mixin tactile {
+  position: relative;
+  isolation: isolate;
+  margin: 0;
+  border: $border solid transparent;
+  background: transparent;
+  font-weight: 500;
+  color: var(--ink-heading);
+  cursor: pointer;
+  // A tap fires at once instead of waiting out the double-tap zoom.
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  // Letting go: back out on the spring.
+  transition: transform var(--duration-release) var(--ease-spring);
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    transition: opacity var(--duration-ui) var(--ease-out);
+  }
+
+  &::after {
+    opacity: 0;
+  }
+
+  &[data-pressed] {
+    transform: translateY(var(--press-sink)) scale(var(--press-scale));
+    transition: transform var(--duration-press) var(--ease-out);
+
+    &::before,
+    &::after {
+      transition: none;
+    }
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  // The look still changes on press; the button stays where it is.
+  @media (prefers-reduced-motion: reduce) {
+    &[data-pressed] {
+      transform: none;
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: var(--opacity-disabled);
+  }
+
+  &[aria-disabled="true"] {
+    cursor: progress;
+  }
+
+  .lucide {
+    flex-shrink: 0;
+    stroke-width: $icon-stroke;
+  }
+}
+
+// The satin variants' dressing: a sheen at rest, a shade while pressed.
+// The drop shadow, where there is one, goes as the button sinks.
+@mixin satin-dressing($pressed-shade) {
+  &::before {
+    box-shadow: var(--shadow-satin-sheen);
+  }
+
+  &::after {
+    box-shadow: $pressed-shade;
+  }
+
+  &[data-pressed] {
+    box-shadow: none;
+
+    &::before {
+      opacity: 0;
+    }
+  }
+}
+
+// The ghosts' dressing: a tint under the pointer, a deeper one pressed.
+@mixin ghost-dressing {
+  &::before {
+    background: var(--surface-hover);
+    opacity: 0;
+  }
+
+  &::after {
+    background: var(--surface-fill-strong);
+  }
+
+  @include hover {
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Button
+// ---------------------------------------------------------------------------
+
+.tactile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-control);
+  white-space: nowrap;
+  @include tactile;
+
+  // The layers fill the inside of the border, rounded to match it.
+  &::before,
+  &::after {
+    border-radius: calc(var(--radius-control) - #{$border});
+  }
+
+  &[data-variant="solid"] {
+    @include satin(var(--satin-top), var(--satin-mid), var(--satin-bottom));
+    border-color: var(--satin-border);
+    box-shadow: var(--shadow-tactile);
+    color: var(--satin-ink);
+    @include satin-dressing(var(--shadow-satin-pressed));
+  }
+
+  // Its colors never change: a press reads by movement, and by the drop
+  // shadow letting go as it sinks.
+  &[data-variant="outline"] {
+    border-color: var(--line-border);
+    background: var(--surface-raised);
+    box-shadow: var(--shadow-tactile);
+
+    &[data-pressed] {
+      box-shadow: none;
+    }
+  }
+
+  &[data-variant="ghost"] {
+    @include ghost-dressing;
+  }
+
+  // The satin with no ring, drawn out to the outer edge (a fill sized
+  // inside the border would repeat under it, a line of its foot along the
+  // top), in a glow that breathes.
+  &[data-variant="spotlight"] {
+    @include satin(
+      var(--spotlight-top),
+      var(--spotlight-mid),
+      var(--spotlight-bottom)
+    );
+    background-origin: border-box;
+    color: var(--spotlight-ink);
+    @include satin-dressing(var(--shadow-spotlight-pressed));
+  }
+}
+
+// The busy button keeps its size: its contents stay in place, faded out,
+// and the spinner fades in over them. Faded, not visibility: hidden, which
+// would take the label out of the accessibility tree and leave the busy
+// button with no name.
+.tactile-button-label,
+.tactile-button-icon {
+  transition: opacity var(--duration-ui) var(--ease-out);
+
+  .tactile-button[data-loading] > & {
+    opacity: 0;
+  }
+}
+
+.tactile-button-spinner {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  animation:
+    tactile-button-fade-in var(--duration-ui) var(--ease-out),
+    tactile-button-spin $spin-period linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: tactile-button-pulse $pulse-period ease-in-out infinite;
+  }
+}
+
+@keyframes tactile-button-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes tactile-button-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes tactile-button-pulse {
+  50% {
+    opacity: var(--opacity-disabled);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Spotlight: the glow round the edge, the sparks inside the face
+// ---------------------------------------------------------------------------
+
+// An outer shadow only shows outside the box, so the glow never covers the
+// face it surrounds. Out over the border, to the outer edge.
+.tactile-button-glow {
+  position: absolute;
+  inset: -$border;
+  z-index: -1;
+  border-radius: inherit;
+  box-shadow: var(--shadow-spotlight-glow);
+  pointer-events: none;
+  animation: tactile-button-breathe $glow-period ease-in-out infinite;
+
+  :disabled > &,
+  [aria-disabled="true"] > & {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+}
+
+@keyframes tactile-button-breathe {
+  0%,
+  100% {
+    opacity: $glow-dim;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+// Clipped to the face, so no spark shows past the rounded corners. Gone
+// under reduced motion and while the button can't be used.
+.tactile-button-sparks {
+  position: absolute;
+  inset: -$border;
+  z-index: -1;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+
+  :disabled > &,
+  [aria-disabled="true"] > & {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    display: none;
+  }
+}
+
+// Each spark rides at the foot of a column as wide as it is, running from
+// just above the foot to the middle; lifting the column by its own height
+// carries the spark up to the middle, fading as it slows. Where it stands,
+// its rise time and its head start come from Button.tsx.
+.tactile-button-spark {
+  position: absolute;
+  top: 50%;
+  bottom: $spark-floor;
+  opacity: 0;
+  animation-name: tactile-button-spark;
+  animation-timing-function: $spark-ease;
+  animation-iteration-count: infinite;
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--spotlight-spark);
+    box-shadow: var(--shadow-spotlight-spark);
+  }
+}
+
+@keyframes tactile-button-spark {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Icon button
+// ---------------------------------------------------------------------------
+
+.tactile-icon-button {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: 50%;
+  @include tactile;
+
+  &::before,
+  &::after {
+    border-radius: 50%;
+  }
+
+  &[data-variant="raised"] {
+    width: var(--tap-target);
+    height: var(--tap-target);
+    border-color: var(--line-border);
+    background: var(--surface-raised);
+    box-shadow: var(--shadow-tactile);
+
+    &::after {
+      background: var(--surface-hover);
+    }
+
+    &[data-pressed] {
+      box-shadow: none;
+    }
+  }
+
+  // The button is the full tap target; the circle you see is the smaller
+  // icon-button size, drawn by the layers inset from its edge. So the hit
+  // area is honest on touch screens without the circle looking any bigger,
+  // and the focus ring is pulled in to hug the circle.
+  &[data-variant="ghost"] {
+    --ghost-inset: calc((var(--tap-target) - var(--icon-button-size)) / 2);
+    width: var(--tap-target);
+    height: var(--tap-target);
+    color: var(--ink-muted);
+    outline-offset: calc(var(--focus-ring-offset) - var(--ghost-inset));
+    @include ghost-dressing;
+
+    &::before,
+    &::after {
+      inset: var(--ghost-inset);
+    }
+
+    @include hover {
+      color: var(--ink-heading);
+    }
+  }
+}

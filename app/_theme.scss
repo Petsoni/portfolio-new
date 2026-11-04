@@ -75,6 +75,35 @@ $tactile-none: 0 1px 1px transparent, 0 2px 1px transparent,
   // Status dots on the shell: these grades clear 3:1 on both inks.
   --morph-success: #{$green-600};
   --morph-error: #{$red-600};
+
+  // Button set (playground). The solid button's satin face: a lighter shade
+  // at the top giving way to the main one, deepening to the foot, ringed in
+  // the foot's shade. Graphite here; in dark mode it inverts to a pale
+  // satin, as the Container Morph does, so the main action stays the
+  // strongest thing on the canvas.
+  --satin-top: #{$gray-700};
+  --satin-mid: #{$gray-900};
+  --satin-bottom: #{$gray-950};
+  --satin-border: #{$gray-950};
+  --satin-ink: #{$white};
+  // Both satins (solid and spotlight) wear a sheen inside the top edge at
+  // rest; pressed, a shade under the edge takes its place.
+  --shadow-satin-sheen: inset 0 1px 1px #{rgba($white, 0.25)},
+    inset 0 3px 5px #{rgba($white, 0.08)};
+  --shadow-satin-pressed: inset 0 1px 3px #{rgba($black, 0.45)};
+  --shadow-spotlight-pressed: inset 0 1px 3px #{rgba($black, 0.35)};
+
+  // The spotlight button: an ember satin in a glow, sparks rising inside.
+  // The same in both themes; white on it is 5.2:1 or more from the 22%
+  // line down, where the letters sit.
+  --spotlight-top: #{$orange-600};
+  --spotlight-mid: #{$orange-700};
+  --spotlight-bottom: #{$orange-800};
+  --spotlight-ink: #{$white};
+  --spotlight-spark: #{$orange-200};
+  --shadow-spotlight-glow: 0 0 14px 3px #{rgba($orange-600, 0.4)},
+    0 0 28px 6px #{rgba($orange-500, 0.18)};
+  --shadow-spotlight-spark: 0 0 3px 1px #{rgba($orange-200, 0.8)};
 }
 
 @mixin dark {
@@ -124,6 +153,13 @@ $tactile-none: 0 1px 1px transparent, 0 2px 1px transparent,
   --morph-ring: #{$gray-200};
   --morph-lip: #{rgba($black, 0.12)};
   --morph-sheen: #{rgba($white, 0.9)};
+
+  --satin-top: #{$white};
+  --satin-mid: #{$gray-50};
+  --satin-bottom: #{$gray-100};
+  --satin-border: #{$gray-100};
+  --satin-ink: #{$gray-950};
+  --shadow-satin-pressed: inset 0 1px 3px #{rgba($black, 0.2)};
 }
 
 @media (prefers-color-scheme: dark) {

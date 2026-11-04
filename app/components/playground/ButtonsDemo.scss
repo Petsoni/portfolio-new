@@ -1,0 +1,21 @@
+// ---------------------------------------------------------------------------
+// ButtonsDemo — the button set on the canvas, in rows: the text buttons, the
+// spotlight on its own (its glow needs the room), then the icon buttons.
+// Rows wrap and stay centred on narrow screens.
+// ---------------------------------------------------------------------------
+
+.buttons-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+}
+
+.buttons-demo-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
