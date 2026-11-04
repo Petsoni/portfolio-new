@@ -2,6 +2,12 @@
 // home page's Playground section and each page's social preview image.
 export const playgroundItems = [
   {
+    id: "buttons",
+    name: "Buttons",
+    meta: "Tactile button set",
+    href: "/playground/buttons",
+  },
+  {
     id: "container-morph",
     name: "Container Morph",
     meta: "Morphing payment flow",
